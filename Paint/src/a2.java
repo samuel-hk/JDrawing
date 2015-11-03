@@ -60,6 +60,9 @@ class a2Frame implements ActionListener
 		// setup exit
 		exitFileItem = new JMenuItem("Exit");
 		fileMenu.add(exitFileItem);
+		exitFileItem.addActionListener(this);
+		exitFileItem.setMnemonic(KeyEvent.VK_E);
+		exitFileItem.setToolTipText("Exit Application");
 	} // end method setupMenuBar
 
 	@Override
@@ -69,6 +72,10 @@ class a2Frame implements ActionListener
 		if (e.getSource() == saveFileItem)
 		{
 			System.out.println("Save Pressed");
+		}
+		else if(e.getSource() == exitFileItem)
+		{
+			System.exit(0);
 		}
 		
 	} // end method actionPerformed

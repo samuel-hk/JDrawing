@@ -114,6 +114,9 @@ class a2Frame implements ActionListener, MouseMotionListener, MouseListener
 		exitFileItem = new JMenuItem("Exit");
 		fileMenu.add(exitFileItem);
 		exitFileItem.addActionListener(this);
+		
+		exitFileItem.setMnemonic(KeyEvent.VK_E);
+		exitFileItem.setToolTipText("Exit Application");
 	} // end method setupMenuBar
 
 	@Override
@@ -124,7 +127,7 @@ class a2Frame implements ActionListener, MouseMotionListener, MouseListener
 		{
 			System.out.println("Save Pressed");
 		}
-		else if (e.getSource() == exitFileItem)
+		else if(e.getSource() == exitFileItem)
 		{
 			System.exit(0);
 		}

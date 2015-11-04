@@ -24,7 +24,7 @@ public class a2
 	public static void main(String[] args)
 	{
 		a2Frame a2 = new a2Frame();
-		System.out.println("Hello World!");
+		System.out.println("Up and running!!");
 	} // end main
 	
 } // end class a2
@@ -35,14 +35,15 @@ class a2Frame implements ActionListener, MouseMotionListener, MouseListener
 	
 	JPanel mainPanel;
 	
-	// Menu Bar Fields
+	// Menu Bar and related fields
 	JMenuBar menuBar;
 	JMenu fileMenu;
 	JMenuItem saveFileItem;
 	JMenuItem exitFileItem;
 	
-	// Tool Bar Fields
+	// Tool Bar and related fields
 	JToolBar toolBar;
+	JButton clearButton;
 	
 	// Paint Panel
 	PaintPanel paintPanel;
@@ -85,12 +86,15 @@ class a2Frame implements ActionListener, MouseMotionListener, MouseListener
 		toolBar = new JToolBar();
 		mainPanel.add(toolBar, BorderLayout.WEST);
 		
+		// clear button
+		clearButton = new JButton("Clear");
+		toolBar.add(clearButton);
+		clearButton.addActionListener(this);
+		
 		// test
 		toolBar.setBackground(Color.BLACK);
 //		toolBar.setPreferredSize(new Dimension(300, 300));
 //		toolBar.setMaximumSize(new Dimension(1300, 1300));
-		JButton test = new JButton("Testing");
-		toolBar.add(test);
 		
 	} // end method setupToolBar
 	
@@ -102,7 +106,7 @@ class a2Frame implements ActionListener, MouseMotionListener, MouseListener
 		fileMenu = new JMenu("File");
 		menuBar.add(fileMenu);
 		
-		// setup save and save accleator/mnemonic
+		// setup save
 		saveFileItem = new JMenuItem("Save");
 		fileMenu.add(saveFileItem);
 		saveFileItem.addActionListener(this);
@@ -115,7 +119,7 @@ class a2Frame implements ActionListener, MouseMotionListener, MouseListener
 		fileMenu.add(exitFileItem);
 		exitFileItem.addActionListener(this);
 		
-		exitFileItem.setMnemonic(KeyEvent.VK_E);
+		exitFileItem.setMnemonic(KeyEvent.VK_E); // test Samuel: not sure if we need this for exit 
 		exitFileItem.setToolTipText("Exit Application");
 	} // end method setupMenuBar
 
@@ -126,11 +130,16 @@ class a2Frame implements ActionListener, MouseMotionListener, MouseListener
 		if (e.getSource() == saveFileItem)
 		{
 			System.out.println("Save Pressed");
-		}
+		} // end if, save file item pressed
 		else if(e.getSource() == exitFileItem)
 		{
 			System.exit(0);
-		}
+		}// end if, exit file Item pressed
+		else if (e.getSource() == clearButton)
+		{
+			System.out.println("Clear!");
+			paintPanel.clearPaintPanel();
+		} // end if, clear button pressed
 		
 	} // end method actionPerformed
 
@@ -205,7 +214,9 @@ class PaintPanel extends JPanel
 {
 	PaintPanel()
 	{
-		setBackground(Color.ORANGE);
+		// test
+		setBackground(Color.ORANGE); // because I love orange!!!!!!
+		setPreferredSize(new Dimension(1200, 600));
 	}
 	
 	public void drawInk(int x1, int x2, int y1, int y2)
@@ -220,5 +231,10 @@ class PaintPanel extends JPanel
 		g2.setColor(Color.black);
 		g2.draw(inkSegment);
 		
+	}
+	
+	public void clearPaintPanel()
+	{
+		repaint();
 	}
 }

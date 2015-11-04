@@ -40,7 +40,12 @@ public class a2
 
 class a2Frame extends JFrame implements ActionListener, MouseMotionListener, MouseListener
 {
+	// fields for status
+	final static int PEN = 0;
+	final static int ERASER = 1;
+	int currentTool;
 	
+	// frame main panel
 	JPanel mainPanel;
 	
 	// Menu Bar and related fields
@@ -53,12 +58,15 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JToolBar toolBar;
 	JButton clearButton;
 	JButton strokeButton;
+	JButton earseButton;
 	
 	// Paint Panel
 	PaintPanel paintPanel;
 	
 	public a2Frame()
 	{
+		
+		currentTool = a2Frame.PEN;
 		
 		mainPanel = new JPanel(new BorderLayout());
 		setContentPane(mainPanel);
@@ -110,6 +118,11 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		strokeButton = new JButton("Stroke");
 		strokeButton.addActionListener(this);
 		toolBar.add(strokeButton);
+		
+		// earser button
+		earseButton = new JButton("Earser");
+		earseButton.addActionListener(this);
+		toolBar.add(earseButton);
 		
 		// test
 		toolBar.setBackground(Color.BLACK);
@@ -164,7 +177,13 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		else if (e.getSource() == strokeButton)
 		{
 			System.out.println("Stroke!");
+			currentTool = a2Frame.PEN;
 		} // end if, stroke button pressed
+		else if (e.getSource() == earseButton)
+		{
+			System.out.println("Earse!");
+			currentTool = a2Frame.ERASER;
+		} // end if, eraser button pressed
 		
 	} // end method actionPerformed
 	
@@ -204,7 +223,8 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	} // end method saveToFile
 
 	@Override
-	public void mouseClicked(MouseEvent e) {
+	public void mouseClicked(MouseEvent e) 
+	{
 		// TODO Auto-generated method stub
 		
 	}
@@ -215,7 +235,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		// TODO Auto-generated method stub
 		oldX = e.getX();
 		oldY = e.getY();
-	}
+	} // end method mousePressed
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
@@ -238,7 +258,6 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	// test
 	private int oldX;
 	private int oldY;
-	private boolean firstPoint = true;
 	
 	@Override
 	public void mouseDragged(MouseEvent e) 
@@ -250,15 +269,10 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		int x2 = e.getX();
 		int y2 = e.getY();
 		
-//		// for the first point draw
-//		if (firstPoint)
-//		{
-//			oldX = x2;
-//			oldY = y2;
-//			firstPoint = false;
-//		} // end if, first point initial setup
 		
-		paintPanel.drawInk(oldX, x2, oldY, y2);
+		// perform draw/erase on the current spot
+		if (currentTool == a2Frame.PEN)	paintPanel.drawInk(oldX, x2, oldY, y2);
+		else if (currentTool == a2Frame.ERASER)	paintPanel.erase(oldX, x2, oldY, y2);
 		
 		// save current pointer location as old for next point draw
 		oldX = x2;
@@ -267,7 +281,8 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	} // end method mouseDragged
 
 	@Override
-	public void mouseMoved(MouseEvent e) {
+	public void mouseMoved(MouseEvent e) 
+	{
 		// TODO Auto-generated method stub
 		
 	}
@@ -276,6 +291,12 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 class PaintPanel extends JPanel
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L; // keep compiler happy
+	
+	
 	private ArrayList<Line2D.Double> allStrokes;
 	
 	PaintPanel()
@@ -321,6 +342,26 @@ class PaintPanel extends JPanel
 		// save drawing for windows resize
 		allStrokes.add(inkSegment);
 	} // end method drawInk
+	
+	public void erase(int x1, int x2, int y1, int y2)
+	{
+		// test
+		for (Line2D.Double line : allStrokes)
+		{
+			int lineX1 = (int) line.getX1();
+			int lineX2 = (int) line.getX2();
+			int lineY1 = (int) line.getY1();
+			int lineY2 = (int) line.getY2();
+			
+			if (lineX1 == x1 && lineX2 == x2 && lineY1 == y1 && lineY2 == y2)
+				System.out.println("Erased!!!!!!!!!!!!!!!!!!!");
+//			System.out.println("lineX1 " + lineX1 + " ----- x1" + x2 );
+			
+//			else
+//				System.out.println("Oh no!");
+		}
+		
+	}
 	
 	public void clearPaintPanel()
 	{

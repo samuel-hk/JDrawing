@@ -10,16 +10,21 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Line2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 
 public class a2 
 {
@@ -31,9 +36,8 @@ public class a2
 	
 } // end class a2
 
-class a2Frame implements ActionListener, MouseMotionListener, MouseListener
+class a2Frame extends JFrame implements ActionListener, MouseMotionListener, MouseListener
 {
-	JFrame frame;
 	
 	JPanel mainPanel;
 	
@@ -52,11 +56,9 @@ class a2Frame implements ActionListener, MouseMotionListener, MouseListener
 	
 	public a2Frame()
 	{
-		frame = new JFrame();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		mainPanel = new JPanel(new BorderLayout());
-		frame.setContentPane(mainPanel);
+		setContentPane(mainPanel);
 		
 		// setup menu bar
 		setupMenuBar();
@@ -68,8 +70,8 @@ class a2Frame implements ActionListener, MouseMotionListener, MouseListener
 		setupPaintPanel();
 		
 		// set application visible
-		frame.pack();
-		frame.setVisible(true);
+		pack();
+		setVisible(true);
 		
 	} // end constructor
 	
@@ -103,7 +105,7 @@ class a2Frame implements ActionListener, MouseMotionListener, MouseListener
 	private void setupMenuBar()
 	{
 		menuBar = new JMenuBar();
-		frame.setJMenuBar(menuBar);
+		setJMenuBar(menuBar);
 		
 		fileMenu = new JMenu("File");
 		menuBar.add(fileMenu);
@@ -131,6 +133,7 @@ class a2Frame implements ActionListener, MouseMotionListener, MouseListener
 		// TODO Auto-generated method stub
 		if (e.getSource() == saveFileItem)
 		{
+			saveToFile();
 			System.out.println("Save Pressed");
 		} // end if, save file item pressed
 		else if(e.getSource() == exitFileItem)
@@ -144,6 +147,33 @@ class a2Frame implements ActionListener, MouseMotionListener, MouseListener
 		} // end if, clear button pressed
 		
 	} // end method actionPerformed
+	
+	// save current graphics to a file
+	private void saveToFile()
+	{
+		// fetch properties of the drawing
+		int paintPanelWidth = paintPanel.getWidth();
+		int paintPanelHeight = paintPanel.getHeight();
+		
+		// create image to hold the drawing
+		BufferedImage image = new BufferedImage(paintPanelWidth, paintPanelHeight, BufferedImage.TYPE_INT_BGR);
+		Graphics2D g2D = image.createGraphics();
+		paintPanel.paint(g2D);
+		g2D.dispose();
+		
+		// save the image to a file
+		try
+		{
+			String path = new File(".") .getCanonicalPath() + File.separator + "output.jpg";
+			ImageIO.write( image, "jpg", new File(path) );
+			JOptionPane.showMessageDialog(this, "Image saved to " + path);
+		}
+		catch (Exception e)
+		{
+			
+		}
+		
+	} // end method saveToFile
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
@@ -183,6 +213,8 @@ class a2Frame implements ActionListener, MouseMotionListener, MouseListener
 	@Override
 	public void mouseDragged(MouseEvent e) 
 	{
+		// do not draw, if mouse left button not clicked
+		if (!SwingUtilities.isLeftMouseButton(e))	return;
 		
 		// fetch pointer current location
 		int x2 = e.getX();
@@ -198,11 +230,11 @@ class a2Frame implements ActionListener, MouseMotionListener, MouseListener
 		
 		paintPanel.drawInk(oldX, x2, oldY, y2);
 		
-		// save current pointer locaation as old for next point draw
+		// save current pointer location as old for next point draw
 		oldX = x2;
 		oldY = y2;
 		
-	}
+	} // end method mouseDragged
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
@@ -224,7 +256,7 @@ class PaintPanel extends JPanel
 		// test
 		setBackground(Color.ORANGE); // because I love orange!!!!!!
 		setPreferredSize(new Dimension(1200, 600));
-	}
+	} // end constructor class PaintPanel
 	
 	@Override
 	public void paintComponent(Graphics g)

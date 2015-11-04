@@ -3,6 +3,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -50,6 +52,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	// Tool Bar and related fields
 	JToolBar toolBar;
 	JButton clearButton;
+	JButton strokeButton;
 	
 	// Paint Panel
 	PaintPanel paintPanel;
@@ -64,7 +67,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		setupMenuBar();
 		
 		//setup tool bar
-		setupToolBar();
+		setupToolBarPanel();
 		
 		// setup Paint Panel
 		setupPaintPanel();
@@ -84,23 +87,36 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		paintPanel.addMouseMotionListener(this);
 	} // end method setupPaintPanel
 	
-	private void setupToolBar()
+	private void setupToolBarPanel()
 	{
+		// set panel properties
+		int toolBarPanelRow = 2; // one for tool bar, one for tool bar selection detail
+		int toolBarPanelCol = 1;
+		
+		// init panel
+		JPanel toolBarPanel = new JPanel(new GridLayout(toolBarPanelRow, toolBarPanelCol));
+		mainPanel.add(toolBarPanel, BorderLayout.WEST);
+		
 		// init tool bar
 		toolBar = new JToolBar();
-		mainPanel.add(toolBar, BorderLayout.WEST);
+		toolBarPanel.add(toolBar);
 		
 		// clear button
 		clearButton = new JButton("Clear");
-		toolBar.add(clearButton);
 		clearButton.addActionListener(this);
+		toolBar.add(clearButton);
+		
+		// stroke button
+		strokeButton = new JButton("Stroke");
+		strokeButton.addActionListener(this);
+		toolBar.add(strokeButton);
 		
 		// test
 		toolBar.setBackground(Color.BLACK);
 //		toolBar.setPreferredSize(new Dimension(300, 300));
 //		toolBar.setMaximumSize(new Dimension(1300, 1300));
 		
-	} // end method setupToolBar
+	} // end method setupToolBarPanel
 	
 	private void setupMenuBar()
 	{
@@ -134,7 +150,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		if (e.getSource() == saveFileItem)
 		{
 			saveToFile();
-			System.out.println("Save Pressed");
+//			System.out.println("Save Pressed");
 		} // end if, save file item pressed
 		else if(e.getSource() == exitFileItem)
 		{
@@ -145,6 +161,10 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 			System.out.println("Clear!");
 			paintPanel.clearPaintPanel();
 		} // end if, clear button pressed
+		else if (e.getSource() == strokeButton)
+		{
+			System.out.println("Stroke!");
+		} // end if, stroke button pressed
 		
 	} // end method actionPerformed
 	
@@ -164,14 +184,22 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		// save the image to a file
 		try
 		{
-			String path = new File(".") .getCanonicalPath() + File.separator + "output.jpg";
+			// ask for path to save file
+			JFileChooser fc = new JFileChooser();
+			int userInput = fc.showSaveDialog(null);
+			
+			// end save action if user pressed cancel when chosing the file
+			if (userInput == JFileChooser.CANCEL_OPTION)	return;
+			
+			// write to file and notify user of the action
+			String path = fc.getSelectedFile().getCanonicalPath() + ".jpg";
 			ImageIO.write( image, "jpg", new File(path) );
 			JOptionPane.showMessageDialog(this, "Image saved to " + path);
 		}
 		catch (Exception e)
 		{
-			
-		}
+			System.out.println("Save File error! Try to restart the application with more privilages");
+		} // end catch, save image to a file
 		
 	} // end method saveToFile
 

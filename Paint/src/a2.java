@@ -210,9 +210,11 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	}
 
 	@Override
-	public void mousePressed(MouseEvent e) {
+	public void mousePressed(MouseEvent e) 
+	{
 		// TODO Auto-generated method stub
-		
+		oldX = e.getX();
+		oldY = e.getY();
 	}
 
 	@Override
@@ -248,13 +250,13 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		int x2 = e.getX();
 		int y2 = e.getY();
 		
-		// for the first point draw
-		if (firstPoint)
-		{
-			oldX = x2;
-			oldY = y2;
-			firstPoint = false;
-		} // end if, first point initial setup
+//		// for the first point draw
+//		if (firstPoint)
+//		{
+//			oldX = x2;
+//			oldY = y2;
+//			firstPoint = false;
+//		} // end if, first point initial setup
 		
 		paintPanel.drawInk(oldX, x2, oldY, y2);
 		

@@ -1,6 +1,7 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,6 +10,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Line2D;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -212,12 +214,35 @@ class a2Frame implements ActionListener, MouseMotionListener, MouseListener
 
 class PaintPanel extends JPanel
 {
+	private ArrayList<Line2D.Double> allStrokes;
+	
 	PaintPanel()
 	{
+		// initialize fields
+		allStrokes = new ArrayList<>();
+		
 		// test
 		setBackground(Color.ORANGE); // because I love orange!!!!!!
 		setPreferredSize(new Dimension(1200, 600));
 	}
+	
+	@Override
+	public void paintComponent(Graphics g)
+	{
+		super.paintComponent(g);
+		drawAllStrokes(g);
+	} // end method paintComponent
+	
+	public void drawAllStrokes(Graphics g)
+	{
+		Graphics2D g2D = (Graphics2D) g;
+		
+		for (Line2D.Double line : allStrokes)
+		{
+			g2D.draw(line);
+		} // end for loop, loop thru and draw back strokes
+		
+	} // end method drawAllStrokes
 	
 	public void drawInk(int x1, int x2, int y1, int y2)
 	{
@@ -231,10 +256,14 @@ class PaintPanel extends JPanel
 		g2.setColor(Color.black);
 		g2.draw(inkSegment);
 		
-	}
+		// save drawing for windows resize
+		allStrokes.add(inkSegment);
+	} // end method drawInk
 	
 	public void clearPaintPanel()
 	{
+		allStrokes.clear();
 		repaint();
-	}
-}
+	} // end method clearPaintPanel
+	
+} // end class PaintPanel 

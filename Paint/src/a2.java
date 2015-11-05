@@ -1,3 +1,4 @@
+import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -6,6 +7,8 @@ import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -18,6 +21,7 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -39,7 +43,7 @@ public class a2
 
 } // end class a2
 
-class a2Frame extends JFrame implements ActionListener, MouseMotionListener, MouseListener
+class a2Frame extends JFrame implements ActionListener, MouseMotionListener, MouseListener, ItemListener
 {
 	// fields for status
 	final static int PEN = 0;
@@ -63,6 +67,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JPanel toolBarDetailPanel;
 	JPanel toolBarPanel;
 	JButton strokeColorButton;
+	JComboBox<Integer> strokeWidthBox;
 
 	// Paint Panel
 	PaintPanel paintPanel;
@@ -71,6 +76,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	{
 		// init variables to avoid null pointer exception (no real purpose here)
 		strokeColorButton = new JButton();
+		strokeWidthBox = new JComboBox<>();
 		
 		// set current tool to pen
 		currentTool = a2Frame.PEN;
@@ -175,7 +181,6 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		if (e.getSource() == saveFileItem)
 		{
 			saveToFile();
-			//			System.out.println("Save Pressed");
 		} // end if, save file item pressed
 		else if(e.getSource() == exitFileItem)
 		{
@@ -183,12 +188,10 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		}// end if, exit file Item pressed
 		else if (e.getSource() == clearButton)
 		{
-			System.out.println("Clear!");
 			paintPanel.clearPaintPanel();
 		} // end if, clear button pressed
 		else if (e.getSource() == strokeButton)
 		{
-			System.out.println("Stroke!");
 			currentTool = a2Frame.PEN;
 			fillToolBarDetailPanelWithPen();
 		} // end if, stroke button pressed
@@ -226,8 +229,13 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		strokeColorButton = new JButton("Color");
 		strokeColorButton.addActionListener(this);
 		toolBarDetailPanel.add(strokeColorButton);
+
+		// add stroke width setting
+		Integer[] size = {1,2,3,4,5,6,7,8,9} ;
+		strokeWidthBox = new JComboBox<>(size);
+		strokeWidthBox.addItemListener(this);
+		toolBarDetailPanel.add(strokeWidthBox);
 		
-		System.out.println("fill");
 		toolBarDetailPanel.revalidate();
 	} // end method fillToolBarDetailPanelWithPen
 
@@ -331,6 +339,20 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 	}
 
+	@Override
+	public void itemStateChanged(ItemEvent e) 
+	{
+		// TODO Auto-generated method stub
+		if (e.getSource() == strokeWidthBox)
+		{
+			String selected = strokeWidthBox.getSelectedItem().toString();
+			int selectedSizeInt = Integer.parseInt(selected);
+			float selectedSizeFlt = (float) selectedSizeInt;
+			paintPanel.setStrokeWidth(selectedSizeFlt);
+//			JOptionPane.showMessageDialog(this, selected);
+		} // end if, stroke state change
+	}
+
 } // end class a2Frame
 
 class PaintPanel extends JPanel
@@ -341,9 +363,10 @@ class PaintPanel extends JPanel
 	private static final long serialVersionUID = 1L; // keep compiler happy
 
 
-	private ArrayList<Line2D.Double> allStrokes;
+	private ArrayList<ExtendedLine2DDouble> allStrokes;
 	
 	private Color strokeColor;
+	private float strokeWidth;
 
 	PaintPanel()
 	{
@@ -352,6 +375,7 @@ class PaintPanel extends JPanel
 		
 		// init default properties
 		strokeColor = Color.black;
+		strokeWidth = 1.0f;
 
 		// test
 		setBackground(Color.ORANGE); // because I love orange!!!!!!
@@ -369,8 +393,10 @@ class PaintPanel extends JPanel
 	{
 		Graphics2D g2D = (Graphics2D) g;
 
-		for (Line2D.Double line : allStrokes)
+		for (ExtendedLine2DDouble line : allStrokes)
 		{
+			g2D.setStroke(line.stroke);
+			g2D.setColor(line.color);
 			g2D.draw(line);
 		} // end for loop, loop thru and draw back strokes
 
@@ -381,11 +407,17 @@ class PaintPanel extends JPanel
 		// get graphics to draw
 		Graphics2D g2 = (Graphics2D) this.getGraphics();
 
-		// get draw line
-		Line2D.Double inkSegment = new Line2D.Double(x1, y1, x2, y2);
-
-		// actual drawing
+		// set stroke properties
+		BasicStroke stroke = new BasicStroke(this.strokeWidth);
+		g2.setStroke(stroke);
 		g2.setColor(strokeColor);
+		
+		// get draw line
+		ExtendedLine2DDouble inkSegment = new ExtendedLine2DDouble(x1, y1, x2, y2);
+		inkSegment.color = strokeColor;
+		inkSegment.stroke = stroke;
+		
+		// actual drawing
 		g2.draw(inkSegment);
 
 		// save drawing for windows resize
@@ -396,12 +428,17 @@ class PaintPanel extends JPanel
 	{
 		strokeColor = color;
 	} // end method setStrokeColor
+	
+	public void setStrokeWidth(float width)
+	{
+		strokeWidth = width;
+	} // end method  setStrokeWidth
 
 	public void erase(int x1, int x2, int y1, int y2)
 	{
 
 		// test
-		for (Line2D.Double line : allStrokes)
+		for (ExtendedLine2DDouble line : allStrokes)
 		{
 			//			int lineX1 = (int) line.getX1();
 			//			int lineX2 = (int) line.getX2();

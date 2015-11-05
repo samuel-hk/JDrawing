@@ -13,6 +13,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -199,6 +200,9 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		{
 			System.out.println("Earse!");
 			currentTool = a2Frame.ERASER;
+			
+			// test
+			paintPanel.setScale();
 		} // end if, eraser button pressed
 		else if (e.getSource() == strokeColorButton)
 		{
@@ -470,6 +474,17 @@ class PaintPanel extends JPanel
 		}
 
 	} // end method erase
+	
+	// test
+	public void setScale()
+	{
+		System.out.println("Scale!");
+		AffineTransform tran = AffineTransform.getScaleInstance(3.0, 3.0);
+		Graphics2D g = (Graphics2D) this.getGraphics();
+//		g.setTransform(tran);
+		g.scale(5.0, 5.0);
+		
+	} // end method setScale
 
 	public void clearPaintPanel()
 	{

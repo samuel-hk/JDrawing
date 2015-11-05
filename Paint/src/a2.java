@@ -441,30 +441,36 @@ class PaintPanel extends JPanel
 	public void erase(int x1, int x2, int y1, int y2)
 	{
 
+		// eraser size
+		int eraserSize = 80;
+		
 		// test
-		for (ExtendedLine2DDouble line : allStrokes)
+		ExtendedLine2DDouble line = null;
+		for (int i = 0; i < allStrokes.size(); i++)
 		{
-			//			int lineX1 = (int) line.getX1();
-			//			int lineX2 = (int) line.getX2();
-			//			int lineY1 = (int) line.getY1();
-			//			int lineY2 = (int) line.getY2();
+			line = allStrokes.get(i);
 
+			// fetch line properties
 			Double lineX1 = line.x1;
 			Double lineX2 = line.x2;
 			Double lineY1 = line.y1;
 			Double lineY2 = line.y2;
 
-			if (lineX1.equals(x1) )
-				System.out.println("yay!");
+			// determine  if
+			boolean sameLine = true;
+			if ( !( x1 - lineX1 < eraserSize && x1 - lineX1 > eraserSize*-1) )
+				sameLine = false;
 
-			if (lineX2.equals(x1))
-				System.out.println("Goal!!");
+			if ( !( x2 - lineX2 < eraserSize && x2 - lineX2 > eraserSize*-1) )
+				sameLine = false;
 
-			if (lineY1.equals(x1))
-				System.out.println("HAHAH");
+			if ( !( y1 - lineY1 < eraserSize && y1 - lineY1  > eraserSize*-1) )
+				sameLine = false;
 
-			if (lineY2.equals(x1))
-				System.out.println("heheh");
+			if ( !( y2 - lineY2 < eraserSize && y2 - lineY2 > eraserSize*-1) )
+				sameLine = false;
+			
+			if (sameLine)	allStrokes.remove(line);
 			
 
 			//			if (lineX1.equals(x1) && lineX2 == x2 && lineY1 == y1 && lineY2 == y2)
@@ -472,7 +478,7 @@ class PaintPanel extends JPanel
 			//			System.out.println("lineX1 " + lineX1 + " ----- x1" + x2 );
 
 		}
-
+		repaint();
 	} // end method erase
 	
 	// test

@@ -57,7 +57,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	// Menu Bar and related fields
 	JMenuBar menuBar;
 	JMenu fileMenu;
-	JMenuItem saveFileItem;
+	JMenuItem saveAsFileItem;
 	JMenuItem exitFileItem;
 
 	// Tool Bar and related fields
@@ -159,11 +159,11 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		menuBar.add(fileMenu);
 
 		// setup save
-		saveFileItem = new JMenuItem("Save");
-		fileMenu.add(saveFileItem);
-		saveFileItem.addActionListener(this);
-		saveFileItem.setMnemonic(KeyEvent.VK_S);
-		saveFileItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
+		saveAsFileItem = new JMenuItem("Save As...");
+		fileMenu.add(saveAsFileItem);
+		saveAsFileItem.addActionListener(this);
+		saveAsFileItem.setMnemonic(KeyEvent.VK_S);
+		saveAsFileItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
 
 		// setup exit
 		fileMenu.addSeparator();
@@ -179,7 +179,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	public void actionPerformed(ActionEvent e) 
 	{
 		// TODO Auto-generated method stub
-		if (e.getSource() == saveFileItem)
+		if (e.getSource() == saveAsFileItem)
 		{
 			saveToFile();
 		} // end if, save file item pressed
@@ -448,6 +448,7 @@ class PaintPanel extends JPanel
 		ExtendedLine2DDouble line = null;
 		for (int i = 0; i < allStrokes.size(); i++)
 		{
+			// fetch the nth elemetn
 			line = allStrokes.get(i);
 
 			// fetch line properties
@@ -456,29 +457,21 @@ class PaintPanel extends JPanel
 			Double lineY1 = line.y1;
 			Double lineY2 = line.y2;
 
-			// determine  if
-			boolean sameLine = true;
-			if ( !( x1 - lineX1 < eraserSize && x1 - lineX1 > eraserSize*-1) )
-				sameLine = false;
+			// determine  if current point falls within eraser area
+			boolean samePoint = true;
+			if ( !( x1 - lineX1 < eraserSize && x1 - lineX1 > eraserSize*-1) )	samePoint = false;
+			if ( !( x2 - lineX2 < eraserSize && x2 - lineX2 > eraserSize*-1) )	samePoint = false;
+			if ( !( y1 - lineY1 < eraserSize && y1 - lineY1  > eraserSize*-1) )	samePoint = false;
+			if ( !( y2 - lineY2 < eraserSize && y2 - lineY2 > eraserSize*-1) )	samePoint = false;
 
-			if ( !( x2 - lineX2 < eraserSize && x2 - lineX2 > eraserSize*-1) )
-				sameLine = false;
-
-			if ( !( y1 - lineY1 < eraserSize && y1 - lineY1  > eraserSize*-1) )
-				sameLine = false;
-
-			if ( !( y2 - lineY2 < eraserSize && y2 - lineY2 > eraserSize*-1) )
-				sameLine = false;
-			
-			if (sameLine)	allStrokes.remove(line);
-			
-
-			//			if (lineX1.equals(x1) && lineX2 == x2 && lineY1 == y1 && lineY2 == y2)
-			//				System.out.println("Erased!!!!!!!!!!!!!!!!!!!");
-			//			System.out.println("lineX1 " + lineX1 + " ----- x1" + x2 );
+			// remove line if conditions are met
+			if (samePoint)	allStrokes.remove(line);
 
 		}
+		
+		// update display to reflect what is erased
 		repaint();
+		
 	} // end method erase
 	
 	// test

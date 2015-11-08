@@ -1,6 +1,7 @@
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -219,7 +220,8 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		else if(e.getSource() == objectButton)
 		{
 			System.out.println("objectButtonPressed");
-			currentTool = a2Frame.CROSSHAIR_CURSOR;
+			currentTool = Cursor.HAND_CURSOR;
+			
 			fillToolBarDetailPanelWithShape();
 		}
 		else if (e.getSource() == earseButton)
@@ -359,7 +361,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		
 	
 		//draw shape
-				if(rectangleShapeButton.isSelected())
+				if(rectangleShapeButton.isSelected()&& currentTool==Cursor.HAND_CURSOR)
 					paintPanel.drawRectangle(pressX, releaseX, pressY, releaseY);
 		
 
@@ -489,13 +491,7 @@ class PaintPanel extends JPanel
 		
 		Rectangle2D.Double r = new Rectangle2D.Double(x1, y1, width, height);
 		g2.draw(r);
-		
-		
-		
-		
-		
-		
-		
+	
 		
 	}
 

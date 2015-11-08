@@ -15,11 +15,13 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
@@ -30,12 +32,14 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 public class a2 
 {
+		
 	public static void main(String[] args)
 	{
 		a2Frame a2 = new a2Frame();
@@ -65,10 +69,21 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JButton clearButton;
 	JButton strokeButton;
 	JButton earseButton;
+	JButton objectButton;
 	JPanel toolBarDetailPanel;
 	JPanel toolBarPanel;
 	JButton strokeColorButton;
+	JRadioButton rectangleShapeButton;
+	JRadioButton circleShapeButton;
+	ButtonGroup shapeButtonGroup;
+	
 	JComboBox<Integer> strokeWidthBox;
+	
+	//coordinates for mouseEvents
+			public double pressX;
+			double pressY;
+			double releaseX;
+			double releaseY;
 
 	// Paint Panel
 	PaintPanel paintPanel;
@@ -137,6 +152,11 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		earseButton = new JButton("Earser");
 		earseButton.addActionListener(this);
 		toolBar.add(earseButton);
+		
+		//draw object button
+		objectButton = new JButton("Draw Object");
+		objectButton.addActionListener(this);
+		toolBar.add(objectButton);
 
 		// init toolBarDetailPanel
 		toolBarDetailPanel = new JPanel();
@@ -196,6 +216,12 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 			currentTool = a2Frame.PEN;
 			fillToolBarDetailPanelWithPen();
 		} // end if, stroke button pressed
+		else if(e.getSource() == objectButton)
+		{
+			System.out.println("objectButtonPressed");
+			currentTool = a2Frame.CROSSHAIR_CURSOR;
+			fillToolBarDetailPanelWithShape();
+		}
 		else if (e.getSource() == earseButton)
 		{
 			System.out.println("Earse!");
@@ -242,6 +268,28 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		
 		toolBarDetailPanel.revalidate();
 	} // end method fillToolBarDetailPanelWithPen
+	
+	private void fillToolBarDetailPanelWithShape()
+	{
+		// clear everything
+		toolBarDetailPanel.removeAll();
+		toolBarDetailPanel.repaint();
+		
+		
+		// add shape button
+		rectangleShapeButton = new JRadioButton("Rectangle");
+		circleShapeButton = new JRadioButton("Circle");
+		shapeButtonGroup = new ButtonGroup();
+		shapeButtonGroup.add(rectangleShapeButton);
+		shapeButtonGroup.add(circleShapeButton);
+		
+		toolBarDetailPanel.add(rectangleShapeButton);
+		toolBarDetailPanel.add(circleShapeButton);
+		
+		rectangleShapeButton.setSelected(true);
+		toolBarDetailPanel.revalidate();
+		
+	}
 
 	// save current graphics to a file
 	private void saveToFile()
@@ -282,6 +330,8 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	public void mouseClicked(MouseEvent e) 
 	{
 		// TODO Auto-generated method stub
+		
+		
 
 	}
 
@@ -291,11 +341,27 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		// TODO Auto-generated method stub
 		oldX = e.getX();
 		oldY = e.getY();
+		
+		//get coordinates when mouse is pressed
+		pressX = e.getX();
+		pressY = e.getY();
+		
+		
 	} // end method mousePressed
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
+		
+		//get coordinates when mouse is released
+		releaseX = e.getX();
+		releaseY = e.getY();
+		
+	
+		//draw shape
+				if(rectangleShapeButton.isSelected())
+					paintPanel.drawRectangle(pressX, releaseX, pressY, releaseY);
+		
 
 	}
 
@@ -333,6 +399,8 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		// save current pointer location as old for next point draw
 		oldX = x2;
 		oldY = y2;
+		
+		
 
 	} // end method mouseDragged
 
@@ -392,7 +460,8 @@ class PaintPanel extends JPanel
 		super.paintComponent(g);
 		drawAllStrokes(g);
 	} // end method paintComponent
-
+	
+	
 	public void drawAllStrokes(Graphics g)
 	{
 		Graphics2D g2D = (Graphics2D) g;
@@ -405,6 +474,30 @@ class PaintPanel extends JPanel
 		} // end for loop, loop thru and draw back strokes
 
 	} // end method drawAllStrokes
+	
+
+	
+	public void drawRectangle(double x1,double x2,double y1,double y2)
+	{
+		
+		Graphics2D g2 = (Graphics2D) this.getGraphics();
+		g2.setColor(new Color(0, 0, 0));
+		double width;
+		double height;
+		width = x2-x1;
+		height = y2-y1;
+		
+		Rectangle2D.Double r = new Rectangle2D.Double(x1, y1, width, height);
+		g2.draw(r);
+		
+		
+		
+		
+		
+		
+		
+		
+	}
 
 	public void drawInk(int x1, int x2, int y1, int y2)
 	{

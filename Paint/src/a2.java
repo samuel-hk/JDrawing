@@ -15,6 +15,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -77,7 +78,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	
 	//Draw Objects Detail Panel
 	JRadioButton rectangleShapeButton;
-	JRadioButton circleShapeButton;
+	JRadioButton ovalShapeButton;
 	ButtonGroup shapeButtonGroup;
 	
 	
@@ -283,13 +284,13 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		
 		// add shape button
 		rectangleShapeButton = new JRadioButton("Rectangle");
-		circleShapeButton = new JRadioButton("Circle");
+		ovalShapeButton = new JRadioButton("Oval");
 		shapeButtonGroup = new ButtonGroup();
 		shapeButtonGroup.add(rectangleShapeButton);
-		shapeButtonGroup.add(circleShapeButton);
+		shapeButtonGroup.add(ovalShapeButton);
 		
 		toolBarDetailPanel.add(rectangleShapeButton);
-		toolBarDetailPanel.add(circleShapeButton);
+		toolBarDetailPanel.add(ovalShapeButton);
 		
 		rectangleShapeButton.setSelected(true);
 		toolBarDetailPanel.revalidate();
@@ -363,9 +364,12 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		releaseY = e.getY();
 		
 	
-		//draw shape
-				if(rectangleShapeButton.isSelected()&& currentTool==Cursor.HAND_CURSOR)
-					paintPanel.drawRectangle(pressX, releaseX, pressY, releaseY);
+		//draw rectangle
+		if(rectangleShapeButton.isSelected()&& currentTool==Cursor.HAND_CURSOR)
+			paintPanel.drawRectangle(pressX, releaseX, pressY, releaseY);
+		//draw oval
+		else if(ovalShapeButton.isSelected() && currentTool == Cursor.HAND_CURSOR)
+			paintPanel.drawOval(pressX, releaseX, pressY, releaseY);
 		
 
 	}
@@ -492,8 +496,6 @@ class PaintPanel extends JPanel
 		double startX;
 		double startY;
 		
-		
-		
 		width = Math.abs(x2-x1);
 		height = Math.abs(y2-y1);
 		
@@ -522,14 +524,47 @@ class PaintPanel extends JPanel
 		{
 			Rectangle2D.Double r = new Rectangle2D.Double(x1, y1, width, height);
 			g2.draw(r);
-			
 		}
+	}
+	
+	public void drawOval(double x1,double x2,double y1, double y2)
+	{
+		Graphics2D g2 = (Graphics2D) this.getGraphics();
+		g2.setColor(new Color(0,0,0));
+		double width;
+		double height;
+		double startX;
+		double startY;
 		
+		width = Math.abs(x2-x1);
+		height = Math.abs(y2-y1);
 		
-		
-		
-		
-		
+		if(x2>x1 && y2<y1)
+		{
+			startX = x1;
+			startY = y1-height;
+			Ellipse2D.Double r = new Ellipse2D.Double(startX,startY,width,height);
+			g2.draw(r);
+		}
+		else if(x1>x2 && y1<y2)
+		{
+			startX = x1-width;
+			startY = y1;
+			Ellipse2D.Double r = new Ellipse2D.Double(startX, startY, width, height);
+			g2.draw(r);
+		}
+		else if(x1>x2 && y1>y2)
+		{
+			startX = x1-width;
+			startY = y1-height;
+			Ellipse2D.Double r = new Ellipse2D.Double(startX, startY, width, height);
+			g2.draw(r);
+		}
+		else
+		{
+			Ellipse2D.Double r = new Ellipse2D.Double(x1, y1, width, height);
+			g2.draw(r);
+		}
 	}
 	
 	

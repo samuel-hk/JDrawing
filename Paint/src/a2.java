@@ -74,9 +74,12 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JPanel toolBarDetailPanel;
 	JPanel toolBarPanel;
 	JButton strokeColorButton;
+	
+	//Draw Objects Detail Panel
 	JRadioButton rectangleShapeButton;
 	JRadioButton circleShapeButton;
 	ButtonGroup shapeButtonGroup;
+	
 	
 	JComboBox<Integer> strokeWidthBox;
 	
@@ -486,14 +489,50 @@ class PaintPanel extends JPanel
 		g2.setColor(new Color(0, 0, 0));
 		double width;
 		double height;
-		width = x2-x1;
-		height = y2-y1;
+		double startX;
+		double startY;
 		
-		Rectangle2D.Double r = new Rectangle2D.Double(x1, y1, width, height);
-		g2.draw(r);
-	
+		
+		
+		width = Math.abs(x2-x1);
+		height = Math.abs(y2-y1);
+		
+		if(x2>x1 && y2<y1)
+		{
+			startX = x1;
+			startY = y1-height;
+			Rectangle2D.Double r = new Rectangle2D.Double(startX,startY,width,height);
+			g2.draw(r);
+		}
+		else if(x1>x2 && y1<y2)
+		{
+			startX = x1-width;
+			startY = y1;
+			Rectangle2D.Double r = new Rectangle2D.Double(startX, startY, width, height);
+			g2.draw(r);
+		}
+		else if(x1>x2 && y1>y2)
+		{
+			startX = x1-width;
+			startY = y1-height;
+			Rectangle2D.Double r = new Rectangle2D.Double(startX, startY, width, height);
+			g2.draw(r);
+		}
+		else
+		{
+			Rectangle2D.Double r = new Rectangle2D.Double(x1, y1, width, height);
+			g2.draw(r);
+			
+		}
+		
+		
+		
+		
+		
 		
 	}
+	
+	
 
 	public void drawInk(int x1, int x2, int y1, int y2)
 	{

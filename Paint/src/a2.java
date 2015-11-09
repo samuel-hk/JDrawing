@@ -23,6 +23,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
+import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
@@ -77,8 +78,11 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JButton strokeColorButton;
 	
 	//Draw Objects Detail Panel
+	JPanel shapeChooserPanel;
 	JRadioButton rectangleShapeButton;
 	JRadioButton ovalShapeButton;
+	JRadioButton circleShapeButton;
+	JRadioButton lineShapeButton;
 	ButtonGroup shapeButtonGroup;
 	
 	
@@ -281,16 +285,33 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		toolBarDetailPanel.removeAll();
 		toolBarDetailPanel.repaint();
 		
+		shapeChooserPanel = new JPanel();
+		shapeChooserPanel.setLayout(new BoxLayout(shapeChooserPanel,BoxLayout.Y_AXIS));
 		
 		// add shape button
 		rectangleShapeButton = new JRadioButton("Rectangle");
 		ovalShapeButton = new JRadioButton("Oval");
+		circleShapeButton = new JRadioButton("Circle");
+		lineShapeButton = new JRadioButton("Line");
 		shapeButtonGroup = new ButtonGroup();
 		shapeButtonGroup.add(rectangleShapeButton);
 		shapeButtonGroup.add(ovalShapeButton);
+		shapeButtonGroup.add(circleShapeButton);
+		shapeButtonGroup.add(lineShapeButton);
 		
-		toolBarDetailPanel.add(rectangleShapeButton);
-		toolBarDetailPanel.add(ovalShapeButton);
+		//toolBarDetailPanel.add(rectangleShapeButton);
+		//toolBarDetailPanel.add(ovalShapeButton);
+		
+		
+		//add radioButtons to subPanel
+		shapeChooserPanel.add(rectangleShapeButton);
+		shapeChooserPanel.add(ovalShapeButton);
+		shapeChooserPanel.add(circleShapeButton);
+		shapeChooserPanel.add(lineShapeButton);
+		
+		//add subPanel to toolBarDetailPanel
+		toolBarDetailPanel.add(shapeChooserPanel);
+		
 		
 		rectangleShapeButton.setSelected(true);
 		toolBarDetailPanel.revalidate();
@@ -370,8 +391,13 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		//draw oval
 		else if(ovalShapeButton.isSelected() && currentTool == Cursor.HAND_CURSOR)
 			paintPanel.drawOval(pressX, releaseX, pressY, releaseY);
-		
-
+		//draw circle
+		else if(circleShapeButton.isSelected() && currentTool == Cursor.HAND_CURSOR)
+			paintPanel.drawCircle(pressX, releaseX, pressY, releaseY);
+		//draw line
+		else if(lineShapeButton.isSelected() && currentTool == Cursor.HAND_CURSOR)
+			paintPanel.drawLine(pressX, releaseX, pressY, releaseY);	
+	
 	}
 
 	@Override
@@ -567,7 +593,55 @@ class PaintPanel extends JPanel
 		}
 	}
 	
+	public void drawCircle(double x1, double x2, double y1, double y2)
+	{
+		Graphics2D g2 = (Graphics2D)this.getGraphics();
+		g2.setColor(new Color(0,0,0));
+		double width;
+		double height;
+		double startX;
+		double startY;
+		
+		width = Math.abs(x2-x1);
+		height = Math.abs(y2-y1);
+		
+		if(x2>x1 && y2<y1)
+		{
+			startX = x1;
+			startY = y1-height;
+			Ellipse2D.Double r = new Ellipse2D.Double(startX,startY,width,width);
+			g2.draw(r);
+		}
+		else if(x1>x2 && y1<y2)
+		{
+			startX = x1-width;
+			startY = y1;
+			Ellipse2D.Double r = new Ellipse2D.Double(startX, startY, width, width);
+			g2.draw(r);
+		}
+		else if(x1>x2 && y1>y2)
+		{
+			startX = x1-width;
+			startY = y1-height;
+			Ellipse2D.Double r = new Ellipse2D.Double(startX, startY, width, width);
+			g2.draw(r);
+		}
+		else
+		{
+			Ellipse2D.Double r = new Ellipse2D.Double(x1, y1, width, width);
+			g2.draw(r);
+		}
+		
+	}
 	
+	public void drawLine(double x1, double x2, double y1, double y2)
+	{
+		Graphics2D g2 = (Graphics2D)this.getGraphics();
+		g2.setColor(new Color(0,0,0));
+		
+		Line2D.Double r = new Line2D.Double(x1, y1, x2, y2);
+		g2.draw(r);
+	}
 
 	public void drawInk(int x1, int x2, int y1, int y2)
 	{

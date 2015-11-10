@@ -41,8 +41,6 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
-import com.sun.prism.paint.Paint;
-
 public class a2 
 {
 		
@@ -263,9 +261,6 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		{
 			System.out.println("Earse!");
 			currentTool = a2Frame.ERASER;
-			
-			// test
-			paintPanel.setScale();
 		} // end if, eraser button pressed
 		else if (e.getSource() == changeBackgroundButton)
 		{

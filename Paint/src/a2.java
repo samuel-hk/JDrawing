@@ -1,4 +1,4 @@
-import java.awt.BasicStroke;
+import java.awt.BasicStroke;	
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -60,6 +60,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	// fields for status
 	final static int PEN = 0;
 	final static int ERASER = 1;
+	String fileName;
 	int currentTool;
 
 	// frame main panel
@@ -68,7 +69,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	// Menu Bar and related fields
 	JMenuBar menuBar;
 	JMenu fileMenu;
-	JMenuItem saveAsFileItem;
+	JMenuItem saveFileItem, saveAsFileItem;
 	JMenuItem exitFileItem;
 
 	// Tool Bar and related fields
@@ -124,8 +125,8 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		objectBorderThicknessBox = new JComboBox<>();
 		shapeFillColorButton = new JButton();
 		shapeNoFillingButton = new JButton();
+		fileName = "";
 		
-
 		mainPanel = new JPanel(new BorderLayout());
 		setContentPane(mainPanel);
 
@@ -219,6 +220,11 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		menuBar.add(fileMenu);
 
 		// setup save
+		saveFileItem = new JMenuItem("Save");
+		fileMenu.add(saveFileItem);
+		fileMenu.addActionListener(this);
+		
+		// setup save as
 		saveAsFileItem = new JMenuItem("Save As...");
 		fileMenu.add(saveAsFileItem);
 		saveAsFileItem.addActionListener(this);
@@ -262,11 +268,14 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	@Override
 	public void actionPerformed(ActionEvent e) 
 	{
-		// TODO Auto-generated method stub
-		if (e.getSource() == saveAsFileItem)
+		if (e.getSource() == saveFileItem)
+		{
+			saveToFile();
+		} // end if, save file item pressed
+		else if (e.getSource() == saveAsFileItem)
 		{
 			saveAsToFile();
-		} // end if, save file item pressed
+		} // end if, save as file item pressed
 		else if(e.getSource() == exitFileItem)
 		{
 			System.exit(0);
@@ -470,7 +479,8 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 	private void saveToFile()
 	{
-		
+		if (fileName.equals(""))	saveAsToFile();
+		System.out.println("the saved file name is : " + fileName);
 	} // end method saveToFile
 	
 	// save current graphics to a file
@@ -500,6 +510,14 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 			String path = fc.getSelectedFile().getCanonicalPath() + ".jpg";
 			ImageIO.write( image, "jpg", new File(path) );
 			JOptionPane.showMessageDialog(this, "Image saved to " + path);
+			
+			// save file name into var
+			fileName = fc.getSelectedFile().getName();
+			
+			// test
+			File f = new File(".");
+			f.getAbsolutePath();
+			f.getPath();
 		}
 		catch (Exception e)
 		{
@@ -539,18 +557,17 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		releaseX = e.getX();
 		releaseY = e.getY();
 		
-	
 		//draw rectangle
-		if(rectangleShapeButton.isSelected()&& currentTool==Cursor.HAND_CURSOR)
+		if(currentTool==Cursor.HAND_CURSOR && rectangleShapeButton.isSelected())
 			paintPanel.drawRectangle(pressX, releaseX, pressY, releaseY);
 		//draw oval
-		else if(ovalShapeButton.isSelected() && currentTool == Cursor.HAND_CURSOR)
+		else if(currentTool == Cursor.HAND_CURSOR && ovalShapeButton.isSelected())
 			paintPanel.drawOval(pressX, releaseX, pressY, releaseY);
 		//draw circle
-		else if(circleShapeButton.isSelected() && currentTool == Cursor.HAND_CURSOR)
+		else if(currentTool == Cursor.HAND_CURSOR && circleShapeButton.isSelected())
 			paintPanel.drawCircle(pressX, releaseX, pressY, releaseY);
 		//draw line
-		else if(lineShapeButton.isSelected() && currentTool == Cursor.HAND_CURSOR)
+		else if(currentTool == Cursor.HAND_CURSOR && lineShapeButton.isSelected())
 			paintPanel.drawLine(pressX, releaseX, pressY, releaseY);	
 	
 	}

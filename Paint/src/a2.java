@@ -41,6 +41,8 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
+import com.sun.prism.paint.Paint;
+
 public class a2 
 {
 		
@@ -58,6 +60,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	final static int PEN = 0;
 	final static int ERASER = 1;
 	int currentTool;
+	
 
 	// frame main panel
 	JPanel mainPanel;
@@ -77,7 +80,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JPanel toolBarDetailPanel;
 	JPanel toolBarPanel;
 	JButton strokeColorButton;
-	JButton objectBorderColorButton;
+	
 	
 	//Draw Objects Detail Panel
 	JPanel shapeChooserPanel;
@@ -86,10 +89,17 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JRadioButton circleShapeButton;
 	JRadioButton lineShapeButton;
 	ButtonGroup shapeButtonGroup;
+	JButton objectBorderColorButton;
 	JLabel shapeBorderColorLabel;
 	JPanel shapeBorderColorPanel;
 	JLabel shapeBorderThicknessLabel;
 	JPanel shapeBorderThicknessPanel;
+	JLabel shapeFillColorLabel;
+	JPanel shapeFillColorPanel;
+	JButton shapeFillColorButton;
+	JButton shapeNoFillingButton;
+	JLabel shapeNoFillingLabel;
+	
 	
 	
 	JComboBox<Integer> strokeWidthBox;
@@ -111,6 +121,8 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		strokeWidthBox = new JComboBox<>();
 		objectBorderColorButton = new JButton();
 		objectBorderThicknessBox = new JComboBox<>();
+		shapeFillColorButton = new JButton();
+		shapeNoFillingButton = new JButton();
 		
 		// set current tool to pen
 		currentTool = a2Frame.PEN;
@@ -257,6 +269,15 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		{
 			setObjectBorderColor();
 		}// end if, stroke color button
+		else if(e.getSource() == shapeFillColorButton)
+		{
+			paintPanel.fillOrDraw = 1;
+			setObjectFillColor();
+		}
+		else if(e.getSource() == shapeNoFillingButton)
+		{
+			paintPanel.fillOrDraw = 0;
+		}
 
 	} // end method actionPerformed
 	
@@ -282,6 +303,18 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		
 		//set user selection effective
 		paintPanel.setObjectBorderColor(tmp);
+	}
+	
+	private void setObjectFillColor()
+	{
+		//fetch user selection
+		Color tmp = JColorChooser.showDialog(this, "Choose Color", Color.orange);
+		
+		//if user did not select a color, stop set color process
+		if(tmp == null)	return;
+		
+		//set user selection effective
+		paintPanel.setObjectFillColor(tmp);
 	}
 	
 	private void fillToolBarDetailPanelWithPen()
@@ -366,6 +399,22 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		shapeBorderThicknessPanel.add(shapeBorderThicknessLabel);
 		shapeBorderThicknessPanel.add(objectBorderThicknessBox);
 		toolBarDetailPanel.add(shapeBorderThicknessPanel);
+		
+		//object fill color panel
+		shapeFillColorPanel = new JPanel();
+		shapeFillColorPanel.setLayout(new BoxLayout(shapeFillColorPanel,BoxLayout.Y_AXIS));
+		shapeFillColorPanel.setBackground(Color.red);
+		shapeFillColorLabel = new JLabel("Filled Object");
+		shapeFillColorButton = new JButton("Choose Color");
+		shapeFillColorButton.addActionListener(this);
+		//shapeNoFillingLabel = new JLabel("Draw Without Filling");
+		shapeNoFillingButton = new JButton("Clear Filling");
+		shapeNoFillingButton.addActionListener(this);
+		
+		shapeFillColorPanel.add(shapeFillColorLabel);
+		shapeFillColorPanel.add(shapeFillColorButton);
+		shapeFillColorPanel.add(shapeNoFillingButton);
+		toolBarDetailPanel.add(shapeFillColorPanel);
 		
 		
 		
@@ -541,6 +590,8 @@ class PaintPanel extends JPanel
 	//fields for objects
 	private Color objectBorderColor;
 	private float objectBorderThickness;
+	private Color objectFillColor;
+	int fillOrDraw = 0;
 
 	PaintPanel()
 	{
@@ -592,6 +643,8 @@ class PaintPanel extends JPanel
 		g2.setStroke(stroke);
 		//default color black
 		g2.setColor(objectBorderColor);
+		g2.setPaint(objectFillColor);
+		
 		double width;
 		double height;
 		double startX;
@@ -626,7 +679,20 @@ class PaintPanel extends JPanel
 			
 		}
 		
-		g2.draw(r);
+		if( fillOrDraw== 0)
+		{
+			g2.setColor(objectBorderColor);
+			g2.draw(r);
+		}
+			
+		else
+		{
+			g2.setColor(objectFillColor);
+			g2.fill(r);
+			g2.setColor(objectBorderColor);
+			g2.draw(r);
+		}
+		
 	}
 	
 	public void drawOval(double x1,double x2,double y1, double y2)
@@ -637,7 +703,9 @@ class PaintPanel extends JPanel
 		g2.setStroke(stroke);
 		
 		//default color black
-		g2.setColor(objectBorderColor);
+		//g2.setColor(objectBorderColor);
+		//g2.setPaint(objectFillColor);
+		
 		double width;
 		double height;
 		double startX;
@@ -670,7 +738,21 @@ class PaintPanel extends JPanel
 		{
 			r = new Ellipse2D.Double(x1, y1, width, height);
 		}
-		g2.draw(r);
+		
+		
+		if( fillOrDraw== 0)
+		{
+			g2.setColor(objectBorderColor);
+			g2.draw(r);
+		}
+			
+		else
+		{
+			g2.setColor(objectFillColor);
+			g2.fill(r);
+			g2.setColor(objectBorderColor);
+			g2.draw(r);
+		}
 	}
 	
 	public void drawCircle(double x1, double x2, double y1, double y2)
@@ -682,6 +764,7 @@ class PaintPanel extends JPanel
 		
 		//default color black
 		g2.setColor(objectBorderColor);
+		g2.setPaint(objectFillColor);
 		
 		double width;
 		double height;
@@ -716,7 +799,20 @@ class PaintPanel extends JPanel
 		{
 			r = new Ellipse2D.Double(x1, y1, width, width);
 		}
-		g2.draw(r);
+		
+		if( fillOrDraw== 0)
+		{
+			g2.setColor(objectBorderColor);
+			g2.draw(r);
+		}
+			
+		else
+		{
+			g2.setColor(objectFillColor);
+			g2.fill(r);
+			g2.setColor(objectBorderColor);
+			g2.draw(r);
+		}
 		
 	}
 	
@@ -765,6 +861,12 @@ class PaintPanel extends JPanel
 	{
 		objectBorderColor = color;
 	}//end method setStrokeColor
+	
+	public void setObjectFillColor(Color color)
+	{
+		objectFillColor = color;
+		
+	}//end method setObjectFillColor
 	
 	public void setStrokeWidth(float width)
 	{

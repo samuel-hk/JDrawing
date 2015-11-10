@@ -30,6 +30,7 @@ import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -76,6 +77,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JPanel toolBarDetailPanel;
 	JPanel toolBarPanel;
 	JButton strokeColorButton;
+	JButton objectBorderColorButton;
 	
 	//Draw Objects Detail Panel
 	JPanel shapeChooserPanel;
@@ -84,6 +86,8 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JRadioButton circleShapeButton;
 	JRadioButton lineShapeButton;
 	ButtonGroup shapeButtonGroup;
+	JLabel shapeBorderColorLabel;
+	JPanel shapeBorderColorPanel;
 	
 	
 	JComboBox<Integer> strokeWidthBox;
@@ -102,6 +106,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		// init variables to avoid null pointer exception (no real purpose here)
 		strokeColorButton = new JButton();
 		strokeWidthBox = new JComboBox<>();
+		objectBorderColorButton = new JButton();
 		
 		// set current tool to pen
 		currentTool = a2Frame.PEN;
@@ -244,6 +249,10 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		{
 			setStrokeColor();
 		} // end if, stroke color button
+		else if(e.getSource() == objectBorderColorButton)
+		{
+			setObjectBorderColor();
+		}// end if, stroke color button
 
 	} // end method actionPerformed
 	
@@ -258,6 +267,18 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		// set user sleection effective
 		paintPanel.setStrokeColor(tmp);
 	} // end method setStrokeColor
+	
+	private void setObjectBorderColor()
+	{
+		//fetch user selection
+		Color tmp = JColorChooser.showDialog(this, "Choose Color", Color.black);
+		
+		//if user did not select a color, stop set color process
+		if(tmp == null)	return;
+		
+		//set user selection effective
+		paintPanel.setObjectBorderColor(tmp);
+	}
 	
 	private void fillToolBarDetailPanelWithPen()
 	{
@@ -285,6 +306,8 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		toolBarDetailPanel.removeAll();
 		toolBarDetailPanel.repaint();
 		
+		toolBarDetailPanel.setLayout(new BoxLayout(toolBarDetailPanel,BoxLayout.Y_AXIS));
+		
 		shapeChooserPanel = new JPanel();
 		shapeChooserPanel.setLayout(new BoxLayout(shapeChooserPanel,BoxLayout.Y_AXIS));
 		
@@ -309,8 +332,22 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		shapeChooserPanel.add(circleShapeButton);
 		shapeChooserPanel.add(lineShapeButton);
 		
+		shapeChooserPanel.setBackground(Color.red);
+		
 		//add subPanel to toolBarDetailPanel
 		toolBarDetailPanel.add(shapeChooserPanel);
+		
+		//Border Color Panel
+		shapeBorderColorPanel = new JPanel();
+		shapeBorderColorPanel.setLayout(new BoxLayout(shapeBorderColorPanel,BoxLayout.Y_AXIS));
+		shapeBorderColorPanel.setBackground(Color.red);
+		shapeBorderColorLabel = new JLabel("Border Color: ");
+		objectBorderColorButton = new JButton("Color");
+		objectBorderColorButton.addActionListener(this);
+		
+		shapeBorderColorPanel.add(shapeBorderColorLabel);
+		shapeBorderColorPanel.add(objectBorderColorButton);
+		toolBarDetailPanel.add(shapeBorderColorPanel);
 		
 		
 		rectangleShapeButton.setSelected(true);
@@ -474,6 +511,9 @@ class PaintPanel extends JPanel
 	
 	private Color strokeColor;
 	private float strokeWidth;
+	
+	//fields for objects
+	private Color objectBorderColor;
 
 	PaintPanel()
 	{
@@ -483,6 +523,9 @@ class PaintPanel extends JPanel
 		// init default properties
 		strokeColor = Color.black;
 		strokeWidth = 1.0f;
+		
+		// init default properties for objects
+		objectBorderColor = Color.black;
 
 		// test
 		setBackground(Color.ORANGE); // because I love orange!!!!!!
@@ -516,7 +559,9 @@ class PaintPanel extends JPanel
 	{
 		
 		Graphics2D g2 = (Graphics2D) this.getGraphics();
-		g2.setColor(new Color(0, 0, 0));
+		
+		//default color black
+		g2.setColor(objectBorderColor);
 		double width;
 		double height;
 		double startX;
@@ -524,39 +569,42 @@ class PaintPanel extends JPanel
 		
 		width = Math.abs(x2-x1);
 		height = Math.abs(y2-y1);
+		Rectangle2D.Double r;
 		
 		if(x2>x1 && y2<y1)
 		{
 			startX = x1;
 			startY = y1-height;
-			Rectangle2D.Double r = new Rectangle2D.Double(startX,startY,width,height);
-			g2.draw(r);
+			r = new Rectangle2D.Double(startX,startY,width,height);
 		}
 		else if(x1>x2 && y1<y2)
 		{
 			startX = x1-width;
 			startY = y1;
-			Rectangle2D.Double r = new Rectangle2D.Double(startX, startY, width, height);
-			g2.draw(r);
+			r = new Rectangle2D.Double(startX, startY, width, height);
 		}
 		else if(x1>x2 && y1>y2)
 		{
 			startX = x1-width;
 			startY = y1-height;
-			Rectangle2D.Double r = new Rectangle2D.Double(startX, startY, width, height);
-			g2.draw(r);
+			r = new Rectangle2D.Double(startX, startY, width, height);
+			
 		}
 		else
 		{
-			Rectangle2D.Double r = new Rectangle2D.Double(x1, y1, width, height);
-			g2.draw(r);
+			r = new Rectangle2D.Double(x1, y1, width, height);
+			
 		}
+		
+		g2.draw(r);
 	}
 	
 	public void drawOval(double x1,double x2,double y1, double y2)
 	{
 		Graphics2D g2 = (Graphics2D) this.getGraphics();
-		g2.setColor(new Color(0,0,0));
+		
+		//default color black
+		g2.setColor(objectBorderColor);
 		double width;
 		double height;
 		double startX;
@@ -564,39 +612,41 @@ class PaintPanel extends JPanel
 		
 		width = Math.abs(x2-x1);
 		height = Math.abs(y2-y1);
+		Ellipse2D.Double r;
 		
 		if(x2>x1 && y2<y1)
 		{
 			startX = x1;
 			startY = y1-height;
-			Ellipse2D.Double r = new Ellipse2D.Double(startX,startY,width,height);
-			g2.draw(r);
+			r = new Ellipse2D.Double(startX,startY,width,height);
+			
 		}
 		else if(x1>x2 && y1<y2)
 		{
 			startX = x1-width;
 			startY = y1;
-			Ellipse2D.Double r = new Ellipse2D.Double(startX, startY, width, height);
-			g2.draw(r);
+			r = new Ellipse2D.Double(startX, startY, width, height);
 		}
 		else if(x1>x2 && y1>y2)
 		{
 			startX = x1-width;
 			startY = y1-height;
-			Ellipse2D.Double r = new Ellipse2D.Double(startX, startY, width, height);
-			g2.draw(r);
+			r = new Ellipse2D.Double(startX, startY, width, height);
 		}
 		else
 		{
-			Ellipse2D.Double r = new Ellipse2D.Double(x1, y1, width, height);
-			g2.draw(r);
+			r = new Ellipse2D.Double(x1, y1, width, height);
 		}
+		g2.draw(r);
 	}
 	
 	public void drawCircle(double x1, double x2, double y1, double y2)
 	{
 		Graphics2D g2 = (Graphics2D)this.getGraphics();
-		g2.setColor(new Color(0,0,0));
+		
+		//default color black
+		g2.setColor(objectBorderColor);
+		
 		double width;
 		double height;
 		double startX;
@@ -605,39 +655,41 @@ class PaintPanel extends JPanel
 		width = Math.abs(x2-x1);
 		height = Math.abs(y2-y1);
 		
+		Ellipse2D.Double r;
+		
 		if(x2>x1 && y2<y1)
 		{
 			startX = x1;
 			startY = y1-height;
-			Ellipse2D.Double r = new Ellipse2D.Double(startX,startY,width,width);
-			g2.draw(r);
+			r = new Ellipse2D.Double(startX,startY,width,width);
+			
 		}
 		else if(x1>x2 && y1<y2)
 		{
 			startX = x1-width;
 			startY = y1;
-			Ellipse2D.Double r = new Ellipse2D.Double(startX, startY, width, width);
-			g2.draw(r);
+			r = new Ellipse2D.Double(startX, startY, width, width);
 		}
 		else if(x1>x2 && y1>y2)
 		{
 			startX = x1-width;
 			startY = y1-height;
-			Ellipse2D.Double r = new Ellipse2D.Double(startX, startY, width, width);
-			g2.draw(r);
+			r = new Ellipse2D.Double(startX, startY, width, width);
 		}
 		else
 		{
-			Ellipse2D.Double r = new Ellipse2D.Double(x1, y1, width, width);
-			g2.draw(r);
+			r = new Ellipse2D.Double(x1, y1, width, width);
 		}
+		g2.draw(r);
 		
 	}
 	
 	public void drawLine(double x1, double x2, double y1, double y2)
 	{
 		Graphics2D g2 = (Graphics2D)this.getGraphics();
-		g2.setColor(new Color(0,0,0));
+		
+		//default color black
+		g2.setColor(objectBorderColor);
 		
 		Line2D.Double r = new Line2D.Double(x1, y1, x2, y2);
 		g2.draw(r);
@@ -669,6 +721,11 @@ class PaintPanel extends JPanel
 	{
 		strokeColor = color;
 	} // end method setStrokeColor
+	
+	public void setObjectBorderColor(Color color)
+	{
+		objectBorderColor = color;
+	}//end method setStrokeColor
 	
 	public void setStrokeWidth(float width)
 	{

@@ -265,7 +265,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		// TODO Auto-generated method stub
 		if (e.getSource() == saveAsFileItem)
 		{
-			saveToFile();
+			saveAsToFile();
 		} // end if, save file item pressed
 		else if(e.getSource() == exitFileItem)
 		{
@@ -468,8 +468,13 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		
 	}
 
-	// save current graphics to a file
 	private void saveToFile()
+	{
+		
+	} // end method saveToFile
+	
+	// save current graphics to a file
+	private void saveAsToFile()
 	{
 		// fetch properties of the drawing
 		int paintPanelWidth = paintPanel.getWidth();

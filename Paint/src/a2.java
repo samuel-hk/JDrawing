@@ -22,6 +22,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
@@ -45,7 +46,7 @@ import javax.swing.SwingUtilities;
 
 public class a2 
 {
-		
+
 	public static void main(String[] args)
 	{
 		a2Frame a2 = new a2Frame();
@@ -60,7 +61,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	// fields for status
 	final static int PEN = 0;
 	final static int ERASER = 1;
-	String fileName;
+	String filePath;
 	int currentTool;
 
 	// frame main panel
@@ -82,8 +83,8 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JPanel toolBarDetailPanel;
 	JPanel toolBarPanel;
 	JButton strokeColorButton;
-	
-	
+
+
 	//Draw Objects Detail Panel
 	JPanel shapeChooserPanel;
 	JRadioButton rectangleShapeButton;
@@ -101,17 +102,17 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JButton shapeFillColorButton;
 	JButton shapeNoFillingButton;
 	JLabel shapeNoFillingLabel;
-	
-	
-	
+
+
+
 	JComboBox<Integer> strokeWidthBox;
 	JComboBox<Integer> objectBorderThicknessBox;
-	
+
 	//coordinates for mouseEvents
-			public double pressX;
-			double pressY;
-			double releaseX;
-			double releaseY;
+	public double pressX;
+	double pressY;
+	double releaseX;
+	double releaseY;
 
 	// Paint Panel
 	PaintPanel paintPanel;
@@ -125,8 +126,8 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		objectBorderThicknessBox = new JComboBox<>();
 		shapeFillColorButton = new JButton();
 		shapeNoFillingButton = new JButton();
-		fileName = "";
-		
+		filePath = "";
+
 		mainPanel = new JPanel(new BorderLayout());
 		setContentPane(mainPanel);
 
@@ -141,10 +142,10 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 		// set current tool to pen and display pen properties
 		setCurrentTool(a2Frame.PEN);
-		
+
 		// set application window properties
 		addWindowListener(this);
-		
+
 		// set application visible
 		pack();
 		setVisible(true);
@@ -188,12 +189,12 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		earseButton = new JButton("Earser");
 		earseButton.addActionListener(this);
 		toolBar.add(earseButton);
-		
+
 		//draw object button
 		objectButton = new JButton("Draw Object");
 		objectButton.addActionListener(this);
 		toolBar.add(objectButton);
-		
+
 		//change background color button
 		changeBackgroundButton = new JButton("Change Background Color");
 		changeBackgroundButton.addActionListener(this);
@@ -202,7 +203,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		// init toolBarDetailPanel
 		toolBarDetailPanel = new JPanel();
 		toolBarPanel.add(toolBarDetailPanel);
-		
+
 		// test
 		toolBarDetailPanel.setBackground(Color.red);
 		toolBar.setBackground(Color.BLACK);
@@ -222,8 +223,8 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		// setup save
 		saveFileItem = new JMenuItem("Save");
 		fileMenu.add(saveFileItem);
-		fileMenu.addActionListener(this);
-		
+		saveFileItem.addActionListener(this);
+
 		// setup save as
 		saveAsFileItem = new JMenuItem("Save As...");
 		fileMenu.add(saveAsFileItem);
@@ -245,26 +246,26 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	{
 		switch (tool)
 		{
-			case a2Frame.PEN:
-				setCurrentToolPen();
-				break;
-			case a2Frame.ERASER:
-				setCurrentToolEraser();
-				break;
+		case a2Frame.PEN:
+			setCurrentToolPen();
+			break;
+		case a2Frame.ERASER:
+			setCurrentToolEraser();
+			break;
 		} // end switch, set tool according to param
 	} // end method setCurrentTool
-	
+
 	private void setCurrentToolPen()
 	{
 		currentTool = a2Frame.PEN;
 		fillToolBarDetailPanelWithPen();
 	} // end method setCurrentToolPen
-	
+
 	private void setCurrentToolEraser()
 	{
 		currentTool = a2Frame.ERASER;
 	} // end method setCurrentToolEraser
-	
+
 	@Override
 	public void actionPerformed(ActionEvent e) 
 	{
@@ -292,7 +293,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		{
 			System.out.println("objectButtonPressed");
 			currentTool = Cursor.HAND_CURSOR;
-			
+
 			fillToolBarDetailPanelWithShape();
 		}
 		else if (e.getSource() == earseButton)
@@ -322,61 +323,61 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		}
 
 	} // end method actionPerformed
-	
+
 	private void setStrokeColor()
 	{
 		// fetch user selection
 		Color tmp = JColorChooser.showDialog(this, "Choose Color", Color.black);
-		
+
 		// if user did not select a color, stop set color process
 		if (tmp == null)	return;
-		
+
 		// set user sleection effective
 		paintPanel.setStrokeColor(tmp);
 	} // end method setStrokeColor
-	
+
 	private void setBackgroundColor()
 	{
 		//fetch user selection
 		Color tmp = JColorChooser.showDialog(this, "Choose Color", Color.white);
-		
+
 		// if user did not select a color, stop set color process
 		if (tmp == null) return;
-		
+
 		//set user selection effective
 		paintPanel.setBackground(tmp);
 	}
-	
+
 	private void setObjectBorderColor()
 	{
 		//fetch user selection
 		Color tmp = JColorChooser.showDialog(this, "Choose Color", Color.black);
-		
+
 		//if user did not select a color, stop set color process
 		if(tmp == null)	return;
-		
+
 		//set user selection effective
 		paintPanel.setObjectBorderColor(tmp);
 	}
-	
+
 	private void setObjectFillColor()
 	{
 		//fetch user selection
 		Color tmp = JColorChooser.showDialog(this, "Choose Color", Color.orange);
-		
+
 		//if user did not select a color, stop set color process
 		if(tmp == null)	return;
-		
+
 		//set user selection effective
 		paintPanel.setObjectFillColor(tmp);
 	}
-	
+
 	private void fillToolBarDetailPanelWithPen()
 	{
 		// clear everything
 		toolBarDetailPanel.removeAll();
 		toolBarDetailPanel.repaint();
-		
+
 		// add color chooser
 		strokeColorButton = new JButton("Color");
 		strokeColorButton.addActionListener(this);
@@ -387,21 +388,21 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		strokeWidthBox = new JComboBox<>(size);
 		strokeWidthBox.addItemListener(this);
 		toolBarDetailPanel.add(strokeWidthBox);
-		
+
 		toolBarDetailPanel.revalidate();
 	} // end method fillToolBarDetailPanelWithPen
-	
+
 	private void fillToolBarDetailPanelWithShape()
 	{
 		// clear everything
 		toolBarDetailPanel.removeAll();
 		toolBarDetailPanel.repaint();
-		
+
 		toolBarDetailPanel.setLayout(new BoxLayout(toolBarDetailPanel,BoxLayout.Y_AXIS));
-		
+
 		shapeChooserPanel = new JPanel();
 		shapeChooserPanel.setLayout(new BoxLayout(shapeChooserPanel,BoxLayout.Y_AXIS));
-		
+
 		// add shape button
 		rectangleShapeButton = new JRadioButton("Rectangle");
 		ovalShapeButton = new JRadioButton("Oval");
@@ -412,22 +413,22 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		shapeButtonGroup.add(ovalShapeButton);
 		shapeButtonGroup.add(circleShapeButton);
 		shapeButtonGroup.add(lineShapeButton);
-		
+
 		//toolBarDetailPanel.add(rectangleShapeButton);
 		//toolBarDetailPanel.add(ovalShapeButton);
-		
-		
+
+
 		//add radioButtons to subPanel
 		shapeChooserPanel.add(rectangleShapeButton);
 		shapeChooserPanel.add(ovalShapeButton);
 		shapeChooserPanel.add(circleShapeButton);
 		shapeChooserPanel.add(lineShapeButton);
-		
+
 		shapeChooserPanel.setBackground(Color.red);
-		
+
 		//add subPanel to toolBarDetailPanel
 		toolBarDetailPanel.add(shapeChooserPanel);
-		
+
 		//Border Color Panel
 		shapeBorderColorPanel = new JPanel();
 		shapeBorderColorPanel.setLayout(new BoxLayout(shapeBorderColorPanel,BoxLayout.Y_AXIS));
@@ -435,25 +436,25 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		shapeBorderColorLabel = new JLabel("Border Color: ");
 		objectBorderColorButton = new JButton("Color");
 		objectBorderColorButton.addActionListener(this);
-		
+
 		shapeBorderColorPanel.add(shapeBorderColorLabel);
 		shapeBorderColorPanel.add(objectBorderColorButton);
 		toolBarDetailPanel.add(shapeBorderColorPanel);
-		
+
 		//Border Thickness Panel
 		Integer[] size = {1,2,3,4,5,6,7,8,9};
 		objectBorderThicknessBox = new JComboBox<>(size);
 		objectBorderThicknessBox.addItemListener(this);
-		
+
 		shapeBorderThicknessLabel = new JLabel("Border Thickness: ");
 		shapeBorderThicknessPanel = new JPanel();
 		shapeBorderThicknessPanel.setLayout(new BoxLayout(shapeBorderThicknessPanel, BoxLayout.Y_AXIS ));
 		shapeBorderThicknessPanel.setBackground(Color.red);
-		
+
 		shapeBorderThicknessPanel.add(shapeBorderThicknessLabel);
 		shapeBorderThicknessPanel.add(objectBorderThicknessBox);
 		toolBarDetailPanel.add(shapeBorderThicknessPanel);
-		
+
 		//object fill color panel
 		shapeFillColorPanel = new JPanel();
 		shapeFillColorPanel.setLayout(new BoxLayout(shapeFillColorPanel,BoxLayout.Y_AXIS));
@@ -464,37 +465,32 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		//shapeNoFillingLabel = new JLabel("Draw Without Filling");
 		shapeNoFillingButton = new JButton("Clear Filling");
 		shapeNoFillingButton.addActionListener(this);
-		
+
 		shapeFillColorPanel.add(shapeFillColorLabel);
 		shapeFillColorPanel.add(shapeFillColorButton);
 		shapeFillColorPanel.add(shapeNoFillingButton);
 		toolBarDetailPanel.add(shapeFillColorPanel);
-		
-		
-		
+
+
+
 		rectangleShapeButton.setSelected(true);
 		toolBarDetailPanel.revalidate();
-		
+
 	}
 
 	private void saveToFile()
 	{
-		if (fileName.equals(""))	saveAsToFile();
-		System.out.println("the saved file name is : " + fileName);
+		if (filePath.equals(""))	saveAsToFile();
+		else
+		{
+			saveHelper("");
+		}
+		System.out.println("the saved file name is : " + filePath);
 	} // end method saveToFile
-	
+
 	// save current graphics to a file
 	private void saveAsToFile()
 	{
-		// fetch properties of the drawing
-		int paintPanelWidth = paintPanel.getWidth();
-		int paintPanelHeight = paintPanel.getHeight();
-
-		// create image to hold the drawing
-		BufferedImage image = new BufferedImage(paintPanelWidth, paintPanelHeight, BufferedImage.TYPE_INT_BGR);
-		Graphics2D g2D = image.createGraphics();
-		paintPanel.paint(g2D);
-		g2D.dispose();
 
 		// save the image to a file
 		try
@@ -508,30 +504,56 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 			// write to file and notify user of the action
 			String path = fc.getSelectedFile().getCanonicalPath() + ".jpg";
-			ImageIO.write( image, "jpg", new File(path) );
-			JOptionPane.showMessageDialog(this, "Image saved to " + path);
-			
-			// save file name into var
-			fileName = fc.getSelectedFile().getName();
-			
-			// test
-			File f = new File(".");
-			f.getAbsolutePath();
-			f.getPath();
+			saveHelper(path);
+
 		}
 		catch (Exception e)
 		{
 			System.out.println("Save File error! Try to restart the application with more privilages");
 		} // end catch, save image to a file
 
-	} // end method saveToFile
+	} // end method saveAsToFile
+
+	private void saveHelper(String path)
+	{
+		// use default file destionation if no path is specified
+		if (path.equals(""))	path = filePath;
+		
+		
+		// fetch properties of the drawing
+		int paintPanelWidth = paintPanel.getWidth();
+		int paintPanelHeight = paintPanel.getHeight();
+		
+		// create image to hold the drawing
+		BufferedImage image = new BufferedImage(paintPanelWidth, paintPanelHeight, BufferedImage.TYPE_INT_BGR);
+		Graphics2D g2D = image.createGraphics();
+		paintPanel.paint(g2D);
+		g2D.dispose();
+
+
+		// write to file and notify user of the action
+		try 
+		{
+			ImageIO.write( image, "jpg", new File(path) );
+			JOptionPane.showMessageDialog(this, "Image saved to " + path);
+			
+			// save file name into var
+			filePath = path;
+		}  // end try, save file try
+		catch (IOException e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} // end catch, IOException when saving to file
+
+	} // end method saveHelper
 
 	@Override
 	public void mouseClicked(MouseEvent e) 
 	{
 		// TODO Auto-generated method stub
-		
-		
+
+
 
 	}
 
@@ -541,22 +563,22 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		// TODO Auto-generated method stub
 		oldX = e.getX();
 		oldY = e.getY();
-		
+
 		//get coordinates when mouse is pressed
 		pressX = e.getX();
 		pressY = e.getY();
-		
-		
+
+
 	} // end method mousePressed
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
 		//get coordinates when mouse is released
 		releaseX = e.getX();
 		releaseY = e.getY();
-		
+
 		//draw rectangle
 		if(currentTool==Cursor.HAND_CURSOR && rectangleShapeButton.isSelected())
 			paintPanel.drawRectangle(pressX, releaseX, pressY, releaseY);
@@ -569,7 +591,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		//draw line
 		else if(currentTool == Cursor.HAND_CURSOR && lineShapeButton.isSelected())
 			paintPanel.drawLine(pressX, releaseX, pressY, releaseY);	
-	
+
 	}
 
 	@Override
@@ -606,8 +628,8 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		// save current pointer location as old for next point draw
 		oldX = x2;
 		oldY = y2;
-		
-		
+
+
 
 	} // end method mouseDragged
 
@@ -625,7 +647,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 			int selectedSizeInt = Integer.parseInt(selected);
 			float selectedSizeFlt = (float) selectedSizeInt;
 			paintPanel.setStrokeWidth(selectedSizeFlt);
-//			JOptionPane.showMessageDialog(this, selected);
+			//			JOptionPane.showMessageDialog(this, selected);
 		} // end if, stroke state change
 		else if(e.getSource() == objectBorderThicknessBox)
 		{
@@ -639,7 +661,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	@Override
 	public void windowOpened(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -658,25 +680,25 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	@Override
 	public void windowIconified(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowDeiconified(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowActivated(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowDeactivated(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 } // end class a2Frame
@@ -690,10 +712,10 @@ class PaintPanel extends JPanel
 
 
 	private ArrayList<ExtendedLine2DDouble> allStrokes;
-	
+
 	private Color strokeColor;
 	private float strokeWidth;
-	
+
 	//fields for objects
 	private Color objectBorderColor;
 	private float objectBorderThickness;
@@ -704,11 +726,11 @@ class PaintPanel extends JPanel
 	{
 		// initialize fields
 		allStrokes = new ArrayList<>();
-		
+
 		// init default properties
 		strokeColor = Color.black;
 		strokeWidth = 1.0f;
-		
+
 		// init default properties for objects
 		objectBorderColor = Color.black;
 		objectBorderThickness = 1.0f;
@@ -716,8 +738,8 @@ class PaintPanel extends JPanel
 		// test
 		setBackground(Color.ORANGE); // because I love orange!!!!!!
 		setPreferredSize(new Dimension(1200, 600));
-		
-		
+
+
 	} // end constructor class PaintPanel
 
 	@Override
@@ -726,8 +748,8 @@ class PaintPanel extends JPanel
 		super.paintComponent(g);
 		drawAllStrokes(g);
 	} // end method paintComponent
-	
-	
+
+
 	public void drawAllStrokes(Graphics g)
 	{
 		Graphics2D g2D = (Graphics2D) g;
@@ -740,29 +762,29 @@ class PaintPanel extends JPanel
 		} // end for loop, loop thru and draw back strokes
 
 	} // end method drawAllStrokes
-	
 
-	
+
+
 	public void drawRectangle(double x1,double x2,double y1,double y2)
 	{
-		
+
 		Graphics2D g2 = (Graphics2D) this.getGraphics();
-		
+
 		BasicStroke stroke = new BasicStroke(this.objectBorderThickness);
 		g2.setStroke(stroke);
 		//default color black
 		g2.setColor(objectBorderColor);
 		g2.setPaint(objectFillColor);
-		
+
 		double width;
 		double height;
 		double startX;
 		double startY;
-		
+
 		width = Math.abs(x2-x1);
 		height = Math.abs(y2-y1);
 		Rectangle2D.Double r;
-		
+
 		if(x2>x1 && y2<y1)
 		{
 			startX = x1;
@@ -780,20 +802,20 @@ class PaintPanel extends JPanel
 			startX = x1-width;
 			startY = y1-height;
 			r = new Rectangle2D.Double(startX, startY, width, height);
-			
+
 		}
 		else
 		{
 			r = new Rectangle2D.Double(x1, y1, width, height);
-			
+
 		}
-		
+
 		if( fillOrDraw== 0)
 		{
 			g2.setColor(objectBorderColor);
 			g2.draw(r);
 		}
-			
+
 		else
 		{
 			g2.setColor(objectFillColor);
@@ -801,35 +823,35 @@ class PaintPanel extends JPanel
 			g2.setColor(objectBorderColor);
 			g2.draw(r);
 		}
-		
+
 	}
-	
+
 	public void drawOval(double x1,double x2,double y1, double y2)
 	{
 		Graphics2D g2 = (Graphics2D) this.getGraphics();
-		
+
 		BasicStroke stroke = new BasicStroke(this.objectBorderThickness);
 		g2.setStroke(stroke);
-		
+
 		//default color black
 		//g2.setColor(objectBorderColor);
 		//g2.setPaint(objectFillColor);
-		
+
 		double width;
 		double height;
 		double startX;
 		double startY;
-		
+
 		width = Math.abs(x2-x1);
 		height = Math.abs(y2-y1);
 		Ellipse2D.Double r;
-		
+
 		if(x2>x1 && y2<y1)
 		{
 			startX = x1;
 			startY = y1-height;
 			r = new Ellipse2D.Double(startX,startY,width,height);
-			
+
 		}
 		else if(x1>x2 && y1<y2)
 		{
@@ -847,14 +869,14 @@ class PaintPanel extends JPanel
 		{
 			r = new Ellipse2D.Double(x1, y1, width, height);
 		}
-		
-		
+
+
 		if( fillOrDraw== 0)
 		{
 			g2.setColor(objectBorderColor);
 			g2.draw(r);
 		}
-			
+
 		else
 		{
 			g2.setColor(objectFillColor);
@@ -863,34 +885,34 @@ class PaintPanel extends JPanel
 			g2.draw(r);
 		}
 	}
-	
+
 	public void drawCircle(double x1, double x2, double y1, double y2)
 	{
 		Graphics2D g2 = (Graphics2D)this.getGraphics();
-		
+
 		BasicStroke stroke = new BasicStroke(this.objectBorderThickness);
 		g2.setStroke(stroke);
-		
+
 		//default color black
 		g2.setColor(objectBorderColor);
 		g2.setPaint(objectFillColor);
-		
+
 		double width;
 		double height;
 		double startX;
 		double startY;
-		
+
 		width = Math.abs(x2-x1);
 		height = Math.abs(y2-y1);
-		
+
 		Ellipse2D.Double r;
-		
+
 		if(x2>x1 && y2<y1)
 		{
 			startX = x1;
 			startY = y1-height;
 			r = new Ellipse2D.Double(startX,startY,width,width);
-			
+
 		}
 		else if(x1>x2 && y1<y2)
 		{
@@ -908,13 +930,13 @@ class PaintPanel extends JPanel
 		{
 			r = new Ellipse2D.Double(x1, y1, width, width);
 		}
-		
+
 		if( fillOrDraw== 0)
 		{
 			g2.setColor(objectBorderColor);
 			g2.draw(r);
 		}
-			
+
 		else
 		{
 			g2.setColor(objectFillColor);
@@ -922,19 +944,19 @@ class PaintPanel extends JPanel
 			g2.setColor(objectBorderColor);
 			g2.draw(r);
 		}
-		
+
 	}
-	
+
 	public void drawLine(double x1, double x2, double y1, double y2)
 	{
 		Graphics2D g2 = (Graphics2D)this.getGraphics();
-		
+
 		BasicStroke stroke = new BasicStroke(this.objectBorderThickness);
 		g2.setStroke(stroke);
-		
+
 		//default color black
 		g2.setColor(objectBorderColor);
-		
+
 		Line2D.Double r = new Line2D.Double(x1, y1, x2, y2);
 		g2.draw(r);
 	}
@@ -948,40 +970,40 @@ class PaintPanel extends JPanel
 		BasicStroke stroke = new BasicStroke(this.strokeWidth);
 		g2.setStroke(stroke);
 		g2.setColor(strokeColor);
-		
+
 		// get draw line
 		ExtendedLine2DDouble inkSegment = new ExtendedLine2DDouble(x1, y1, x2, y2);
 		inkSegment.color = strokeColor;
 		inkSegment.stroke = stroke;
-		
+
 		// actual drawing
 		g2.draw(inkSegment);
 
 		// save drawing for windows resize
 		allStrokes.add(inkSegment);
 	} // end method drawInk
-	
+
 	public void setStrokeColor(Color color)
 	{
 		strokeColor = color;
 	} // end method setStrokeColor
-	
+
 	public void setObjectBorderColor(Color color)
 	{
 		objectBorderColor = color;
 	}//end method setStrokeColor
-	
+
 	public void setObjectFillColor(Color color)
 	{
 		objectFillColor = color;
-		
+
 	}//end method setObjectFillColor
-	
+
 	public void setStrokeWidth(float width)
 	{
 		strokeWidth = width;
 	} // end method  setStrokeWidth
-	
+
 	public void setObjectBorderThickness(float width)
 	{
 		objectBorderThickness = width;
@@ -992,7 +1014,7 @@ class PaintPanel extends JPanel
 
 		// eraser size
 		int eraserSize = 80;
-		
+
 		// test
 		ExtendedLine2DDouble line = null;
 		for (int i = 0; i < allStrokes.size(); i++)
@@ -1017,21 +1039,21 @@ class PaintPanel extends JPanel
 			if (samePoint)	allStrokes.remove(line);
 
 		}
-		
+
 		// update display to reflect what is erased
 		repaint();
-		
+
 	} // end method erase
-	
+
 	// test
 	public void setScale()
 	{
 		System.out.println("Scale!");
 		AffineTransform tran = AffineTransform.getScaleInstance(3.0, 3.0);
 		Graphics2D g = (Graphics2D) this.getGraphics();
-//		g.setTransform(tran);
+		//		g.setTransform(tran);
 		g.scale(5.0, 5.0);
-		
+
 	} // end method setScale
 
 	public void clearPaintPanel()

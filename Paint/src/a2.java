@@ -77,6 +77,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JButton strokeButton;
 	JButton earseButton;
 	JButton objectButton;
+	JButton changeBackgroundButton;
 	JPanel toolBarDetailPanel;
 	JPanel toolBarPanel;
 	JButton strokeColorButton;
@@ -187,6 +188,11 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		objectButton = new JButton("Draw Object");
 		objectButton.addActionListener(this);
 		toolBar.add(objectButton);
+		
+		//change background color button
+		changeBackgroundButton = new JButton("Change Background Color");
+		changeBackgroundButton.addActionListener(this);
+		toolBar.add(changeBackgroundButton);
 
 		// init toolBarDetailPanel
 		toolBarDetailPanel = new JPanel();
@@ -261,6 +267,10 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 			// test
 			paintPanel.setScale();
 		} // end if, eraser button pressed
+		else if (e.getSource() == changeBackgroundButton)
+		{
+			setBackgroundColor();
+		}// end if, changeBackgroundButton
 		else if (e.getSource() == strokeColorButton)
 		{
 			setStrokeColor();
@@ -292,6 +302,18 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		// set user sleection effective
 		paintPanel.setStrokeColor(tmp);
 	} // end method setStrokeColor
+	
+	private void setBackgroundColor()
+	{
+		//fetch user selection
+		Color tmp = JColorChooser.showDialog(this, "Choose Color", Color.white);
+		
+		// if user did not select a color, stop set color process
+		if (tmp == null) return;
+		
+		//set user selection effective
+		paintPanel.setBackground(tmp);
+	}
 	
 	private void setObjectBorderColor()
 	{

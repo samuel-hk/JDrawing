@@ -14,6 +14,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
@@ -47,18 +49,18 @@ public class a2
 	public static void main(String[] args)
 	{
 		a2Frame a2 = new a2Frame();
+		a2.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		System.out.println("Up and running!!");
 	} // end main
 
 } // end class a2
 
-class a2Frame extends JFrame implements ActionListener, MouseMotionListener, MouseListener, ItemListener
+class a2Frame extends JFrame implements ActionListener, MouseMotionListener, MouseListener, ItemListener, WindowListener
 {
 	// fields for status
 	final static int PEN = 0;
 	final static int ERASER = 1;
 	int currentTool;
-	
 
 	// frame main panel
 	JPanel mainPanel;
@@ -123,8 +125,6 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		shapeFillColorButton = new JButton();
 		shapeNoFillingButton = new JButton();
 		
-		// set current tool to pen
-		currentTool = a2Frame.PEN;
 
 		mainPanel = new JPanel(new BorderLayout());
 		setContentPane(mainPanel);
@@ -138,11 +138,17 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		// setup Paint Panel
 		setupPaintPanel();
 
+		// set current tool to pen and display pen properties
+		setCurrentTool(a2Frame.PEN);
+		
+		// set application window properties
+		addWindowListener(this);
+		
 		// set application visible
 		pack();
 		setVisible(true);
 
-	} // end constructor
+	} // end constructor a2JFrame
 
 	private void setupPaintPanel()
 	{
@@ -229,6 +235,30 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		exitFileItem.setToolTipText("Exit Application");
 	} // end method setupMenuBar
 
+	private void setCurrentTool(int tool)
+	{
+		switch (tool)
+		{
+			case a2Frame.PEN:
+				setCurrentToolPen();
+				break;
+			case a2Frame.ERASER:
+				setCurrentToolEraser();
+				break;
+		} // end switch, set tool according to param
+	} // end method setCurrentTool
+	
+	private void setCurrentToolPen()
+	{
+		currentTool = a2Frame.PEN;
+		fillToolBarDetailPanelWithPen();
+	} // end method setCurrentToolPen
+	
+	private void setCurrentToolEraser()
+	{
+		currentTool = a2Frame.ERASER;
+	} // end method setCurrentToolEraser
+	
 	@Override
 	public void actionPerformed(ActionEvent e) 
 	{
@@ -247,8 +277,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		} // end if, clear button pressed
 		else if (e.getSource() == strokeButton)
 		{
-			currentTool = a2Frame.PEN;
-			fillToolBarDetailPanelWithPen();
+			setCurrentTool(a2Frame.PEN);
 		} // end if, stroke button pressed
 		else if(e.getSource() == objectButton)
 		{
@@ -259,8 +288,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		}
 		else if (e.getSource() == earseButton)
 		{
-			System.out.println("Earse!");
-			currentTool = a2Frame.ERASER;
+			setCurrentTool(a2Frame.ERASER);
 		} // end if, eraser button pressed
 		else if (e.getSource() == changeBackgroundButton)
 		{
@@ -564,14 +592,11 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	@Override
 	public void mouseMoved(MouseEvent e) 
 	{
-		// TODO Auto-generated method stub
-
-	}
+	} // end method mouseMoved
 
 	@Override
 	public void itemStateChanged(ItemEvent e) 
 	{
-		// TODO Auto-generated method stub
 		if (e.getSource() == strokeWidthBox)
 		{
 			String selected = strokeWidthBox.getSelectedItem().toString();
@@ -587,6 +612,49 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 			float selectedSizeFlt = (float) selectedSizeInt;
 			paintPanel.setObjectBorderThickness(selectedSizeFlt);
 		}
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e) 
+	{
+		int choice = JOptionPane.showConfirmDialog(this, "Exit without saving?", "Exit", JOptionPane.YES_OPTION, JOptionPane.QUESTION_MESSAGE);
+		if (choice == JOptionPane.YES_OPTION)	System.exit(0);
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) 
+	{
+		// TODO Auto-generated method stub
+	} // end method windowClosed
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 } // end class a2Frame
@@ -626,6 +694,8 @@ class PaintPanel extends JPanel
 		// test
 		setBackground(Color.ORANGE); // because I love orange!!!!!!
 		setPreferredSize(new Dimension(1200, 600));
+		
+		
 	} // end constructor class PaintPanel
 
 	@Override

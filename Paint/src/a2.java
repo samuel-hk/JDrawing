@@ -88,9 +88,12 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	ButtonGroup shapeButtonGroup;
 	JLabel shapeBorderColorLabel;
 	JPanel shapeBorderColorPanel;
+	JLabel shapeBorderThicknessLabel;
+	JPanel shapeBorderThicknessPanel;
 	
 	
 	JComboBox<Integer> strokeWidthBox;
+	JComboBox<Integer> objectBorderThicknessBox;
 	
 	//coordinates for mouseEvents
 			public double pressX;
@@ -107,6 +110,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		strokeColorButton = new JButton();
 		strokeWidthBox = new JComboBox<>();
 		objectBorderColorButton = new JButton();
+		objectBorderThicknessBox = new JComboBox<>();
 		
 		// set current tool to pen
 		currentTool = a2Frame.PEN;
@@ -349,6 +353,21 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		shapeBorderColorPanel.add(objectBorderColorButton);
 		toolBarDetailPanel.add(shapeBorderColorPanel);
 		
+		//Border Thickness Panel
+		Integer[] size = {1,2,3,4,5,6,7,8,9};
+		objectBorderThicknessBox = new JComboBox<>(size);
+		objectBorderThicknessBox.addItemListener(this);
+		
+		shapeBorderThicknessLabel = new JLabel("Border Thickness: ");
+		shapeBorderThicknessPanel = new JPanel();
+		shapeBorderThicknessPanel.setLayout(new BoxLayout(shapeBorderThicknessPanel, BoxLayout.Y_AXIS ));
+		shapeBorderThicknessPanel.setBackground(Color.red);
+		
+		shapeBorderThicknessPanel.add(shapeBorderThicknessLabel);
+		shapeBorderThicknessPanel.add(objectBorderThicknessBox);
+		toolBarDetailPanel.add(shapeBorderThicknessPanel);
+		
+		
 		
 		rectangleShapeButton.setSelected(true);
 		toolBarDetailPanel.revalidate();
@@ -495,6 +514,13 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 			paintPanel.setStrokeWidth(selectedSizeFlt);
 //			JOptionPane.showMessageDialog(this, selected);
 		} // end if, stroke state change
+		else if(e.getSource() == objectBorderThicknessBox)
+		{
+			String selected = objectBorderThicknessBox.getSelectedItem().toString();
+			int selectedSizeInt = Integer.parseInt(selected);
+			float selectedSizeFlt = (float) selectedSizeInt;
+			paintPanel.setObjectBorderThickness(selectedSizeFlt);
+		}
 	}
 
 } // end class a2Frame
@@ -514,6 +540,7 @@ class PaintPanel extends JPanel
 	
 	//fields for objects
 	private Color objectBorderColor;
+	private float objectBorderThickness;
 
 	PaintPanel()
 	{
@@ -526,6 +553,7 @@ class PaintPanel extends JPanel
 		
 		// init default properties for objects
 		objectBorderColor = Color.black;
+		objectBorderThickness = 1.0f;
 
 		// test
 		setBackground(Color.ORANGE); // because I love orange!!!!!!
@@ -560,6 +588,8 @@ class PaintPanel extends JPanel
 		
 		Graphics2D g2 = (Graphics2D) this.getGraphics();
 		
+		BasicStroke stroke = new BasicStroke(this.objectBorderThickness);
+		g2.setStroke(stroke);
 		//default color black
 		g2.setColor(objectBorderColor);
 		double width;
@@ -603,6 +633,9 @@ class PaintPanel extends JPanel
 	{
 		Graphics2D g2 = (Graphics2D) this.getGraphics();
 		
+		BasicStroke stroke = new BasicStroke(this.objectBorderThickness);
+		g2.setStroke(stroke);
+		
 		//default color black
 		g2.setColor(objectBorderColor);
 		double width;
@@ -643,6 +676,9 @@ class PaintPanel extends JPanel
 	public void drawCircle(double x1, double x2, double y1, double y2)
 	{
 		Graphics2D g2 = (Graphics2D)this.getGraphics();
+		
+		BasicStroke stroke = new BasicStroke(this.objectBorderThickness);
+		g2.setStroke(stroke);
 		
 		//default color black
 		g2.setColor(objectBorderColor);
@@ -688,6 +724,9 @@ class PaintPanel extends JPanel
 	{
 		Graphics2D g2 = (Graphics2D)this.getGraphics();
 		
+		BasicStroke stroke = new BasicStroke(this.objectBorderThickness);
+		g2.setStroke(stroke);
+		
 		//default color black
 		g2.setColor(objectBorderColor);
 		
@@ -731,6 +770,11 @@ class PaintPanel extends JPanel
 	{
 		strokeWidth = width;
 	} // end method  setStrokeWidth
+	
+	public void setObjectBorderThickness(float width)
+	{
+		objectBorderThickness = width;
+	}
 
 	public void erase(int x1, int x2, int y1, int y2)
 	{

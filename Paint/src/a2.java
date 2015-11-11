@@ -72,6 +72,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JMenu fileMenu;
 	JMenuItem saveFileItem, saveAsFileItem;
 	JMenuItem exitFileItem;
+	JMenuItem newFileItem;
 
 	// Tool Bar and related fields
 	JToolBar toolBar;
@@ -220,6 +221,12 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		fileMenu = new JMenu("File");
 		menuBar.add(fileMenu);
 
+		// setup new
+		newFileItem = new JMenuItem("New");
+		fileMenu.add(newFileItem);
+		newFileItem.addActionListener(this);
+		newFileItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
+
 		// setup save
 		saveFileItem = new JMenuItem("Save");
 		fileMenu.add(saveFileItem);
@@ -266,11 +273,26 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	{
 		currentTool = a2Frame.ERASER;
 	} // end method setCurrentToolEraser
+	
+	private void createNewPaint()
+	{
+		// ask for confirmation to discard current paintings
+		String message = "Create new painting? Current Painting will be lost.";
+		int answer = JOptionPane.showConfirmDialog(this, message, "Create", JOptionPane.YES_OPTION, JOptionPane.QUESTION_MESSAGE);
+		
+		// create new painting if user selected yes
+		if (answer == JOptionPane.YES_OPTION)	paintPanel.clearPaintPanel();
+	} // end method createNewPaintPanel
 
 	@Override
 	public void actionPerformed(ActionEvent e) 
 	{
-		if (e.getSource() == saveFileItem)
+		if (e.getSource() == newFileItem)
+		{
+			System.out.println("New File Item pressed!");
+			createNewPaint();
+		} // end if, new file item pressed
+		else if (e.getSource() == saveFileItem)
 		{
 			System.out.println("Save Only pressed!");
 			saveToFile();
@@ -713,9 +735,12 @@ class PaintPanel extends JPanel
 	 */
 	private static final long serialVersionUID = 1L; // keep compiler happy
 
+	// default properties
+	final private Color DEFAULT_BACKGROUND_COLOR = Color.white;
 
 	private ArrayList<ExtendedLine2DDouble> allStrokes;
 
+	// stroke properties
 	private Color strokeColor;
 	private float strokeWidth;
 
@@ -730,7 +755,7 @@ class PaintPanel extends JPanel
 		// initialize fields
 		allStrokes = new ArrayList<>();
 
-		// init default properties
+		// init default stokre properties
 		strokeColor = Color.black;
 		strokeWidth = 1.0f;
 
@@ -1063,6 +1088,8 @@ class PaintPanel extends JPanel
 	{
 		allStrokes.clear();
 		repaint();
+		
+		setBackground(DEFAULT_BACKGROUND_COLOR);
 	} // end method clearPaintPanel
-
+	
 } // end class PaintPanel 

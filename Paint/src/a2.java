@@ -61,6 +61,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	// fields for status
 	final static int PEN = 0;
 	final static int ERASER = 1;
+	final static int TEXT = 2;
 	String filePath;
 	int currentTool;
 
@@ -76,11 +77,8 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 	// Tool Bar and related fields
 	JToolBar toolBar;
-	JButton clearButton;
-	JButton strokeButton;
-	JButton earseButton;
-	JButton objectButton;
-	JButton changeBackgroundButton;
+	JButton clearButton, strokeButton, earseButton, objectButton, changeBackgroundButton;
+	JButton textButton;
 	JPanel toolBarDetailPanel;
 	JPanel toolBarPanel;
 	JButton strokeColorButton;
@@ -185,6 +183,11 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		strokeButton = new JButton("Stroke");
 		strokeButton.addActionListener(this);
 		toolBar.add(strokeButton);
+		
+		// text button
+		textButton = new JButton("Text");
+		textButton.addActionListener(this);
+		toolBar.add(textButton);
 
 		// earser button
 		earseButton = new JButton("Earser");
@@ -207,7 +210,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 		// test
 		toolBarDetailPanel.setBackground(Color.red);
-		toolBar.setBackground(Color.BLACK);
+		toolBar.setBackground(Color.gray);
 		//		toolBar.setPreferredSize(new Dimension(300, 300));
 		//		toolBar.setMaximumSize(new Dimension(1300, 1300));
 
@@ -260,8 +263,18 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		case a2Frame.ERASER:
 			setCurrentToolEraser();
 			break;
+		case a2Frame.TEXT:
+			setCurrentToolText();
+			break;
 		} // end switch, set tool according to param
 	} // end method setCurrentTool
+	
+	private void setCurrentToolText()
+	{
+		currentTool = a2Frame.TEXT;
+	} // end method setCurrentToolText
+	
+//	private void fi
 
 	private void setCurrentToolPen()
 	{
@@ -314,11 +327,14 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		{
 			setCurrentTool(a2Frame.PEN);
 		} // end if, stroke button pressed
+		else if (e.getSource() == textButton)
+		{
+			setCurrentTool(a2Frame.TEXT);
+			System.out.println("Text button oressed!");
+		} // end if, text button pressed
 		else if(e.getSource() == objectButton)
 		{
-			System.out.println("objectButtonPressed");
 			currentTool = Cursor.HAND_CURSOR;
-
 			fillToolBarDetailPanelWithShape();
 		}
 		else if (e.getSource() == earseButton)
@@ -736,7 +752,7 @@ class PaintPanel extends JPanel
 	private static final long serialVersionUID = 1L; // keep compiler happy
 
 	// default properties
-	final private Color DEFAULT_BACKGROUND_COLOR = Color.white;
+	final public static Color DEFAULT_BACKGROUND_COLOR = Color.white;
 
 	private ArrayList<ExtendedLine2DDouble> allStrokes;
 

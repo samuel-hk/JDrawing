@@ -224,13 +224,14 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		saveFileItem = new JMenuItem("Save");
 		fileMenu.add(saveFileItem);
 		saveFileItem.addActionListener(this);
+		saveFileItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
 
 		// setup save as
 		saveAsFileItem = new JMenuItem("Save As...");
 		fileMenu.add(saveAsFileItem);
 		saveAsFileItem.addActionListener(this);
 		saveAsFileItem.setMnemonic(KeyEvent.VK_S);
-		saveAsFileItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
+		saveAsFileItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
 
 		// setup exit
 		fileMenu.addSeparator();
@@ -271,10 +272,12 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	{
 		if (e.getSource() == saveFileItem)
 		{
+			System.out.println("Save Only pressed!");
 			saveToFile();
 		} // end if, save file item pressed
 		else if (e.getSource() == saveAsFileItem)
 		{
+			System.out.println("Save As pressed!");
 			saveAsToFile();
 		} // end if, save as file item pressed
 		else if(e.getSource() == exitFileItem)
@@ -480,12 +483,12 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 	private void saveToFile()
 	{
+		// fresh save, save like save as
 		if (filePath.equals(""))	saveAsToFile();
-		else
-		{
-			saveHelper("");
-		}
-		System.out.println("the saved file name is : " + filePath);
+		
+		// save to the last saved file destionation
+		else	saveHelper("");
+		
 	} // end method saveToFile
 
 	// save current graphics to a file

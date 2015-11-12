@@ -3,6 +3,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
@@ -274,7 +275,10 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		currentTool = a2Frame.TEXT;
 	} // end method setCurrentToolText
 	
-//	private void fi
+	private void fillToolBarDetailPanelWithText()
+	{
+		
+	} // end method fillToolBarDetailPanelWithText
 
 	private void setCurrentToolPen()
 	{
@@ -609,6 +613,9 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		pressX = e.getX();
 		pressY = e.getY();
 
+		// test
+		if (currentTool == a2Frame.TEXT)	paintPanel.drawText("Hello World", (int) pressX, (int) pressY);
+		
 
 	} // end method mousePressed
 
@@ -1026,6 +1033,15 @@ class PaintPanel extends JPanel
 		// save drawing for windows resize
 		allStrokes.add(inkSegment);
 	} // end method drawInk
+	
+	public void drawText(String text, int x, int y)
+	{
+		Graphics g = this.getGraphics();
+		
+		FontMetrics fm = g.getFontMetrics();
+		
+		g.drawString(text, x, y);
+	} // end method drawText
 
 	public void setStrokeColor(Color color)
 	{

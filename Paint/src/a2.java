@@ -30,6 +30,7 @@ import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -89,9 +90,11 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JPanel textDetailPanel;
 	JTextField textInputField;
 	JLabel drawTextLabel;
+	JComboBox<Integer> textSizeBox;
+	JCheckBox textBoldCheckBox, textItalicsCheckBox, textUnderLineCheckBox;
+	JComboBox<String> fontFamily;
 
-
-	//Draw Objects Detail Panel
+	// Draw Objects Detail Panel
 	JPanel shapeChooserPanel;
 	JRadioButton rectangleShapeButton;
 	JRadioButton ovalShapeButton;
@@ -292,7 +295,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		textDetailPanel = new JPanel();
 		
 		// add "Drawing Text" text label
-		drawTextLabel = new JLabel("Drawing Text");
+		drawTextLabel = new JLabel("Insert Text");
 		textDetailPanel.add(drawTextLabel);
 		
 		// add text input field
@@ -304,7 +307,10 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		toolBarDetailPanel.add(textDetailPanel);
 		toolBarDetailPanel.revalidate();
 		
-		System.out.println("Show up!");
+//		JComboBox<Integer> textSizeBox;
+//		JCheckBox textBoldCheckBox, textItalicsCheckBox, textUnderLineCheckBox;
+//		JComboBox<String> fontFamily;
+
 	} // end method fillToolBarDetailPanelWithText
 
 	private void setCurrentToolPen()

@@ -41,6 +41,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
@@ -83,6 +84,11 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JPanel toolBarDetailPanel;
 	JPanel toolBarPanel;
 	JButton strokeColorButton;
+	
+	// Text Objects Detail Panel
+	JPanel textDetailPanel;
+	JTextField textInputField;
+	JLabel drawTextLabel;
 
 
 	//Draw Objects Detail Panel
@@ -273,11 +279,32 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	private void setCurrentToolText()
 	{
 		currentTool = a2Frame.TEXT;
+		fillToolBarDetailPanelWithText();
 	} // end method setCurrentToolText
 	
 	private void fillToolBarDetailPanelWithText()
 	{
+		// clear detail pane for text buttons arrival
+		toolBarDetailPanel.removeAll();
+		toolBarDetailPanel.revalidate();
 		
+		// create panel to hold text detail buttons
+		textDetailPanel = new JPanel();
+		
+		// add "Drawing Text" text label
+		drawTextLabel = new JLabel("Drawing Text");
+		textDetailPanel.add(drawTextLabel);
+		
+		// add text input field
+		int textInputFieldWidth = 10;
+		textInputField = new JTextField(textInputFieldWidth);
+		textDetailPanel.add(textInputField);
+		
+		// show textDetailPanel on toolBarDetailPanel
+		toolBarDetailPanel.add(textDetailPanel);
+		toolBarDetailPanel.revalidate();
+		
+		System.out.println("Show up!");
 	} // end method fillToolBarDetailPanelWithText
 
 	private void setCurrentToolPen()
@@ -614,7 +641,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		pressY = e.getY();
 
 		// test
-		if (currentTool == a2Frame.TEXT)	paintPanel.drawText("Hello World", (int) pressX, (int) pressY);
+		if (currentTool == a2Frame.TEXT)	paintPanel.drawText(textInputField.getText(), (int) pressX, (int) pressY);
 		
 
 	} // end method mousePressed

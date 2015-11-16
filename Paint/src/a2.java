@@ -3,6 +3,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -17,6 +18,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.awt.font.TextAttribute;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
@@ -27,6 +29,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -46,6 +49,7 @@ import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import javax.swing.border.TitledBorder;
 
 public class a2 
 {
@@ -88,11 +92,13 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	
 	// Text Objects Detail Panel
 	JPanel textDetailPanel;
+	JPanel textStylePanel;
 	JTextField textInputField;
 	JLabel drawTextLabel;
 	JComboBox<Integer> textSizeBox;
 	JCheckBox textBoldCheckBox, textItalicsCheckBox, textUnderLineCheckBox;
 	JComboBox<String> fontFamily;
+	
 
 	// Draw Objects Detail Panel
 	JPanel shapeChooserPanel;
@@ -293,6 +299,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		
 		// create panel to hold text detail buttons
 		textDetailPanel = new JPanel();
+		textDetailPanel.setLayout(new BoxLayout(textDetailPanel,BoxLayout.Y_AXIS));
 		
 		// add "Drawing Text" text label
 		drawTextLabel = new JLabel("Insert Text");
@@ -303,12 +310,31 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		textInputField = new JTextField(textInputFieldWidth);
 		textDetailPanel.add(textInputField);
 		
+		// add text style panel
+		textStylePanel = new JPanel();
+		textStylePanel.setLayout(new BoxLayout(textStylePanel,BoxLayout.Y_AXIS));
+		TitledBorder styleTitle;
+		styleTitle = BorderFactory.createTitledBorder("Styles");
+		
+		textStylePanel.setBorder(styleTitle);
+		 textBoldCheckBox = new JCheckBox("Bold");
+		 textBoldCheckBox.addItemListener(this);
+		 textBoldCheckBox.setSelected(false);
+		 textItalicsCheckBox = new JCheckBox("Italic");
+		 textItalicsCheckBox.addItemListener(this);
+		 textItalicsCheckBox.setSelected(false);
+		 textStylePanel.add(textBoldCheckBox);
+		 textStylePanel.add(textItalicsCheckBox);
+		 textDetailPanel.add(textStylePanel);
+		
 		// show textDetailPanel on toolBarDetailPanel
 		toolBarDetailPanel.add(textDetailPanel);
 		toolBarDetailPanel.revalidate();
 		
 //		JComboBox<Integer> textSizeBox;
-//		JCheckBox textBoldCheckBox, textItalicsCheckBox, textUnderLineCheckBox;
+		
+		
+		 
 //		JComboBox<String> fontFamily;
 
 	} // end method fillToolBarDetailPanelWithText
@@ -368,7 +394,6 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		else if (e.getSource() == textButton)
 		{
 			setCurrentTool(a2Frame.TEXT);
-			System.out.println("Text button oressed!");
 		} // end if, text button pressed
 		else if(e.getSource() == objectButton)
 		{
@@ -400,6 +425,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		{
 			paintPanel.fillOrDraw = 0;
 		}
+		
 
 	} // end method actionPerformed
 
@@ -738,6 +764,25 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 			float selectedSizeFlt = (float) selectedSizeInt;
 			paintPanel.setObjectBorderThickness(selectedSizeFlt);
 		}
+		else if(e.getSource() == textBoldCheckBox)
+		{
+			if(textBoldCheckBox.isSelected())
+				paintPanel.fontStyle = paintPanel.fontStyle | Font.BOLD;
+			else if(!textBoldCheckBox.isSelected())
+			{
+				System.out.println("Bold not selected" );
+				paintPanel.fontStyle = paintPanel.fontStyle & ~Font.BOLD;
+			}
+				
+		}
+		else if(e.getSource() == textItalicsCheckBox)
+		{
+			if(textItalicsCheckBox.isSelected())
+				paintPanel.fontStyle = paintPanel.fontStyle | Font.ITALIC;
+			else
+				paintPanel.fontStyle = paintPanel.fontStyle & ~Font.ITALIC;
+		}
+		
 	}
 
 	@Override
@@ -806,11 +851,14 @@ class PaintPanel extends JPanel
 	private float objectBorderThickness;
 	private Color objectFillColor;
 	int fillOrDraw = 0;
+	int fontStyle;
+	int DEFAULT_STYLE = Font.PLAIN;
 
 	PaintPanel()
 	{
 		// initialize fields
 		allStrokes = new ArrayList<>();
+		fontStyle = DEFAULT_STYLE;
 
 		// init default stokre properties
 		strokeColor = Color.black;
@@ -1070,9 +1118,14 @@ class PaintPanel extends JPanel
 	
 	public void drawText(String text, int x, int y)
 	{
-		Graphics g = this.getGraphics();
 		
+		Graphics g = this.getGraphics();
+
 		FontMetrics fm = g.getFontMetrics();
+		
+		System.out.println("fontStyle: "+fontStyle);
+		g.setFont(new Font("default", fontStyle, 16));
+		
 		
 		g.drawString(text, x, y);
 	} // end method drawText

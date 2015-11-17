@@ -1,54 +1,13 @@
-import java.awt.BasicStroke;	
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.awt.*;	
+import java.awt.event.*;
+import java.awt.geom.*;
 import java.awt.font.TextAttribute;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Line2D;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JColorChooser;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JTextField;
-import javax.swing.JToolBar;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.border.TitledBorder;
 
 public class a2 
@@ -100,6 +59,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JComboBox<Integer> textSizeBox;
 	JCheckBox textBoldCheckBox, textItalicsCheckBox, textUnderLineCheckBox;
 	JComboBox<String> fontFamily;
+	JButton textColorButton;
 	
 
 	// Draw Objects Detail Panel
@@ -346,6 +306,12 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		 textSizePanel.add(textSizeBox);
 		 textDetailPanel.add(textSizePanel);
 		 
+		 // add text color panel
+		 textColorButton = new JButton("Color");
+		 textColorButton.addActionListener(this);
+		 textDetailPanel.add(textColorButton);
+		 
+		 
 		// show textDetailPanel on toolBarDetailPanel
 		toolBarDetailPanel.add(textDetailPanel);
 		toolBarDetailPanel.revalidate();
@@ -441,6 +407,12 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		else if(e.getSource() == shapeNoFillingButton)
 		{
 			paintPanel.fillOrDraw = 0;
+		}
+		else if (e.getSource() == textColorButton)
+		{
+			System.out.println("Color!");
+			Color tmp = JColorChooser.showDialog(this, "Choose Color", Color.black);
+			paintPanel.setTextColor(tmp);
 		}
 		
 
@@ -861,14 +833,18 @@ class PaintPanel extends JPanel
 
 	// default properties
 	final public static Color DEFAULT_BACKGROUND_COLOR = Color.white;
+	final public static Color DEFAULT_TEXT_COLOR = Color.RED;
 
 	private ArrayList<ExtendedLine2DDouble> allStrokes;
 
+	// text properties
+	private Color textColor;
+	
 	// stroke properties
 	private Color strokeColor;
 	private float strokeWidth;
 
-	//fields for objects
+	// fields for objects
 	private Color objectBorderColor;
 	private float objectBorderThickness;
 	private Color objectFillColor;
@@ -1149,6 +1125,9 @@ class PaintPanel extends JPanel
 		System.out.println("fontStyle: "+fontStyle);
 		g.setFont(new Font("default", fontStyle, fontSize));
 		
+		// set text color, use default if no color selected
+		if (textColor == null)	g.setColor(PaintPanel.DEFAULT_TEXT_COLOR);
+		else	g.setColor(textColor);
 		
 		g.drawString(text, x, y);
 	} // end method drawText
@@ -1178,6 +1157,11 @@ class PaintPanel extends JPanel
 	{
 		objectBorderThickness = width;
 	}
+	
+	public void setTextColor(Color color)
+	{
+		this.textColor = color;
+	}  // end method, setTextColor
 
 	public void erase(int x1, int x2, int y1, int y2)
 	{

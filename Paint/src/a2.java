@@ -32,7 +32,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	String filePath;
 	int currentTool;
 
-	// frame main panel
+	// frame main panel field
 	JPanel mainPanel;
 
 	// Menu Bar and related fields
@@ -50,7 +50,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JPanel toolBarPanel;
 	JButton strokeColorButton;
 
-	// Text Objects Detail Panel
+	// Text Objects Detail Panel related fields
 	JPanel textDetailPanel;
 	JPanel textStylePanel;
 	JPanel textSizePanel;
@@ -80,7 +80,9 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JButton shapeNoFillingButton;
 	JLabel shapeNoFillingLabel;
 
-
+	// import image realted fields
+	JPanel importImagePanel;
+	JButton importImageButton;
 
 	JComboBox<Integer> strokeWidthBox;
 	JComboBox<Integer> objectBorderThicknessBox;
@@ -181,6 +183,11 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		changeBackgroundButton = new JButton("Change Background Color");
 		changeBackgroundButton.addActionListener(this);
 		toolBar.add(changeBackgroundButton);
+
+		// import image button
+		importImageButton = new JButton("Import Image");
+		importImageButton.addActionListener(this);
+		toolBar.add(importImageButton);
 
 		// init toolBarDetailPanel
 		toolBarDetailPanel = new JPanel();
@@ -433,9 +440,44 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 			Color tmp = JColorChooser.showDialog(this, "Choose Color", Color.black);
 			paintPanel.setTextColor(tmp);
 		}
-
+		else if (e.getSource() == importImageButton)
+		{
+			importImage();
+		}
 
 	} // end method actionPerformed
+
+	private void importImage()
+	{
+		System.out.println("Import Image");
+
+		// present open file dialog and receive input
+		JFileChooser fc = new JFileChooser();
+		int userInput = fc.showOpenDialog(null);
+
+		// cancel open action if user press cancel
+		if (userInput == JFileChooser.CANCEL_OPTION)	return;
+
+		String path = "";
+		try {
+			path = fc.getSelectedFile().getCanonicalPath();
+		} catch (IOException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Fail to open file");
+			return;
+		}
+
+		paintPanel.importImage(path);
+		/*
+			// write to file and notify user of the action
+			String path = fc.getSelectedFile().getCanonicalPath() + ".jpg";
+			saveHelper(path);
+
+
+			ImageIO.write( image, "jpg", new File(path) );
+
+		 */
+	} // end method importImage
 
 	private void setStrokeColor()
 	{
@@ -1256,5 +1298,22 @@ class PaintPanel extends JPanel
 
 		setBackground(DEFAULT_BACKGROUND_COLOR);
 	} // end method clearPaintPanel
+
+	public void importImage(String path)
+	{
+
+		// read image from path
+		Image img = null;
+		try {
+			img = ImageIO.read(new File(path));
+		} catch (IOException e) {
+			System.out.println("Cannot read file!");
+		}
+
+		// draw image to panel
+		Graphics g = this.getGraphics();
+		g.drawImage(img, 0, 0, null);
+
+	} // end method importImage
 
 } // end class PaintPanel 

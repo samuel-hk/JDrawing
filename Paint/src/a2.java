@@ -389,13 +389,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		} // end if, save as file item pressed
 		else if(e.getSource() == exitFileItem)
 		{
-			int n=JOptionPane.showConfirmDialog(mainPanel, "Exit Without Saving?", "Warning", JOptionPane.YES_NO_CANCEL_OPTION);
-			if(n == JOptionPane.YES_OPTION)
-				System.exit(0);
-			else if(n == JOptionPane.NO_OPTION)
-				saveToFile();
-			else
-				;
+			askExitWithoutSaving();
 		}// end if, exit file Item pressed
 		else if (e.getSource() == clearButton)
 		{
@@ -451,6 +445,13 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		}
 
 	} // end method actionPerformed
+	
+	private void askExitWithoutSaving()
+	{
+		int n = JOptionPane.showConfirmDialog(mainPanel, "Exit Without Saving?", "Warning", JOptionPane.YES_NO_CANCEL_OPTION);
+		if (n == JOptionPane.YES_OPTION)	System.exit(0);
+		else if (n == JOptionPane.NO_OPTION)	saveToFile();
+	}  // end method askExitWithoutExiting
 
 	private void importImage()
 	{
@@ -644,7 +645,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		// fresh save, save like save as
 		if (filePath.equals(""))	saveAsToFile();
 
-		// save to the last saved file destionation
+		// save to the last saved file destination
 		else	saveHelper("");
 
 	} // end method saveToFile
@@ -663,8 +664,19 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 			// end save action if user pressed cancel when chosing the file
 			if (userInput == JFileChooser.CANCEL_OPTION)	return;
 
+			// get real destination path 
+			String path = fc.getSelectedFile().getCanonicalPath();
+			if ( !path.endsWith(".jpg") )	path += ".jpg";
+			
+			// prompt user to overwrite file if file exist
+			File f = new File(path);
+			if (f.exists())
+			{
+				int choice = JOptionPane.showConfirmDialog(null, "Are you sure you want to overwrite " + fc.getSelectedFile().getName() + " ?", "Overwrite", JOptionPane.YES_NO_CANCEL_OPTION);
+				if (choice != JOptionPane.YES_OPTION)	return;
+			}
+			
 			// write to file and notify user of the action
-			String path = fc.getSelectedFile().getCanonicalPath() + ".jpg";
 			saveHelper(path);
 
 		}
@@ -677,9 +689,8 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 	private void saveHelper(String path)
 	{
-		// use default file destionation if no path is specified
+		// use default file destination if no path is specified
 		if (path.equals(""))	path = filePath;
-
 
 		// fetch properties of the drawing
 		int paintPanelWidth = paintPanel.getWidth();
@@ -862,8 +873,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	@Override
 	public void windowClosing(WindowEvent e) 
 	{
-		int choice = JOptionPane.showConfirmDialog(this, "Exit without saving?", "Exit", JOptionPane.YES_OPTION, JOptionPane.QUESTION_MESSAGE);
-		if (choice == JOptionPane.YES_OPTION)	System.exit(0);
+		askExitWithoutSaving();
 	}
 
 	@Override

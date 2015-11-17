@@ -5,6 +5,7 @@ import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -290,8 +291,12 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		 textItalicsCheckBox = new JCheckBox("Italic");
 		 textItalicsCheckBox.addItemListener(this);
 		 textItalicsCheckBox.setSelected(false);
+		 textUnderLineCheckBox = new JCheckBox("UnderLine");
+		 textUnderLineCheckBox.addItemListener(this);
+		 textUnderLineCheckBox.setSelected(false);
 		 textStylePanel.add(textBoldCheckBox);
 		 textStylePanel.add(textItalicsCheckBox);
+		 textStylePanel.add(textUnderLineCheckBox);
 		 textDetailPanel.add(textStylePanel);
 		 
 		 // add text size panel
@@ -777,7 +782,14 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 				paintPanel.fontStyle = paintPanel.fontStyle & ~Font.ITALIC;
 		}
 		
-	}
+		else if (e.getSource() == textUnderLineCheckBox)
+		{
+			// if underline check box is selected, text created have underline 
+			if (textUnderLineCheckBox.isSelected())	paintPanel.textUnderLined = true;
+			else	paintPanel.textUnderLined = false;
+		}
+		
+	} // end method itemStateChanged
 
 	@Override
 	public void windowOpened(WindowEvent e) {
@@ -849,8 +861,11 @@ class PaintPanel extends JPanel
 	private float objectBorderThickness;
 	private Color objectFillColor;
 	int fillOrDraw = 0;
+	
+	// fields for text
 	int fontStyle;
 	int fontSize = 14;
+	boolean textUnderLined;
 	int DEFAULT_STYLE = Font.PLAIN;
 
 	PaintPanel()
@@ -858,6 +873,7 @@ class PaintPanel extends JPanel
 		// initialize fields
 		allStrokes = new ArrayList<>();
 		fontStyle = DEFAULT_STYLE;
+		textUnderLined = false;
 
 		// init default stokre properties
 		strokeColor = Color.black;
@@ -1120,10 +1136,19 @@ class PaintPanel extends JPanel
 		
 		Graphics g = this.getGraphics();
 
-		FontMetrics fm = g.getFontMetrics();
+		// test
+//		FontMetrics fm = g.getFontMetrics();
 		
+		// set Font
 		System.out.println("fontStyle: "+fontStyle);
-		g.setFont(new Font("default", fontStyle, fontSize));
+		Font f = new Font("default", fontStyle, fontSize);
+		if (textUnderLined)
+		{
+			Map attritubes = f.getAttributes();
+			attritubes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+			g.setFont(f.deriveFont(attritubes));
+		}	// end if, font should be underlined
+		else	g.setFont(f);
 		
 		// set text color, use default if no color selected
 		if (textColor == null)	g.setColor(PaintPanel.DEFAULT_TEXT_COLOR);
@@ -1203,7 +1228,7 @@ class PaintPanel extends JPanel
 	public void setScale()
 	{
 		System.out.println("Scale!");
-		AffineTransform tran = AffineTransform.getScaleInstance(3.0, 3.0);
+//		AffineTransform tran = AffineTransform.getScaleInstance(3.0, 3.0);
 		Graphics2D g = (Graphics2D) this.getGraphics();
 		//		g.setTransform(tran);
 		g.scale(5.0, 5.0);

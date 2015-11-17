@@ -93,6 +93,8 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	// Text Objects Detail Panel
 	JPanel textDetailPanel;
 	JPanel textStylePanel;
+	JPanel textSizePanel;
+	JPanel textContentPanel;
 	JTextField textInputField;
 	JLabel drawTextLabel;
 	JComboBox<Integer> textSizeBox;
@@ -302,20 +304,25 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		textDetailPanel.setLayout(new BoxLayout(textDetailPanel,BoxLayout.Y_AXIS));
 		
 		// add "Drawing Text" text label
-		drawTextLabel = new JLabel("Insert Text");
-		textDetailPanel.add(drawTextLabel);
+		//drawTextLabel = new JLabel("Insert Text");
+		//textDetailPanel.add(drawTextLabel);
+		textContentPanel = new JPanel();
+		textContentPanel.setLayout(new BoxLayout(textContentPanel,BoxLayout.Y_AXIS));
+		TitledBorder contentTitle;
+		contentTitle = BorderFactory.createTitledBorder("Content");
+		textContentPanel.setBorder(contentTitle);
 		
 		// add text input field
 		int textInputFieldWidth = 10;
 		textInputField = new JTextField(textInputFieldWidth);
-		textDetailPanel.add(textInputField);
+		textContentPanel.add(textInputField);
+		textDetailPanel.add(textContentPanel);
 		
 		// add text style panel
 		textStylePanel = new JPanel();
 		textStylePanel.setLayout(new BoxLayout(textStylePanel,BoxLayout.Y_AXIS));
 		TitledBorder styleTitle;
 		styleTitle = BorderFactory.createTitledBorder("Styles");
-		
 		textStylePanel.setBorder(styleTitle);
 		 textBoldCheckBox = new JCheckBox("Bold");
 		 textBoldCheckBox.addItemListener(this);
@@ -326,13 +333,23 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		 textStylePanel.add(textBoldCheckBox);
 		 textStylePanel.add(textItalicsCheckBox);
 		 textDetailPanel.add(textStylePanel);
-		
+		 
+		 // add text size panel
+		 textSizePanel = new JPanel();
+		 textSizePanel.setLayout(new BoxLayout(textSizePanel,BoxLayout.Y_AXIS));
+		 TitledBorder sizeTitle;
+		 sizeTitle = BorderFactory.createTitledBorder("Size");
+		 textSizePanel.setBorder(sizeTitle);
+		 Integer[] size = {10,12,14,16,18,20,22,24,26,28,30,32,34,36} ;
+		 textSizeBox = new JComboBox<>(size);
+		 textSizeBox.addItemListener(this);
+		 textSizePanel.add(textSizeBox);
+		 textDetailPanel.add(textSizePanel);
+		 
 		// show textDetailPanel on toolBarDetailPanel
 		toolBarDetailPanel.add(textDetailPanel);
 		toolBarDetailPanel.revalidate();
-		
-//		JComboBox<Integer> textSizeBox;
-		
+				
 		
 		 
 //		JComboBox<String> fontFamily;
@@ -764,6 +781,11 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 			float selectedSizeFlt = (float) selectedSizeInt;
 			paintPanel.setObjectBorderThickness(selectedSizeFlt);
 		}
+		else if(e.getSource() == textSizeBox)
+		{
+			String selected = textSizeBox.getSelectedItem().toString();
+			paintPanel.fontSize = Integer.parseInt(selected);
+		}
 		else if(e.getSource() == textBoldCheckBox)
 		{
 			if(textBoldCheckBox.isSelected())
@@ -852,6 +874,7 @@ class PaintPanel extends JPanel
 	private Color objectFillColor;
 	int fillOrDraw = 0;
 	int fontStyle;
+	int fontSize = 14;
 	int DEFAULT_STYLE = Font.PLAIN;
 
 	PaintPanel()
@@ -1124,7 +1147,7 @@ class PaintPanel extends JPanel
 		FontMetrics fm = g.getFontMetrics();
 		
 		System.out.println("fontStyle: "+fontStyle);
-		g.setFont(new Font("default", fontStyle, 16));
+		g.setFont(new Font("default", fontStyle, fontSize));
 		
 		
 		g.drawString(text, x, y);

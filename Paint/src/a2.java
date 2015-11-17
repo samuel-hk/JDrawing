@@ -389,8 +389,13 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		} // end if, save as file item pressed
 		else if(e.getSource() == exitFileItem)
 		{
-			saveToFile();
-			System.exit(0);
+			int n=JOptionPane.showConfirmDialog(mainPanel, "Exit Without Saving?", "Warning", JOptionPane.YES_NO_CANCEL_OPTION);
+			if(n == JOptionPane.YES_OPTION)
+				System.exit(0);
+			else if(n == JOptionPane.NO_OPTION)
+				saveToFile();
+			else
+				;
 		}// end if, exit file Item pressed
 		else if (e.getSource() == clearButton)
 		{

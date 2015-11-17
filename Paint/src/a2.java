@@ -49,7 +49,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JPanel toolBarDetailPanel;
 	JPanel toolBarPanel;
 	JButton strokeColorButton;
-	
+
 	// Text Objects Detail Panel
 	JPanel textDetailPanel;
 	JPanel textStylePanel;
@@ -61,7 +61,6 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JCheckBox textBoldCheckBox, textItalicsCheckBox, textUnderLineCheckBox;
 	JComboBox<String> fontFamily;
 	JButton textColorButton;
-	
 
 	// Draw Objects Detail Panel
 	JPanel shapeChooserPanel;
@@ -162,7 +161,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		strokeButton = new JButton("Stroke");
 		strokeButton.addActionListener(this);
 		toolBar.add(strokeButton);
-		
+
 		// text button
 		textButton = new JButton("Text");
 		textButton.addActionListener(this);
@@ -247,23 +246,23 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 			break;
 		} // end switch, set tool according to param
 	} // end method setCurrentTool
-	
+
 	private void setCurrentToolText()
 	{
 		currentTool = a2Frame.TEXT;
 		fillToolBarDetailPanelWithText();
 	} // end method setCurrentToolText
-	
+
 	private void fillToolBarDetailPanelWithText()
 	{
 		// clear detail pane for text buttons arrival
 		toolBarDetailPanel.removeAll();
 		toolBarDetailPanel.revalidate();
-		
+
 		// create panel to hold text detail buttons
 		textDetailPanel = new JPanel();
 		textDetailPanel.setLayout(new BoxLayout(textDetailPanel,BoxLayout.Y_AXIS));
-		
+
 		// add "Drawing Text" text label
 		//drawTextLabel = new JLabel("Insert Text");
 		//textDetailPanel.add(drawTextLabel);
@@ -272,58 +271,73 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		TitledBorder contentTitle;
 		contentTitle = BorderFactory.createTitledBorder("Content");
 		textContentPanel.setBorder(contentTitle);
-		
+
 		// add text input field
 		int textInputFieldWidth = 10;
 		textInputField = new JTextField(textInputFieldWidth);
 		textContentPanel.add(textInputField);
 		textDetailPanel.add(textContentPanel);
-		
+
 		// add text style panel
 		textStylePanel = new JPanel();
 		textStylePanel.setLayout(new BoxLayout(textStylePanel,BoxLayout.Y_AXIS));
 		TitledBorder styleTitle;
 		styleTitle = BorderFactory.createTitledBorder("Styles");
 		textStylePanel.setBorder(styleTitle);
-		 textBoldCheckBox = new JCheckBox("Bold");
-		 textBoldCheckBox.addItemListener(this);
-		 textBoldCheckBox.setSelected(false);
-		 textItalicsCheckBox = new JCheckBox("Italic");
-		 textItalicsCheckBox.addItemListener(this);
-		 textItalicsCheckBox.setSelected(false);
-		 textUnderLineCheckBox = new JCheckBox("UnderLine");
-		 textUnderLineCheckBox.addItemListener(this);
-		 textUnderLineCheckBox.setSelected(false);
-		 textStylePanel.add(textBoldCheckBox);
-		 textStylePanel.add(textItalicsCheckBox);
-		 textStylePanel.add(textUnderLineCheckBox);
-		 textDetailPanel.add(textStylePanel);
-		 
-		 // add text size panel
-		 textSizePanel = new JPanel();
-		 textSizePanel.setLayout(new BoxLayout(textSizePanel,BoxLayout.Y_AXIS));
-		 TitledBorder sizeTitle;
-		 sizeTitle = BorderFactory.createTitledBorder("Size");
-		 textSizePanel.setBorder(sizeTitle);
-		 Integer[] size = {10,12,14,16,18,20,22,24,26,28,30,32,34,36} ;
-		 textSizeBox = new JComboBox<>(size);
-		 textSizeBox.addItemListener(this);
-		 textSizePanel.add(textSizeBox);
-		 textDetailPanel.add(textSizePanel);
-		 
-		 // add text color panel
-		 textColorButton = new JButton("Color");
-		 textColorButton.addActionListener(this);
-		 textDetailPanel.add(textColorButton);
-		 
-		 
+		textBoldCheckBox = new JCheckBox("Bold");
+		textBoldCheckBox.addItemListener(this);
+		textBoldCheckBox.setSelected(false);
+		textItalicsCheckBox = new JCheckBox("Italic");
+		textItalicsCheckBox.addItemListener(this);
+		textItalicsCheckBox.setSelected(false);
+		textUnderLineCheckBox = new JCheckBox("UnderLine");
+		textUnderLineCheckBox.addItemListener(this);
+		textUnderLineCheckBox.setSelected(false);
+		textStylePanel.add(textBoldCheckBox);
+		textStylePanel.add(textItalicsCheckBox);
+		textStylePanel.add(textUnderLineCheckBox);
+		textDetailPanel.add(textStylePanel);
+
+		// add text size panel
+		textSizePanel = new JPanel();
+		textSizePanel.setLayout(new BoxLayout(textSizePanel,BoxLayout.Y_AXIS));
+		TitledBorder sizeTitle;
+		sizeTitle = BorderFactory.createTitledBorder("Size");
+		textSizePanel.setBorder(sizeTitle);
+		Integer[] size = {10,12,14,16,18,20,22,24,26,28,30,32,34,36} ;
+		textSizeBox = new JComboBox<>(size);
+		textSizeBox.addItemListener(this);
+		textSizePanel.add(textSizeBox);
+		textDetailPanel.add(textSizePanel);
+
+		// add text color panel
+		JPanel textColorPanel = new JPanel();
+		textColorPanel.setBorder(BorderFactory.createTitledBorder("Color"));
+		textColorButton = new JButton("Color");
+		textColorButton.addActionListener(this);
+		textColorPanel.add(textColorButton);
+		textDetailPanel.add(textColorPanel);
+
+		// add font panel
+		JPanel textFontFamilyPanel = new JPanel();
+		textFontFamilyPanel.setBorder(BorderFactory.createTitledBorder("Font"));
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		String[] fontList = ge.getAvailableFontFamilyNames();
+		fontFamily = new JComboBox<>(fontList);
+		textFontFamilyPanel.add(fontFamily);
+
+
+		textDetailPanel.add(textFontFamilyPanel);
+
+
+
+
 		// show textDetailPanel on toolBarDetailPanel
 		toolBarDetailPanel.add(textDetailPanel);
 		toolBarDetailPanel.revalidate();
-				
-		
-		 
-//		JComboBox<String> fontFamily;
+
+
+
 
 	} // end method fillToolBarDetailPanelWithText
 
@@ -337,13 +351,13 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	{
 		currentTool = a2Frame.ERASER;
 	} // end method setCurrentToolEraser
-	
+
 	private void createNewPaint()
 	{
 		// ask for confirmation to discard current paintings
 		String message = "Create new painting? Current Painting will be lost.";
 		int answer = JOptionPane.showConfirmDialog(this, message, "Create", JOptionPane.YES_OPTION, JOptionPane.QUESTION_MESSAGE);
-		
+
 		// create new painting if user selected yes
 		if (answer == JOptionPane.YES_OPTION)	paintPanel.clearPaintPanel();
 	} // end method createNewPaintPanel
@@ -419,7 +433,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 			Color tmp = JColorChooser.showDialog(this, "Choose Color", Color.black);
 			paintPanel.setTextColor(tmp);
 		}
-		
+
 
 	} // end method actionPerformed
 
@@ -581,10 +595,10 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	{
 		// fresh save, save like save as
 		if (filePath.equals(""))	saveAsToFile();
-		
+
 		// save to the last saved file destionation
 		else	saveHelper("");
-		
+
 	} // end method saveToFile
 
 	// save current graphics to a file
@@ -617,12 +631,12 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	{
 		// use default file destionation if no path is specified
 		if (path.equals(""))	path = filePath;
-		
-		
+
+
 		// fetch properties of the drawing
 		int paintPanelWidth = paintPanel.getWidth();
 		int paintPanelHeight = paintPanel.getHeight();
-		
+
 		// create image to hold the drawing
 		BufferedImage image = new BufferedImage(paintPanelWidth, paintPanelHeight, BufferedImage.TYPE_INT_BGR);
 		Graphics2D g2D = image.createGraphics();
@@ -635,7 +649,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		{
 			ImageIO.write( image, "jpg", new File(path) );
 			JOptionPane.showMessageDialog(this, "Image saved to " + path);
-			
+
 			// save file name into var
 			filePath = path;
 		}  // end try, save file try
@@ -668,8 +682,8 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		pressY = e.getY();
 
 		// test
-		if (currentTool == a2Frame.TEXT)	paintPanel.drawText(textInputField.getText(), (int) pressX, (int) pressY);
-		
+		if (currentTool == a2Frame.TEXT)	paintPanel.drawText(textInputField.getText(), (String) fontFamily.getSelectedItem(), (int) pressX, (int) pressY);
+
 
 	} // end method mousePressed
 
@@ -772,7 +786,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 				System.out.println("Bold not selected" );
 				paintPanel.fontStyle = paintPanel.fontStyle & ~Font.BOLD;
 			}
-				
+
 		}
 		else if(e.getSource() == textItalicsCheckBox)
 		{
@@ -781,14 +795,14 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 			else
 				paintPanel.fontStyle = paintPanel.fontStyle & ~Font.ITALIC;
 		}
-		
+
 		else if (e.getSource() == textUnderLineCheckBox)
 		{
 			// if underline check box is selected, text created have underline 
-			if (textUnderLineCheckBox.isSelected())	paintPanel.textUnderLined = true;
-			else	paintPanel.textUnderLined = false;
+			if (textUnderLineCheckBox.isSelected())	paintPanel.textShouldBeUnderlined = true;
+			else	paintPanel.textShouldBeUnderlined = false;
 		}
-		
+
 	} // end method itemStateChanged
 
 	@Override
@@ -851,7 +865,7 @@ class PaintPanel extends JPanel
 
 	// text properties
 	private Color textColor;
-	
+
 	// stroke properties
 	private Color strokeColor;
 	private float strokeWidth;
@@ -861,11 +875,11 @@ class PaintPanel extends JPanel
 	private float objectBorderThickness;
 	private Color objectFillColor;
 	int fillOrDraw = 0;
-	
+
 	// fields for text
 	int fontStyle;
 	int fontSize = 14;
-	boolean textUnderLined;
+	boolean textShouldBeUnderlined;
 	int DEFAULT_STYLE = Font.PLAIN;
 
 	PaintPanel()
@@ -873,7 +887,7 @@ class PaintPanel extends JPanel
 		// initialize fields
 		allStrokes = new ArrayList<>();
 		fontStyle = DEFAULT_STYLE;
-		textUnderLined = false;
+		textShouldBeUnderlined = false;
 
 		// init default stokre properties
 		strokeColor = Color.black;
@@ -1130,30 +1144,30 @@ class PaintPanel extends JPanel
 		// save drawing for windows resize
 		allStrokes.add(inkSegment);
 	} // end method drawInk
-	
-	public void drawText(String text, int x, int y)
+
+	public void drawText(String text, String font, int x, int y)
 	{
-		
+
 		Graphics g = this.getGraphics();
 
 		// test
-//		FontMetrics fm = g.getFontMetrics();
-		
+		//		FontMetrics fm = g.getFontMetrics();
+
 		// set Font
 		System.out.println("fontStyle: "+fontStyle);
-		Font f = new Font("default", fontStyle, fontSize);
-		if (textUnderLined)
+		Font f = new Font(font, fontStyle, fontSize);
+		if (textShouldBeUnderlined)
 		{
 			Map attritubes = f.getAttributes();
 			attritubes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
 			g.setFont(f.deriveFont(attritubes));
 		}	// end if, font should be underlined
 		else	g.setFont(f);
-		
+
 		// set text color, use default if no color selected
 		if (textColor == null)	g.setColor(PaintPanel.DEFAULT_TEXT_COLOR);
 		else	g.setColor(textColor);
-		
+
 		g.drawString(text, x, y);
 	} // end method drawText
 
@@ -1182,7 +1196,7 @@ class PaintPanel extends JPanel
 	{
 		objectBorderThickness = width;
 	}
-	
+
 	public void setTextColor(Color color)
 	{
 		this.textColor = color;
@@ -1228,7 +1242,7 @@ class PaintPanel extends JPanel
 	public void setScale()
 	{
 		System.out.println("Scale!");
-//		AffineTransform tran = AffineTransform.getScaleInstance(3.0, 3.0);
+		//		AffineTransform tran = AffineTransform.getScaleInstance(3.0, 3.0);
 		Graphics2D g = (Graphics2D) this.getGraphics();
 		//		g.setTransform(tran);
 		g.scale(5.0, 5.0);
@@ -1239,8 +1253,8 @@ class PaintPanel extends JPanel
 	{
 		allStrokes.clear();
 		repaint();
-		
+
 		setBackground(DEFAULT_BACKGROUND_COLOR);
 	} // end method clearPaintPanel
-	
+
 } // end class PaintPanel 

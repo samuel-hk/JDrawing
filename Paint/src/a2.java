@@ -264,7 +264,8 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	{
 		// clear detail pane for text buttons arrival
 		toolBarDetailPanel.removeAll();
-		toolBarDetailPanel.revalidate();
+		//toolBarDetailPanel.revalidate();
+		toolBarDetailPanel.repaint();
 
 		// create panel to hold text detail buttons
 		textDetailPanel = new JPanel();

@@ -49,6 +49,8 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JPanel toolBarDetailPanel;
 	JPanel toolBarPanel;
 	JButton strokeColorButton;
+	JPanel strokeColorPanel;
+	JPanel strokeWeightPanel;
 
 	// Text Objects Detail Panel related fields
 	JPanel textDetailPanel;
@@ -79,6 +81,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JButton shapeFillColorButton;
 	JButton shapeNoFillingButton;
 	JLabel shapeNoFillingLabel;
+	
 
 	// import image realted fields
 	JPanel importImagePanel;
@@ -192,6 +195,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		// init toolBarDetailPanel
 		toolBarDetailPanel = new JPanel();
 		toolBarPanel.add(toolBarDetailPanel);
+		toolBarDetailPanel.setLayout(new BoxLayout(toolBarDetailPanel,BoxLayout.Y_AXIS));
 
 		// test
 		toolBarDetailPanel.setBackground(Color.red);
@@ -531,17 +535,30 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		// clear everything
 		toolBarDetailPanel.removeAll();
 		toolBarDetailPanel.repaint();
+		
 
 		// add color chooser
+		strokeColorPanel = new JPanel();
+		strokeColorPanel.setLayout(new BoxLayout(strokeColorPanel,BoxLayout.Y_AXIS));
+		TitledBorder strokeColorTitle;
+		strokeColorTitle = BorderFactory.createTitledBorder("Stroke Color");
+		strokeColorPanel.setBorder(strokeColorTitle);
 		strokeColorButton = new JButton("Color");
 		strokeColorButton.addActionListener(this);
-		toolBarDetailPanel.add(strokeColorButton);
+		strokeColorPanel.add(strokeColorButton);
+		toolBarDetailPanel.add(strokeColorPanel);
 
 		// add stroke width setting
+		strokeWeightPanel = new JPanel();
+		strokeWeightPanel.setLayout(new BoxLayout(strokeWeightPanel,BoxLayout.Y_AXIS));
+		TitledBorder strokeWeightTitle;
+		strokeWeightTitle = BorderFactory.createTitledBorder("Weight");
+		strokeWeightPanel.setBorder(strokeWeightTitle);
 		Integer[] size = {1,2,3,4,5,6,7,8,9} ;
 		strokeWidthBox = new JComboBox<>(size);
 		strokeWidthBox.addItemListener(this);
-		toolBarDetailPanel.add(strokeWidthBox);
+		strokeWeightPanel.add(strokeWidthBox);
+		toolBarDetailPanel.add(strokeWeightPanel);
 
 		toolBarDetailPanel.revalidate();
 	} // end method fillToolBarDetailPanelWithPen

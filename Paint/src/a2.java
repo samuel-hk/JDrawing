@@ -49,6 +49,8 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JPanel toolBarDetailPanel;
 	JPanel toolBarPanel;
 	JButton strokeColorButton;
+	JPanel strokeColorPanel;
+	JPanel strokeWeightPanel;
 
 	// Text Objects Detail Panel related fields
 	JPanel textDetailPanel;
@@ -70,15 +72,14 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JRadioButton lineShapeButton;
 	ButtonGroup shapeButtonGroup;
 	JButton objectBorderColorButton;
-	JLabel shapeBorderColorLabel;
 	JPanel shapeBorderColorPanel;
-	JLabel shapeBorderThicknessLabel;
 	JPanel shapeBorderThicknessPanel;
 	JLabel shapeFillColorLabel;
 	JPanel shapeFillColorPanel;
 	JButton shapeFillColorButton;
 	JButton shapeNoFillingButton;
 	JLabel shapeNoFillingLabel;
+	
 
 	// import image realted fields
 	JPanel importImagePanel;
@@ -192,6 +193,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		// init toolBarDetailPanel
 		toolBarDetailPanel = new JPanel();
 		toolBarPanel.add(toolBarDetailPanel);
+		toolBarDetailPanel.setLayout(new BoxLayout(toolBarDetailPanel,BoxLayout.Y_AXIS));
 
 		// test
 		toolBarDetailPanel.setBackground(Color.red);
@@ -264,7 +266,8 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	{
 		// clear detail pane for text buttons arrival
 		toolBarDetailPanel.removeAll();
-		toolBarDetailPanel.revalidate();
+		//toolBarDetailPanel.revalidate();
+		toolBarDetailPanel.repaint();
 
 		// create panel to hold text detail buttons
 		textDetailPanel = new JPanel();
@@ -530,17 +533,30 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		// clear everything
 		toolBarDetailPanel.removeAll();
 		toolBarDetailPanel.repaint();
+		
 
 		// add color chooser
+		strokeColorPanel = new JPanel();
+		strokeColorPanel.setLayout(new BoxLayout(strokeColorPanel,BoxLayout.Y_AXIS));
+		TitledBorder strokeColorTitle;
+		strokeColorTitle = BorderFactory.createTitledBorder("Stroke Color");
+		strokeColorPanel.setBorder(strokeColorTitle);
 		strokeColorButton = new JButton("Color");
 		strokeColorButton.addActionListener(this);
-		toolBarDetailPanel.add(strokeColorButton);
+		strokeColorPanel.add(strokeColorButton);
+		toolBarDetailPanel.add(strokeColorPanel);
 
 		// add stroke width setting
+		strokeWeightPanel = new JPanel();
+		strokeWeightPanel.setLayout(new BoxLayout(strokeWeightPanel,BoxLayout.Y_AXIS));
+		TitledBorder strokeWeightTitle;
+		strokeWeightTitle = BorderFactory.createTitledBorder("Weight");
+		strokeWeightPanel.setBorder(strokeWeightTitle);
 		Integer[] size = {1,2,3,4,5,6,7,8,9} ;
 		strokeWidthBox = new JComboBox<>(size);
 		strokeWidthBox.addItemListener(this);
-		toolBarDetailPanel.add(strokeWidthBox);
+		strokeWeightPanel.add(strokeWidthBox);
+		toolBarDetailPanel.add(strokeWeightPanel);
 
 		// repaint tool bar for new widget to show up
 		toolBarDetailPanel.revalidate();
@@ -589,13 +605,11 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		shapeBorderColorPanel = new JPanel();
 		shapeBorderColorPanel.setLayout(new BoxLayout(shapeBorderColorPanel,BoxLayout.Y_AXIS));
 //		shapeBorderColorPanel.setBackground(Color.red);
-		shapeBorderColorLabel = new JLabel("Border Color: ");
-		objectBorderColorButton = new JButton("Color");
+		objectBorderColorButton = new JButton("Choose Color");
 		objectBorderColorButton.addActionListener(this);
 
-		shapeBorderColorPanel.add(shapeBorderColorLabel);
 		shapeBorderColorPanel.add(objectBorderColorButton);
-		shapeBorderColorPanel.setBorder(BorderFactory.createTitledBorder("Color"));
+		shapeBorderColorPanel.setBorder(BorderFactory.createTitledBorder("Border Color"));
 		shapeDetailPanel.add(shapeBorderColorPanel);
 
 		//Border Thickness Panel
@@ -603,11 +617,9 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		objectBorderThicknessBox = new JComboBox<>(size);
 		objectBorderThicknessBox.addItemListener(this);
 
-		shapeBorderThicknessLabel = new JLabel("Border Thickness: ");
 		shapeBorderThicknessPanel = new JPanel();
 		shapeBorderThicknessPanel.setLayout(new BoxLayout(shapeBorderThicknessPanel, BoxLayout.Y_AXIS ));
 
-		shapeBorderThicknessPanel.add(shapeBorderThicknessLabel);
 		shapeBorderThicknessPanel.add(objectBorderThicknessBox);
 		shapeBorderThicknessPanel.setBorder(BorderFactory.createTitledBorder("Thickness"));
 		shapeDetailPanel.add(shapeBorderThicknessPanel);
@@ -619,10 +631,10 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		shapeFillColorButton = new JButton("Choose Color");
 		shapeFillColorButton.addActionListener(this);
 		//shapeNoFillingLabel = new JLabel("Draw Without Filling");
+		shapeFillColorPanel.setBorder(BorderFactory.createTitledBorder("Filling Color"));
 		shapeNoFillingButton = new JButton("Clear Filling");
 		shapeNoFillingButton.addActionListener(this);
 
-		shapeFillColorPanel.add(shapeFillColorLabel);
 		shapeFillColorPanel.add(shapeFillColorButton);
 		shapeFillColorPanel.add(shapeNoFillingButton);
 		shapeDetailPanel.add(shapeFillColorPanel);
@@ -633,6 +645,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		toolBarDetailPanel.revalidate();
 
 	}
+	
 
 	private void saveToFile()
 	{

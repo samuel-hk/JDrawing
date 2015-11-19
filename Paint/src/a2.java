@@ -74,6 +74,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JButton objectBorderColorButton;
 	JPanel shapeBorderColorPanel;
 	JPanel shapeBorderThicknessPanel;
+	JLabel shapeFillColorLabel;
 	JPanel shapeFillColorPanel;
 	JButton shapeFillColorButton;
 	JButton shapeNoFillingButton;
@@ -557,6 +558,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		strokeWeightPanel.add(strokeWidthBox);
 		toolBarDetailPanel.add(strokeWeightPanel);
 
+		// repaint tool bar for new widget to show up
 		toolBarDetailPanel.revalidate();
 	} // end method fillToolBarDetailPanelWithPen
 
@@ -617,21 +619,15 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 		shapeBorderThicknessPanel = new JPanel();
 		shapeBorderThicknessPanel.setLayout(new BoxLayout(shapeBorderThicknessPanel, BoxLayout.Y_AXIS ));
-//		shapeBorderThicknessPanel.setBackground(Color.red);
 
 		shapeBorderThicknessPanel.add(objectBorderThicknessBox);
-		shapeBorderThicknessPanel.setBorder(BorderFactory.createTitledBorder("Border Thickness"));
-////		shapeBorderThicknessPanel.setPreferredSize(shapeBorderColorPanel.getPreferredSize());
-//		int panelWidth = (int) shapeBorderThicknessLabel.getPreferredSize().getWidth();
-//		panelWidth += objectBorderThicknessBox.getPreferredSize().getWidth() + 50;
-//		int panelHeight = (int) shapeBorderThicknessLabel.getPreferredSize().getHeight();
-//		shapeBorderThicknessPanel.setMaximumSize(new Dimension(panelWidth, panelHeight));
+		shapeBorderThicknessPanel.setBorder(BorderFactory.createTitledBorder("Thickness"));
 		shapeDetailPanel.add(shapeBorderThicknessPanel);
 
 		//object fill color panel
 		shapeFillColorPanel = new JPanel();
 		shapeFillColorPanel.setLayout(new BoxLayout(shapeFillColorPanel,BoxLayout.Y_AXIS));
-//		shapeFillColorPanel.setBackground(Color.red);
+		shapeFillColorLabel = new JLabel("Filled Object");
 		shapeFillColorButton = new JButton("Choose Color");
 		shapeFillColorButton.addActionListener(this);
 		//shapeNoFillingLabel = new JLabel("Draw Without Filling");

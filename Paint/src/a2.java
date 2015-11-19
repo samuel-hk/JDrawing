@@ -927,7 +927,6 @@ class PaintPanel extends JPanel
 	final public static Color DEFAULT_TEXT_COLOR = Color.RED;
 
 	private ArrayList<ExtendedLine2DDouble> allStrokes;
-
 	private ArrayList<ExtendedRectangle2DDouble> allRectangles;
 	private ArrayList<ExtendedEllipse2DDouble> allEllipse;
 	
@@ -1246,8 +1245,12 @@ class PaintPanel extends JPanel
 		//default color black
 		g2.setColor(objectBorderColor);
 
-		Line2D.Double r = new Line2D.Double(x1, y1, x2, y2);
+		ExtendedLine2DDouble r = new ExtendedLine2DDouble((int)x1, (int)y1, (int)x2, (int)y2);
+		r.color = objectBorderColor;
+		r.stroke = stroke;
 		g2.draw(r);
+		
+		allStrokes.add(r);
 	}
 
 	public void drawInk(int x1, int x2, int y1, int y2)

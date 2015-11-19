@@ -931,6 +931,7 @@ class PaintPanel extends JPanel
 	final public static Color DEFAULT_TEXT_COLOR = Color.RED;
 
 	private ArrayList<ExtendedLine2DDouble> allStrokes;
+	private ArrayList<Rectangle2D> allRectangles;
 
 	// text properties
 	private Color textColor;
@@ -955,6 +956,7 @@ class PaintPanel extends JPanel
 	{
 		// initialize fields
 		allStrokes = new ArrayList<>();
+		allRectangles = new ArrayList<>();
 		fontStyle = DEFAULT_STYLE;
 		textShouldBeUnderlined = false;
 
@@ -978,6 +980,7 @@ class PaintPanel extends JPanel
 	{
 		super.paintComponent(g);
 		drawAllStrokes(g);
+		drawAllRectangles(g);
 	} // end method paintComponent
 
 
@@ -993,6 +996,16 @@ class PaintPanel extends JPanel
 		} // end for loop, loop thru and draw back strokes
 
 	} // end method drawAllStrokes
+	
+	public void drawAllRectangles(Graphics g)
+	{
+		Graphics2D g2D = (Graphics2D) g;
+		
+		for(Rectangle2D rectangle : allRectangles)
+		{
+			g2D.draw(rectangle);
+		}
+	}
 
 
 
@@ -1045,15 +1058,21 @@ class PaintPanel extends JPanel
 		{
 			g2.setColor(objectBorderColor);
 			g2.draw(r);
+			allRectangles.add(r);
 		}
 
 		else
 		{
 			g2.setColor(objectFillColor);
 			g2.fill(r);
+			allRectangles.add(r);
 			g2.setColor(objectBorderColor);
 			g2.draw(r);
+			allRectangles.add(r);
+
 		}
+		
+		
 
 	}
 

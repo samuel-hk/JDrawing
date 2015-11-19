@@ -995,6 +995,7 @@ class PaintPanel extends JPanel
 				g2D.fill(circle);
 			}
 			
+			g2D.setStroke(circle.stroke);
 			g2D.setColor(circle.borderColor);
 			g2D.draw(circle);
 		}
@@ -1166,6 +1167,7 @@ class PaintPanel extends JPanel
 			r.setFillColor(objectFillColor);
 		}
 		allEllipse.add(r);
+		r.setStroke(stroke);
 		g2.draw(r);
 	}
 
@@ -1228,6 +1230,7 @@ class PaintPanel extends JPanel
 			g2.draw(r);
 			r.setFillColor(objectFillColor);
 		}
+		r.setStroke(stroke);
 		r.setBorderColor(objectBorderColor);
 		allEllipse.add(r);
 

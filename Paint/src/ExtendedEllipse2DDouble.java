@@ -1,3 +1,4 @@
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.geom.Ellipse2D;
 
@@ -5,6 +6,7 @@ public class ExtendedEllipse2DDouble extends Ellipse2D.Double
 {
 	Color fillColor;
 	Color borderColor;
+	BasicStroke stroke;
 	
 	public ExtendedEllipse2DDouble (double startX, double startY, double width, double height)
 	{
@@ -20,5 +22,10 @@ public class ExtendedEllipse2DDouble extends Ellipse2D.Double
 	{
 		this.borderColor= color;
 	} // end method setFillColor(Color color)
+	
+	public void setStroke(BasicStroke stroke)
+	{
+		this.stroke = stroke;
+	} // end method setStroke
 	
 } // end class ExtendedEllipse2DDouble 

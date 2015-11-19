@@ -4,6 +4,11 @@ import java.awt.geom.Line2D;
 
 public class ExtendedLine2DDouble extends Line2D.Double 
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	public Color color;
 	public BasicStroke stroke;
 

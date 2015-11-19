@@ -1,0 +1,6 @@
+import Ellipse2D.Double;
+
+public class ExtendedEllipse2DDouble extends Ellipse2D.Double
+{
+
+}

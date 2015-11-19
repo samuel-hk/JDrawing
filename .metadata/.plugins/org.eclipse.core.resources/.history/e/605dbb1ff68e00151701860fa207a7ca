@@ -1,0 +1,10 @@
+import java.awt.geom.Ellipse2D;
+
+public class ExtendedEllipse2DDouble extends Ellipse2D.Double
+{
+	public ExtendedEllipse2DDouble (double startX, double startY, double width, double height)
+	{
+		
+	}
+	
+} // end class ExtendedEllipse2DDouble 

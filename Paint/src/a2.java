@@ -927,8 +927,10 @@ class PaintPanel extends JPanel
 	final public static Color DEFAULT_TEXT_COLOR = Color.RED;
 
 	private ArrayList<ExtendedLine2DDouble> allStrokes;
-	private ArrayList<ExtendedRectangle2DDouble> allRectangles;
 
+	private ArrayList<ExtendedRectangle2DDouble> allRectangles;
+	private ArrayList<ExtendedEllipse2DDouble> allEllipse;
+	
 	// text properties
 	private Color textColor;
 
@@ -953,6 +955,7 @@ class PaintPanel extends JPanel
 		// initialize fields
 		allStrokes = new ArrayList<>();
 		allRectangles = new ArrayList<>();
+		allEllipse = new ArrayList<>();
 		fontStyle = DEFAULT_STYLE;
 		textShouldBeUnderlined = false;
 
@@ -977,8 +980,26 @@ class PaintPanel extends JPanel
 		super.paintComponent(g);
 		drawAllStrokes(g);
 		drawAllRectangles(g);
+		drawAllEllipses(g);
 	} // end method paintComponent
-
+	
+	public void drawAllEllipses(Graphics g)
+	{
+		Graphics2D g2D = (Graphics2D) g;
+		
+		for (ExtendedEllipse2DDouble circle : allEllipse)
+		{
+			if (circle.fillColor != null)
+			{
+				g2D.setColor(circle.fillColor);
+				g2D.fill(circle);
+			}
+			
+			g2D.setColor(circle.borderColor);
+			g2D.draw(circle);
+		}
+		
+	} // end method drawAllEllipses
 
 	public void drawAllStrokes(Graphics g)
 	{
@@ -1091,37 +1112,36 @@ class PaintPanel extends JPanel
 
 		width = Math.abs(x2-x1);
 		height = Math.abs(y2-y1);
-		Ellipse2D.Double r;
+		ExtendedEllipse2DDouble r;
 
 		if(x2>x1 && y2<y1)
 		{
 			startX = x1;
 			startY = y1-height;
-			r = new Ellipse2D.Double(startX,startY,width,height);
+			r = new ExtendedEllipse2DDouble(startX,startY,width,height);
 
 		}
 		else if(x1>x2 && y1<y2)
 		{
 			startX = x1-width;
 			startY = y1;
-			r = new Ellipse2D.Double(startX, startY, width, height);
+			r = new ExtendedEllipse2DDouble(startX, startY, width, height);
 		}
 		else if(x1>x2 && y1>y2)
 		{
 			startX = x1-width;
 			startY = y1-height;
-			r = new Ellipse2D.Double(startX, startY, width, height);
+			r = new ExtendedEllipse2DDouble(startX, startY, width, height);
 		}
 		else
 		{
-			r = new Ellipse2D.Double(x1, y1, width, height);
+			r = new ExtendedEllipse2DDouble(x1, y1, width, height);
 		}
 
 
 		if( fillOrDraw== 0)
 		{
 			g2.setColor(objectBorderColor);
-			g2.draw(r);
 		}
 
 		else
@@ -1129,8 +1149,12 @@ class PaintPanel extends JPanel
 			g2.setColor(objectFillColor);
 			g2.fill(r);
 			g2.setColor(objectBorderColor);
-			g2.draw(r);
+			
+			r.setBorderColor(objectBorderColor);
+			r.setFillColor(objectFillColor);
 		}
+		allEllipse.add(r);
+		g2.draw(r);
 	}
 
 	public void drawCircle(double x1, double x2, double y1, double y2)
@@ -1152,30 +1176,30 @@ class PaintPanel extends JPanel
 		width = Math.abs(x2-x1);
 		height = Math.abs(y2-y1);
 
-		Ellipse2D.Double r;
+		ExtendedEllipse2DDouble r;
 
 		if(x2>x1 && y2<y1)
 		{
 			startX = x1;
 			startY = y1-height;
-			r = new Ellipse2D.Double(startX,startY,width,width);
+			r = new ExtendedEllipse2DDouble (startX,startY,width,width);
 
 		}
 		else if(x1>x2 && y1<y2)
 		{
 			startX = x1-width;
 			startY = y1;
-			r = new Ellipse2D.Double(startX, startY, width, width);
+			r = new ExtendedEllipse2DDouble (startX, startY, width, width);
 		}
 		else if(x1>x2 && y1>y2)
 		{
 			startX = x1-width;
 			startY = y1-height;
-			r = new Ellipse2D.Double(startX, startY, width, width);
+			r = new ExtendedEllipse2DDouble (startX, startY, width, width);
 		}
 		else
 		{
-			r = new Ellipse2D.Double(x1, y1, width, width);
+			r = new ExtendedEllipse2DDouble (x1, y1, width, width);
 		}
 
 		if( fillOrDraw== 0)
@@ -1190,7 +1214,10 @@ class PaintPanel extends JPanel
 			g2.fill(r);
 			g2.setColor(objectBorderColor);
 			g2.draw(r);
+			r.setFillColor(objectFillColor);
 		}
+		r.setBorderColor(objectBorderColor);
+		allEllipse.add(r);
 
 	}
 

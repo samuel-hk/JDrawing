@@ -72,11 +72,8 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JRadioButton lineShapeButton;
 	ButtonGroup shapeButtonGroup;
 	JButton objectBorderColorButton;
-	JLabel shapeBorderColorLabel;
 	JPanel shapeBorderColorPanel;
-	JLabel shapeBorderThicknessLabel;
 	JPanel shapeBorderThicknessPanel;
-	JLabel shapeFillColorLabel;
 	JPanel shapeFillColorPanel;
 	JButton shapeFillColorButton;
 	JButton shapeNoFillingButton;
@@ -606,13 +603,11 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		shapeBorderColorPanel = new JPanel();
 		shapeBorderColorPanel.setLayout(new BoxLayout(shapeBorderColorPanel,BoxLayout.Y_AXIS));
 //		shapeBorderColorPanel.setBackground(Color.red);
-		shapeBorderColorLabel = new JLabel("Border Color: ");
-		objectBorderColorButton = new JButton("Color");
+		objectBorderColorButton = new JButton("Choose Color");
 		objectBorderColorButton.addActionListener(this);
 
-		shapeBorderColorPanel.add(shapeBorderColorLabel);
 		shapeBorderColorPanel.add(objectBorderColorButton);
-		shapeBorderColorPanel.setBorder(BorderFactory.createTitledBorder("Color"));
+		shapeBorderColorPanel.setBorder(BorderFactory.createTitledBorder("Border Color"));
 		shapeDetailPanel.add(shapeBorderColorPanel);
 
 		//Border Thickness Panel
@@ -620,14 +615,12 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		objectBorderThicknessBox = new JComboBox<>(size);
 		objectBorderThicknessBox.addItemListener(this);
 
-		shapeBorderThicknessLabel = new JLabel("Border Thickness: ");
 		shapeBorderThicknessPanel = new JPanel();
 		shapeBorderThicknessPanel.setLayout(new BoxLayout(shapeBorderThicknessPanel, BoxLayout.Y_AXIS ));
 //		shapeBorderThicknessPanel.setBackground(Color.red);
 
-		shapeBorderThicknessPanel.add(shapeBorderThicknessLabel);
 		shapeBorderThicknessPanel.add(objectBorderThicknessBox);
-		shapeBorderThicknessPanel.setBorder(BorderFactory.createTitledBorder("Thickness"));
+		shapeBorderThicknessPanel.setBorder(BorderFactory.createTitledBorder("Border Thickness"));
 ////		shapeBorderThicknessPanel.setPreferredSize(shapeBorderColorPanel.getPreferredSize());
 //		int panelWidth = (int) shapeBorderThicknessLabel.getPreferredSize().getWidth();
 //		panelWidth += objectBorderThicknessBox.getPreferredSize().getWidth() + 50;
@@ -639,14 +632,13 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		shapeFillColorPanel = new JPanel();
 		shapeFillColorPanel.setLayout(new BoxLayout(shapeFillColorPanel,BoxLayout.Y_AXIS));
 //		shapeFillColorPanel.setBackground(Color.red);
-		shapeFillColorLabel = new JLabel("Filled Object");
 		shapeFillColorButton = new JButton("Choose Color");
 		shapeFillColorButton.addActionListener(this);
 		//shapeNoFillingLabel = new JLabel("Draw Without Filling");
+		shapeFillColorPanel.setBorder(BorderFactory.createTitledBorder("Filling Color"));
 		shapeNoFillingButton = new JButton("Clear Filling");
 		shapeNoFillingButton.addActionListener(this);
 
-		shapeFillColorPanel.add(shapeFillColorLabel);
 		shapeFillColorPanel.add(shapeFillColorButton);
 		shapeFillColorPanel.add(shapeNoFillingButton);
 		shapeDetailPanel.add(shapeFillColorPanel);
@@ -657,6 +649,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		toolBarDetailPanel.revalidate();
 
 	}
+	
 
 	private void saveToFile()
 	{

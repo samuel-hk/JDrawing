@@ -542,6 +542,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		strokeWidthBox.addItemListener(this);
 		toolBarDetailPanel.add(strokeWidthBox);
 
+		// repaint tool bar for new widget to show up
 		toolBarDetailPanel.revalidate();
 	} // end method fillToolBarDetailPanelWithPen
 
@@ -605,22 +606,15 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		shapeBorderThicknessLabel = new JLabel("Border Thickness: ");
 		shapeBorderThicknessPanel = new JPanel();
 		shapeBorderThicknessPanel.setLayout(new BoxLayout(shapeBorderThicknessPanel, BoxLayout.Y_AXIS ));
-//		shapeBorderThicknessPanel.setBackground(Color.red);
 
 		shapeBorderThicknessPanel.add(shapeBorderThicknessLabel);
 		shapeBorderThicknessPanel.add(objectBorderThicknessBox);
 		shapeBorderThicknessPanel.setBorder(BorderFactory.createTitledBorder("Thickness"));
-////		shapeBorderThicknessPanel.setPreferredSize(shapeBorderColorPanel.getPreferredSize());
-//		int panelWidth = (int) shapeBorderThicknessLabel.getPreferredSize().getWidth();
-//		panelWidth += objectBorderThicknessBox.getPreferredSize().getWidth() + 50;
-//		int panelHeight = (int) shapeBorderThicknessLabel.getPreferredSize().getHeight();
-//		shapeBorderThicknessPanel.setMaximumSize(new Dimension(panelWidth, panelHeight));
 		shapeDetailPanel.add(shapeBorderThicknessPanel);
 
 		//object fill color panel
 		shapeFillColorPanel = new JPanel();
 		shapeFillColorPanel.setLayout(new BoxLayout(shapeFillColorPanel,BoxLayout.Y_AXIS));
-//		shapeFillColorPanel.setBackground(Color.red);
 		shapeFillColorLabel = new JLabel("Filled Object");
 		shapeFillColorButton = new JButton("Choose Color");
 		shapeFillColorButton.addActionListener(this);

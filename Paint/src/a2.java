@@ -1020,6 +1020,15 @@ class PaintPanel extends JPanel
 		
 		for(ExtendedRectangle2DDouble rectangle : allRectangles)
 		{
+			g2D.setStroke(rectangle.strokeThickness);
+			g2D.setColor(rectangle.bordercolor);
+			g2D.draw(rectangle);
+			
+			if(rectangle.fillColor != null)
+			{
+				g2D.setColor(rectangle.fillColor);
+				g2D.fill(rectangle);
+			}
 			g2D.setColor(rectangle.bordercolor);
 			g2D.draw(rectangle);
 		}
@@ -1075,20 +1084,23 @@ class PaintPanel extends JPanel
 		if( fillOrDraw== 0)
 		{
 			g2.setColor(objectBorderColor);
-			g2.draw(r);
-			allRectangles.add(r);
 		}
 
 		else
 		{
 			g2.setColor(objectFillColor);
 			g2.fill(r);
-			allRectangles.add(r);
 			g2.setColor(objectBorderColor);
-			g2.draw(r);
-			allRectangles.add(r);
+			
+			r.setBorderColor(objectBorderColor);
+			r.setFillColor(objectFillColor);
 
 		}
+		allRectangles.add(r);
+		r.setBorderThickness(stroke);
+
+		g2.draw(r);
+
 		
 		
 

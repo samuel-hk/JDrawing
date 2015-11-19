@@ -927,7 +927,7 @@ class PaintPanel extends JPanel
 	final public static Color DEFAULT_TEXT_COLOR = Color.RED;
 
 	private ArrayList<ExtendedLine2DDouble> allStrokes;
-	private ArrayList<Rectangle2D> allRectangles;
+	private ArrayList<ExtendedRectangle2DDouble> allRectangles;
 
 	// text properties
 	private Color textColor;
@@ -997,8 +997,9 @@ class PaintPanel extends JPanel
 	{
 		Graphics2D g2D = (Graphics2D) g;
 		
-		for(Rectangle2D rectangle : allRectangles)
+		for(ExtendedRectangle2DDouble rectangle : allRectangles)
 		{
+			g2D.setColor(rectangle.bordercolor);
 			g2D.draw(rectangle);
 		}
 	}
@@ -1023,30 +1024,30 @@ class PaintPanel extends JPanel
 
 		width = Math.abs(x2-x1);
 		height = Math.abs(y2-y1);
-		Rectangle2D.Double r;
+		ExtendedRectangle2DDouble r;
 
 		if(x2>x1 && y2<y1)
 		{
 			startX = x1;
 			startY = y1-height;
-			r = new Rectangle2D.Double(startX,startY,width,height);
+			r = new ExtendedRectangle2DDouble(startX,startY,width,height);
 		}
 		else if(x1>x2 && y1<y2)
 		{
 			startX = x1-width;
 			startY = y1;
-			r = new Rectangle2D.Double(startX, startY, width, height);
+			r = new ExtendedRectangle2DDouble(startX, startY, width, height);
 		}
 		else if(x1>x2 && y1>y2)
 		{
 			startX = x1-width;
 			startY = y1-height;
-			r = new Rectangle2D.Double(startX, startY, width, height);
+			r = new ExtendedRectangle2DDouble(startX, startY, width, height);
 
 		}
 		else
 		{
-			r = new Rectangle2D.Double(x1, y1, width, height);
+			r = new ExtendedRectangle2DDouble(x1, y1, width, height);
 
 		}
 

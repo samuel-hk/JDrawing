@@ -51,6 +51,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JButton strokeColorButton;
 	JPanel strokeColorPanel;
 	JPanel strokeWeightPanel;
+	JLabel penStrokeColorLabel;
 
 	// Text Objects Detail Panel related fields
 	JPanel textDetailPanel;
@@ -63,6 +64,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JCheckBox textBoldCheckBox, textItalicsCheckBox, textUnderLineCheckBox;
 	JComboBox<String> fontFamily;
 	JButton textColorButton;
+	JLabel textColorLabel;
 
 	// Draw Objects Detail Panel
 	JPanel shapeChooserPanel;
@@ -79,6 +81,9 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JButton shapeFillColorButton;
 	JButton shapeNoFillingButton;
 	JLabel shapeNoFillingLabel;
+	JLabel shapeBorderColorLabel;
+	JLabel shapeFillingColorLabel;
+	
 	
 
 	// import image realted fields
@@ -277,7 +282,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		//drawTextLabel = new JLabel("Insert Text");
 		//textDetailPanel.add(drawTextLabel);
 		textContentPanel = new JPanel();
-		textContentPanel.setLayout(new BoxLayout(textContentPanel,BoxLayout.Y_AXIS));
+		//textContentPanel.setLayout(new BoxLayout(textContentPanel,BoxLayout.Y_AXIS));
 		TitledBorder contentTitle;
 		contentTitle = BorderFactory.createTitledBorder("Content");
 		textContentPanel.setBorder(contentTitle);
@@ -290,7 +295,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 		// add text style panel
 		textStylePanel = new JPanel();
-		textStylePanel.setLayout(new BoxLayout(textStylePanel,BoxLayout.Y_AXIS));
+		//textStylePanel.setLayout(new BoxLayout(textStylePanel,BoxLayout.Y_AXIS));
 		TitledBorder styleTitle;
 		styleTitle = BorderFactory.createTitledBorder("Styles");
 		textStylePanel.setBorder(styleTitle);
@@ -310,7 +315,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 		// add text size panel
 		textSizePanel = new JPanel();
-		textSizePanel.setLayout(new BoxLayout(textSizePanel,BoxLayout.Y_AXIS));
+		//textSizePanel.setLayout(new BoxLayout(textSizePanel,BoxLayout.Y_AXIS));
 		TitledBorder sizeTitle;
 		sizeTitle = BorderFactory.createTitledBorder("Size");
 		textSizePanel.setBorder(sizeTitle);
@@ -326,6 +331,12 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		textColorButton = new JButton("Color");
 		textColorButton.addActionListener(this);
 		textColorPanel.add(textColorButton);
+		
+		textColorLabel = new JLabel();
+		textColorLabel.setPreferredSize(new Dimension(30,30));
+		textColorLabel.setOpaque(true);
+		textColorLabel.setBackground(PaintPanel.DEFAULT_TEXT_COLOR);
+		textColorPanel.add(textColorLabel);
 		textDetailPanel.add(textColorPanel);
 
 		// add font panel
@@ -441,6 +452,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 			System.out.println("Color!");
 			Color tmp = JColorChooser.showDialog(this, "Choose Color", Color.black);
 			paintPanel.setTextColor(tmp);
+			textColorLabel.setBackground(tmp);
 		}
 		else if (e.getSource() == importImageButton)
 		{
@@ -490,6 +502,8 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 		// set user selection effective
 		paintPanel.setStrokeColor(tmp);
+		penStrokeColorLabel.setBackground(PaintPanel.strokeColor);
+
 	} // end method setStrokeColor
 
 	private void setBackgroundColor()
@@ -514,6 +528,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 		//set user selection effective
 		paintPanel.setObjectBorderColor(tmp);
+		shapeBorderColorLabel.setBackground(PaintPanel.objectBorderColor);
 	}
 
 	private void setObjectFillColor()
@@ -526,6 +541,8 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 		//set user selection effective
 		paintPanel.setObjectFillColor(tmp);
+		shapeFillingColorLabel.setBackground(PaintPanel.objectFillColor);
+		
 	}
 
 	private void fillToolBarDetailPanelWithPen()
@@ -534,21 +551,34 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		toolBarDetailPanel.removeAll();
 		toolBarDetailPanel.repaint();
 		
-
+		
+		toolBarDetailPanel.setLayout(new BoxLayout(toolBarDetailPanel,BoxLayout.Y_AXIS));
+		toolBarDetailPanel.setBackground(Color.white);
 		// add color chooser
 		strokeColorPanel = new JPanel();
-		strokeColorPanel.setLayout(new BoxLayout(strokeColorPanel,BoxLayout.Y_AXIS));
+		strokeColorPanel.setBackground(Color.white);
+		//strokeColorPanel.setLayout(new BoxLayout(strokeColorPanel,BoxLayout.Y_AXIS));
 		TitledBorder strokeColorTitle;
 		strokeColorTitle = BorderFactory.createTitledBorder("Stroke Color");
 		strokeColorPanel.setBorder(strokeColorTitle);
-		strokeColorButton = new JButton("Color");
+		strokeColorButton = new JButton("Choose Color");
 		strokeColorButton.addActionListener(this);
 		strokeColorPanel.add(strokeColorButton);
+		
+		
+		// add color label
+		penStrokeColorLabel = new JLabel();
+		penStrokeColorLabel.setPreferredSize(new Dimension(50,50));
+		penStrokeColorLabel.setOpaque(true);
+		penStrokeColorLabel.setBackground(PaintPanel.strokeColor);
+		//penStrokeColorLabel.setForeground(Color.red);
+		strokeColorPanel.add(penStrokeColorLabel);
+		
 		toolBarDetailPanel.add(strokeColorPanel);
 
 		// add stroke width setting
 		strokeWeightPanel = new JPanel();
-		strokeWeightPanel.setLayout(new BoxLayout(strokeWeightPanel,BoxLayout.Y_AXIS));
+		//strokeWeightPanel.setLayout(new BoxLayout(strokeWeightPanel,BoxLayout.Y_AXIS));
 		TitledBorder strokeWeightTitle;
 		strokeWeightTitle = BorderFactory.createTitledBorder("Weight");
 		strokeWeightPanel.setBorder(strokeWeightTitle);
@@ -568,12 +598,13 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		toolBarDetailPanel.removeAll();
 		toolBarDetailPanel.repaint();
 
+		//toolBarDetailPanel.setOpaque(true);
 		// panel to hold shape related fields
 		JPanel shapeDetailPanel = new JPanel();
 		shapeDetailPanel.setLayout(new BoxLayout(shapeDetailPanel,BoxLayout.Y_AXIS));
 
 		shapeChooserPanel = new JPanel();
-		shapeChooserPanel.setLayout(new BoxLayout(shapeChooserPanel,BoxLayout.Y_AXIS));
+		//shapeChooserPanel.setLayout(new BoxLayout(shapeChooserPanel,BoxLayout.X_AXIS));
 
 		// add shape button
 		rectangleShapeButton = new JRadioButton("Rectangle");
@@ -603,12 +634,19 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 		//Border Color Panel
 		shapeBorderColorPanel = new JPanel();
-		shapeBorderColorPanel.setLayout(new BoxLayout(shapeBorderColorPanel,BoxLayout.Y_AXIS));
+		//shapeBorderColorPanel.setOpaque(true);
+		//shapeBorderColorPanel.setLayout(new BoxLayout(shapeBorderColorPanel,BoxLayout.Y_AXIS));
 //		shapeBorderColorPanel.setBackground(Color.red);
 		objectBorderColorButton = new JButton("Choose Color");
 		objectBorderColorButton.addActionListener(this);
+		
+		shapeBorderColorLabel = new JLabel();
+		shapeBorderColorLabel.setPreferredSize(new Dimension(50,50));
+		shapeBorderColorLabel.setOpaque(true);
+		shapeBorderColorLabel.setBackground(PaintPanel.objectBorderColor);
 
 		shapeBorderColorPanel.add(objectBorderColorButton);
+		shapeBorderColorPanel.add(shapeBorderColorLabel);
 		shapeBorderColorPanel.setBorder(BorderFactory.createTitledBorder("Border Color"));
 		shapeDetailPanel.add(shapeBorderColorPanel);
 
@@ -618,7 +656,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		objectBorderThicknessBox.addItemListener(this);
 
 		shapeBorderThicknessPanel = new JPanel();
-		shapeBorderThicknessPanel.setLayout(new BoxLayout(shapeBorderThicknessPanel, BoxLayout.Y_AXIS ));
+		//shapeBorderThicknessPanel.setLayout(new BoxLayout(shapeBorderThicknessPanel, BoxLayout.Y_AXIS ));
 
 		shapeBorderThicknessPanel.add(objectBorderThicknessBox);
 		shapeBorderThicknessPanel.setBorder(BorderFactory.createTitledBorder("Thickness"));
@@ -626,16 +664,22 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 		//object fill color panel
 		shapeFillColorPanel = new JPanel();
-		shapeFillColorPanel.setLayout(new BoxLayout(shapeFillColorPanel,BoxLayout.Y_AXIS));
+		//shapeFillColorPanel.setLayout(new BoxLayout(shapeFillColorPanel,BoxLayout.Y_AXIS));
 		shapeFillColorLabel = new JLabel("Filled Object");
 		shapeFillColorButton = new JButton("Choose Color");
 		shapeFillColorButton.addActionListener(this);
 		//shapeNoFillingLabel = new JLabel("Draw Without Filling");
 		shapeFillColorPanel.setBorder(BorderFactory.createTitledBorder("Filling Color"));
+		
+		shapeFillingColorLabel = new JLabel();
+		shapeFillingColorLabel.setPreferredSize(new Dimension(50,50));
+		shapeFillingColorLabel.setOpaque(true);
+		shapeFillingColorLabel.setBackground(PaintPanel.objectFillColor);
 		shapeNoFillingButton = new JButton("Clear Filling");
 		shapeNoFillingButton.addActionListener(this);
 
 		shapeFillColorPanel.add(shapeFillColorButton);
+		shapeFillColorPanel.add(shapeFillingColorLabel);
 		shapeFillColorPanel.add(shapeNoFillingButton);
 		shapeDetailPanel.add(shapeFillColorPanel);
 
@@ -931,16 +975,16 @@ class PaintPanel extends JPanel
 	private ArrayList<ExtendedEllipse2DDouble> allEllipse;
 	
 	// text properties
-	private Color textColor;
+	public static Color textColor;
 
 	// stroke properties
-	private Color strokeColor;
+	public static Color strokeColor;
 	private float strokeWidth;
 
 	// fields for objects
-	private Color objectBorderColor;
+	public static Color objectBorderColor;
 	private float objectBorderThickness;
-	private Color objectFillColor;
+	public static Color objectFillColor;
 	int fillOrDraw = 0;
 
 	// fields for text
@@ -1267,7 +1311,7 @@ class PaintPanel extends JPanel
 		ExtendedLine2DDouble inkSegment = new ExtendedLine2DDouble(x1, y1, x2, y2);
 		inkSegment.color = strokeColor;
 		inkSegment.stroke = stroke;
-
+		
 		// actual drawing
 		g2.draw(inkSegment);
 

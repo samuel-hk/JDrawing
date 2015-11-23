@@ -10,6 +10,8 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class a2 
 {
@@ -23,12 +25,13 @@ public class a2
 
 } // end class a2
 
-class a2Frame extends JFrame implements ActionListener, MouseMotionListener, MouseListener, ItemListener, WindowListener
+class a2Frame extends JFrame implements ActionListener, MouseMotionListener, MouseListener, ItemListener, WindowListener, ChangeListener
 {
 	// fields for status
 	final static int PEN = 0;
 	final static int ERASER = 1;
 	final static int TEXT = 2;
+	final static int IMAGE = 3;
 	String filePath;
 	int currentTool;
 
@@ -83,12 +86,15 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JLabel shapeNoFillingLabel;
 	JLabel shapeBorderColorLabel;
 	JLabel shapeFillingColorLabel;
-	
-	
+
+
 
 	// import image realted fields
 	JPanel importImagePanel;
 	JButton importImageButton;
+	JSlider rotationSlider;
+	JButton importImageToolBarDetailButton;
+	JLabel imageImportLabel;
 
 	JComboBox<Integer> strokeWidthBox;
 	JComboBox<Integer> objectBorderThicknessBox;
@@ -258,6 +264,9 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		case a2Frame.TEXT:
 			setCurrentToolText();
 			break;
+		case a2Frame.IMAGE:
+			setCurrentToolImport();
+			break;
 		} // end switch, set tool according to param
 	} // end method setCurrentTool
 
@@ -331,7 +340,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		textColorButton = new JButton("Color");
 		textColorButton.addActionListener(this);
 		textColorPanel.add(textColorButton);
-		
+
 		textColorLabel = new JLabel();
 		textColorLabel.setPreferredSize(new Dimension(30,30));
 		textColorLabel.setOpaque(true);
@@ -349,7 +358,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 
 		textDetailPanel.add(textFontFamilyPanel);
-//		textDetailPanel.setPreferredSize(toolBarDetailPanel.getSize());
+		//		textDetailPanel.setPreferredSize(toolBarDetailPanel.getSize());
 
 
 
@@ -456,11 +465,24 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		}
 		else if (e.getSource() == importImageButton)
 		{
-			importImage();
+			setCurrentTool(a2Frame.IMAGE);
+		}
+		else if (e.getSource() == importImageToolBarDetailButton)
+		{
+			//			importImage(x, y);
+			//			importImage(x, y);
+			importImageIntoMemory();
 		}
 
 	} // end method actionPerformed
-	
+
+	private void setCurrentToolImport()
+	{
+		currentTool = a2Frame.IMAGE;
+		fillToolBarDetailPanelWithImportImage();
+
+	} // end method setCurrentToolImport
+
 	private void askExitWithoutSaving()
 	{
 		int n = JOptionPane.showConfirmDialog(mainPanel, "Exit Without Saving?", "Warning", JOptionPane.YES_NO_CANCEL_OPTION);
@@ -468,7 +490,49 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		else if (n == JOptionPane.NO_OPTION)	saveToFile();
 	}  // end method askExitWithoutExiting
 
-	private void importImage()
+	private void fillToolBarDetailPanelWithImportImage()
+	{
+		// clear toolbardetail panel
+		toolBarDetailPanel.removeAll();
+		toolBarDetailPanel.repaint();
+
+		// init detail panel
+//		importImagePanel = new JPanel();
+		importImagePanel = new JPanel(new BorderLayout());
+
+		// add roatation slider
+		int defaultRotation = 50;
+		int minROtation = 0;
+		int MaxRotation = 100;
+		rotationSlider = new JSlider(JSlider.HORIZONTAL, minROtation, MaxRotation, defaultRotation);
+		rotationSlider.addChangeListener(this);
+//		importImagePanel.add(rotationSlider);
+		importImagePanel.add(rotationSlider, BorderLayout.NORTH);
+
+		// add import button
+		importImageToolBarDetailButton = new JButton("Import");
+//		importImagePanel.add(importImageToolBarDetailButton);
+		importImagePanel.add(importImageToolBarDetailButton, BorderLayout.SOUTH);
+		importImageToolBarDetailButton.addActionListener(this);
+
+		// add label to show imported image
+		imageImportLabel = new JLabel();
+		imageImportLabel.setVerticalAlignment(JLabel.CENTER);
+		imageImportLabel.setHorizontalAlignment(JLabel.CENTER);
+//		importImagePanel.add(imageImportLabel);
+		importImagePanel.add(imageImportLabel, BorderLayout.CENTER);
+		
+		
+		//		imageImportLabel.setIcon(icon);
+
+		// put import panel to detail panel
+		toolBarDetailPanel.add(importImagePanel);
+		toolBarDetailPanel.revalidate();
+	} // end method fillToolBarDetailPanelWithImportImage
+
+	
+	private BufferedImage importImageCache;
+	private void importImageIntoMemory()
 	{
 
 		// present open file dialog and receive input
@@ -488,8 +552,54 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 			return;
 		}
 
+
+		// read image from path
+		Image img = null;
+		try {
+			img = ImageIO.read(new File(path));
+		} catch (IOException e) {
+			System.out.println("The selected file is not an image file!");
+		}
+		BufferedImage image = (BufferedImage) img;
+		importImageCache = image;
+		
+		// scale image
+		int width = 200;
+		int height = 200;
+		img = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+
+		ImageIcon icon = new ImageIcon(img);
+//		imageImportLabel.setMaximumSize(new Dimension(200, 300));
+		int imageLabelHeight = imageImportLabel.getParent().getHeight() / 10;
+		int imageLabelWidth = imageImportLabel.getParent().getWidth() / 10;
+		imageImportLabel.setIcon(icon);
+//		imageImportLabel.setMaximumSize(new Dimension(imageLabelWidth, imageLabelHeight));
+//		this.repaint();
+//		this.revalidate();
+	} // end method importImageIntoMemory
+
+	private void importImage(int x, int y)
+	{
+
+//		// present open file dialog and receive input
+//		JFileChooser fc = new JFileChooser();
+//		int userInput = fc.showOpenDialog(null);
+//
+//		// cancel open action if user press cancel
+//		if (userInput == JFileChooser.CANCEL_OPTION)	return;
+//
+//		// fetch properties of the file 
+//		String path = "";
+//		try {
+//			path = fc.getSelectedFile().getCanonicalPath();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//			JOptionPane.showMessageDialog(null, "Fail to open file");
+//			return;
+//		}
+
 		// import image to panel
-		paintPanel.importImage(path);
+		paintPanel.importImage(importImageCache, x, y);
 	} // end method importImage
 
 	private void setStrokeColor()
@@ -542,7 +652,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		//set user selection effective
 		paintPanel.setObjectFillColor(tmp);
 		shapeFillingColorLabel.setBackground(PaintPanel.objectFillColor);
-		
+
 	}
 
 	private void fillToolBarDetailPanelWithPen()
@@ -550,8 +660,8 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		// clear everything
 		toolBarDetailPanel.removeAll();
 		toolBarDetailPanel.repaint();
-		
-		
+
+
 		toolBarDetailPanel.setLayout(new BoxLayout(toolBarDetailPanel,BoxLayout.Y_AXIS));
 		toolBarDetailPanel.setBackground(Color.white);
 		// add color chooser
@@ -564,8 +674,8 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		strokeColorButton = new JButton("Choose Color");
 		strokeColorButton.addActionListener(this);
 		strokeColorPanel.add(strokeColorButton);
-		
-		
+
+
 		// add color label
 		penStrokeColorLabel = new JLabel();
 		penStrokeColorLabel.setPreferredSize(new Dimension(50,50));
@@ -573,7 +683,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		penStrokeColorLabel.setBackground(PaintPanel.strokeColor);
 		//penStrokeColorLabel.setForeground(Color.red);
 		strokeColorPanel.add(penStrokeColorLabel);
-		
+
 		toolBarDetailPanel.add(strokeColorPanel);
 
 		// add stroke width setting
@@ -627,7 +737,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		shapeChooserPanel.add(circleShapeButton);
 		shapeChooserPanel.add(lineShapeButton);
 		shapeChooserPanel.setBorder(BorderFactory.createTitledBorder("Shape"));
-//		shapeChooserPanel.setBackground(Color.red);
+		//		shapeChooserPanel.setBackground(Color.red);
 
 		//add subPanel to toolBarDetailPanel
 		shapeDetailPanel.add(shapeChooserPanel);
@@ -636,10 +746,10 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		shapeBorderColorPanel = new JPanel();
 		//shapeBorderColorPanel.setOpaque(true);
 		//shapeBorderColorPanel.setLayout(new BoxLayout(shapeBorderColorPanel,BoxLayout.Y_AXIS));
-//		shapeBorderColorPanel.setBackground(Color.red);
+		//		shapeBorderColorPanel.setBackground(Color.red);
 		objectBorderColorButton = new JButton("Choose Color");
 		objectBorderColorButton.addActionListener(this);
-		
+
 		shapeBorderColorLabel = new JLabel();
 		shapeBorderColorLabel.setPreferredSize(new Dimension(50,50));
 		shapeBorderColorLabel.setOpaque(true);
@@ -670,7 +780,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		shapeFillColorButton.addActionListener(this);
 		//shapeNoFillingLabel = new JLabel("Draw Without Filling");
 		shapeFillColorPanel.setBorder(BorderFactory.createTitledBorder("Filling Color"));
-		
+
 		shapeFillingColorLabel = new JLabel();
 		shapeFillingColorLabel.setPreferredSize(new Dimension(50,50));
 		shapeFillingColorLabel.setOpaque(true);
@@ -684,12 +794,12 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		shapeDetailPanel.add(shapeFillColorPanel);
 
 		toolBarDetailPanel.add(shapeDetailPanel);
-		
+
 		rectangleShapeButton.setSelected(true);
 		toolBarDetailPanel.revalidate();
 
 	}
-	
+
 
 	private void saveToFile()
 	{
@@ -718,7 +828,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 			// get real destination path 
 			String path = fc.getSelectedFile().getCanonicalPath();
 			if ( !path.endsWith(".jpg") )	path += ".jpg";
-			
+
 			// prompt user to overwrite file if file exist
 			File f = new File(path);
 			if (f.exists())
@@ -726,7 +836,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 				int choice = JOptionPane.showConfirmDialog(null, "Are you sure you want to overwrite " + fc.getSelectedFile().getName() + " ?", "Overwrite", JOptionPane.YES_NO_CANCEL_OPTION);
 				if (choice != JOptionPane.YES_OPTION)	return;
 			}
-			
+
 			// write to file and notify user of the action
 			saveHelper(path);
 
@@ -793,7 +903,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 		// test
 		if (currentTool == a2Frame.TEXT)	paintPanel.drawText(textInputField.getText(), (String) fontFamily.getSelectedItem(), (int) pressX, (int) pressY);
-
+		else if (currentTool == a2Frame.IMAGE)	importImage(e.getX(), e.getY());
 
 	} // end method mousePressed
 
@@ -957,6 +1067,21 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 	}
 
+	@Override
+	public void stateChanged(ChangeEvent e)
+	{
+		JSlider source = (JSlider) e.getSource();
+		System.out.println("here!fdfdfsdsd");
+
+
+		if (source == rotationSlider)
+		{
+			double value = (double) source.getValue();
+			//			paintPanel.rotateImage(value);
+		}
+
+	} // end method stateChanged
+
 } // end class a2Frame
 
 class PaintPanel extends JPanel
@@ -973,7 +1098,7 @@ class PaintPanel extends JPanel
 	private ArrayList<ExtendedLine2DDouble> allStrokes;
 	private ArrayList<ExtendedRectangle2DDouble> allRectangles;
 	private ArrayList<ExtendedEllipse2DDouble> allEllipse;
-	
+
 	// text properties
 	public static Color textColor;
 
@@ -1025,11 +1150,11 @@ class PaintPanel extends JPanel
 		drawAllRectangles(g);
 		drawAllEllipses(g);
 	} // end method paintComponent
-	
+
 	public void drawAllEllipses(Graphics g)
 	{
 		Graphics2D g2D = (Graphics2D) g;
-		
+
 		for (ExtendedEllipse2DDouble circle : allEllipse)
 		{
 			if (circle.fillColor != null)
@@ -1037,12 +1162,12 @@ class PaintPanel extends JPanel
 				g2D.setColor(circle.fillColor);
 				g2D.fill(circle);
 			}
-			
+
 			g2D.setStroke(circle.stroke);
 			g2D.setColor(circle.borderColor);
 			g2D.draw(circle);
 		}
-		
+
 	} // end method drawAllEllipses
 
 	public void drawAllStrokes(Graphics g)
@@ -1057,17 +1182,17 @@ class PaintPanel extends JPanel
 		} // end for loop, loop thru and draw back strokes
 
 	} // end method drawAllStrokes
-	
+
 	public void drawAllRectangles(Graphics g)
 	{
 		Graphics2D g2D = (Graphics2D) g;
-		
+
 		for(ExtendedRectangle2DDouble rectangle : allRectangles)
 		{
 			g2D.setStroke(rectangle.strokeThickness);
 			g2D.setColor(rectangle.bordercolor);
 			g2D.draw(rectangle);
-			
+
 			if(rectangle.fillColor != null)
 			{
 				g2D.setColor(rectangle.fillColor);
@@ -1135,7 +1260,7 @@ class PaintPanel extends JPanel
 			g2.setColor(objectFillColor);
 			g2.fill(r);
 			g2.setColor(objectBorderColor);
-			
+
 			r.setBorderColor(objectBorderColor);
 			r.setFillColor(objectFillColor);
 
@@ -1145,8 +1270,8 @@ class PaintPanel extends JPanel
 
 		g2.draw(r);
 
-		
-		
+
+
 
 	}
 
@@ -1205,7 +1330,7 @@ class PaintPanel extends JPanel
 			g2.setColor(objectFillColor);
 			g2.fill(r);
 			g2.setColor(objectBorderColor);
-			
+
 			r.setBorderColor(objectBorderColor);
 			r.setFillColor(objectFillColor);
 		}
@@ -1293,7 +1418,7 @@ class PaintPanel extends JPanel
 		r.color = objectBorderColor;
 		r.stroke = stroke;
 		g2.draw(r);
-		
+
 		allStrokes.add(r);
 	}
 
@@ -1311,7 +1436,7 @@ class PaintPanel extends JPanel
 		ExtendedLine2DDouble inkSegment = new ExtendedLine2DDouble(x1, y1, x2, y2);
 		inkSegment.color = strokeColor;
 		inkSegment.stroke = stroke;
-		
+
 		// actual drawing
 		g2.draw(inkSegment);
 
@@ -1431,21 +1556,50 @@ class PaintPanel extends JPanel
 		setBackground(DEFAULT_BACKGROUND_COLOR);
 	} // end method clearPaintPanel
 
-	public void importImage(String path)
+	public void importImage(BufferedImage image, int x, int y)
 	{
 
-		// read image from path
-		Image img = null;
-		try {
-			img = ImageIO.read(new File(path));
-		} catch (IOException e) {
-			System.out.println("The selected file is not an image file!");
-		}
+		// test
+		//		repaint();
+
+//		// read image from path
+//		Image img = null;
+//		try {
+//			img = ImageIO.read(new File(path));
+//		} catch (IOException e) {
+//			System.out.println("The selected file is not an image file!");
+//		}
+//		BufferedImage image = (BufferedImage) img;
+
+		// try to transform
+		rotateImage(image, 0, x, y);
 
 		// draw image to panel
 		Graphics g = this.getGraphics();
-		g.drawImage(img, 0, 0, null);
+		//		g.drawImage(img, 0, 0, null);
+		Graphics2D g2 = (Graphics2D) g;
+		g2.drawImage(image, at, null);
 
 	} // end method importImage
+
+
+	private AffineTransform at;
+	public void rotateImage(BufferedImage image, int degree, int x, int y)
+	{
+		at = new AffineTransform();
+		//		at.translate(getWidth() /2, getHeight()/2);
+
+		
+		
+		at.translate(x, y);
+		if (degree == 0)	return;
+		
+		
+		at.translate(image.getWidth()/2, image.getHeight()/2);
+		if (degree != 0)	at.rotate(Math.PI/degree);
+		//		at.translate(-100, -600);
+				at.translate(-x, -y);
+		//		System.out.println("jdlsfkjds");
+	} // end method rotateImage
 
 } // end class PaintPanel 

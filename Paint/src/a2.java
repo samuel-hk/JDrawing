@@ -2,6 +2,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
 import java.awt.font.TextAttribute;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
@@ -480,7 +481,9 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	{
 		currentTool = a2Frame.IMAGE;
 		fillToolBarDetailPanelWithImportImage();
-
+		
+		// test
+		importImageIntoMemory();
 	} // end method setCurrentToolImport
 
 	private void askExitWithoutSaving()
@@ -511,7 +514,6 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 		// add import button
 		importImageToolBarDetailButton = new JButton("Import");
-//		importImagePanel.add(importImageToolBarDetailButton);
 		importImagePanel.add(importImageToolBarDetailButton, BorderLayout.SOUTH);
 		importImageToolBarDetailButton.addActionListener(this);
 
@@ -519,11 +521,8 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		imageImportLabel = new JLabel();
 		imageImportLabel.setVerticalAlignment(JLabel.CENTER);
 		imageImportLabel.setHorizontalAlignment(JLabel.CENTER);
-//		importImagePanel.add(imageImportLabel);
 		importImagePanel.add(imageImportLabel, BorderLayout.CENTER);
 		
-		
-		//		imageImportLabel.setIcon(icon);
 
 		// put import panel to detail panel
 		toolBarDetailPanel.add(importImagePanel);
@@ -534,29 +533,32 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	private BufferedImage importImageCache;
 	private void importImageIntoMemory()
 	{
-
-		// present open file dialog and receive input
-		JFileChooser fc = new JFileChooser();
-		int userInput = fc.showOpenDialog(null);
-
-		// cancel open action if user press cancel
-		if (userInput == JFileChooser.CANCEL_OPTION)	return;
-
-		// fetch properties of the file 
-		String path = "";
-		try {
-			path = fc.getSelectedFile().getCanonicalPath();
-		} catch (IOException e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Fail to open file");
-			return;
-		}
-
+		// ebalnle back later
+//		// present open file dialog and receive input
+//		JFileChooser fc = new JFileChooser();
+//		int userInput = fc.showOpenDialog(null);
+//
+//		// cancel open action if user press cancel
+//		if (userInput == JFileChooser.CANCEL_OPTION)	return;
+//
+//		// fetch properties of the file 
+//		String path = "";
+//		try {
+//			path = fc.getSelectedFile().getCanonicalPath();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//			JOptionPane.showMessageDialog(null, "Fail to open file");
+//			return;
+//		}
+//
+//		// test
+//		System.out.println(path);
 
 		// read image from path
 		Image img = null;
 		try {
-			img = ImageIO.read(new File(path));
+			img = ImageIO.read(new File("/eecs/home/cse13185/zzz.png"));
+//			img = ImageIO.read(new File(path));
 		} catch (IOException e) {
 			System.out.println("The selected file is not an image file!");
 		}
@@ -578,28 +580,12 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 //		this.revalidate();
 	} // end method importImageIntoMemory
 
-	private void importImage(int x, int y)
+	private void drawImportedImageOntoPanel(int x, int y)
 	{
 
-//		// present open file dialog and receive input
-//		JFileChooser fc = new JFileChooser();
-//		int userInput = fc.showOpenDialog(null);
-//
-//		// cancel open action if user press cancel
-//		if (userInput == JFileChooser.CANCEL_OPTION)	return;
-//
-//		// fetch properties of the file 
-//		String path = "";
-//		try {
-//			path = fc.getSelectedFile().getCanonicalPath();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//			JOptionPane.showMessageDialog(null, "Fail to open file");
-//			return;
-//		}
-
 		// import image to panel
-		paintPanel.importImage(importImageCache, x, y);
+		paintPanel.drawGivenImageAtLocation(importImageCache, x, y);
+		
 	} // end method importImage
 
 	private void setStrokeColor()
@@ -903,7 +889,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 		// test
 		if (currentTool == a2Frame.TEXT)	paintPanel.drawText(textInputField.getText(), (String) fontFamily.getSelectedItem(), (int) pressX, (int) pressY);
-		else if (currentTool == a2Frame.IMAGE)	importImage(e.getX(), e.getY());
+		else if (currentTool == a2Frame.IMAGE)	drawImportedImageOntoPanel(e.getX(), e.getY());
 
 	} // end method mousePressed
 
@@ -1556,7 +1542,7 @@ class PaintPanel extends JPanel
 		setBackground(DEFAULT_BACKGROUND_COLOR);
 	} // end method clearPaintPanel
 
-	public void importImage(BufferedImage image, int x, int y)
+	public void drawGivenImageAtLocation(BufferedImage image, int x, int y)
 	{
 
 		// test
@@ -1572,7 +1558,7 @@ class PaintPanel extends JPanel
 //		BufferedImage image = (BufferedImage) img;
 
 		// try to transform
-		rotateImage(image, 0, x, y);
+		rotateImage(image, true, 100, x, y);
 
 		// draw image to panel
 		Graphics g = this.getGraphics();
@@ -1580,26 +1566,45 @@ class PaintPanel extends JPanel
 		Graphics2D g2 = (Graphics2D) g;
 		g2.drawImage(image, at, null);
 
+//		double rotationRequired = Math.toRadians (45);
+//		double locationX = image.getWidth() / 2;
+//		double locationY = image.getHeight() / 2;
+//		AffineTransform tx = AffineTransform.getRotateInstance(rotationRequired, locationX, locationY);
+//		AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
+//		tx.translate(x, y);
+////
+////		// Drawing the rotated image at the required drawing locations
+//		g2.drawImage(op.filter(image, null), x, y, null);
+//		g2.drawImage(image, tx, null);
+
 	} // end method importImage
 
 
 	private AffineTransform at;
-	public void rotateImage(BufferedImage image, int degree, int x, int y)
+	public void rotateImage(BufferedImage image, boolean rotate, double degree, int x, int y)
 	{
 		at = new AffineTransform();
 		//		at.translate(getWidth() /2, getHeight()/2);
 
 		
-		
+		// do not rate if rotate false
 		at.translate(x, y);
-		if (degree == 0)	return;
+		if (!rotate)	return;
 		
-		
-		at.translate(image.getWidth()/2, image.getHeight()/2);
-		if (degree != 0)	at.rotate(Math.PI/degree);
+		// 
+//		at.translate(x, y);
+//		at.translate(getWidth(), getHeight());
+//		at.translate(image.getWidth()/2, image.getHeight()/2);
+		at.rotate(80);
+//		at.translate(0, 0);
+//		at.translate(-x, y);
+		at.translate(-image.getWidth(), -image.getHeight());
 		//		at.translate(-100, -600);
-				at.translate(-x, -y);
+//				at.translate(-x, -y);
 		//		System.out.println("jdlsfkjds");
+		
+		
+		
 	} // end method rotateImage
 
 } // end class PaintPanel 

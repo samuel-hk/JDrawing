@@ -516,7 +516,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		importImagePanel = new JPanel(new BorderLayout());
 
 		// add roatation slider
-		int defaultRotation = 0;
+		int defaultRotation = 180;
 		int minROtation = 0;
 		int MaxRotation = 360;
 //		int MaxRotation = 5;
@@ -524,11 +524,11 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		rotationSlider.addChangeListener(this);
 		rotationSlider.setEnabled(false);
 //		importImagePanel.add(rotationSlider);
-		importImagePanel.add(rotationSlider, BorderLayout.NORTH);
+		importImagePanel.add(rotationSlider, BorderLayout.SOUTH);
 
 		// add import button
-		importImageToolBarDetailButton = new JButton("Import");
-		importImagePanel.add(importImageToolBarDetailButton, BorderLayout.SOUTH);
+		importImageToolBarDetailButton = new JButton("Change Import File");
+		importImagePanel.add(importImageToolBarDetailButton, BorderLayout.NORTH);
 		importImageToolBarDetailButton.addActionListener(this);
 
 		// add label to show imported image
@@ -564,9 +564,6 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 			JOptionPane.showMessageDialog(null, "Fail to open file");
 			return;
 		}
-//
-//		// test
-//		System.out.println(path);
 
 		// read image from path
 		Image img = null;
@@ -586,8 +583,8 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 		ImageIcon icon = new ImageIcon(img);
 //		imageImportLabel.setMaximumSize(new Dimension(200, 300));
-		int imageLabelHeight = imageImportLabel.getParent().getHeight() / 10;
-		int imageLabelWidth = imageImportLabel.getParent().getWidth() / 10;
+//		int imageLabelHeight = imageImportLabel.getParent().getHeight() / 10;
+//		int imageLabelWidth = imageImportLabel.getParent().getWidth() / 10;
 		imageImportLabel.setIcon(icon);
 //		imageImportLabel.setMaximumSize(new Dimension(imageLabelWidth, imageLabelHeight));
 //		this.repaint();

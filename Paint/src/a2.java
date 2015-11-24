@@ -109,6 +109,9 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	// Paint Panel
 	PaintPanel paintPanel;
 
+	// test
+	JMenuItem placeholder = new JMenuItem("for testing");
+	
 	public a2Frame()
 	{
 		// init variables to avoid null pointer exception (no real purpose here)
@@ -242,6 +245,10 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		saveAsFileItem.setMnemonic(KeyEvent.VK_S);
 		saveAsFileItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
 
+		// test
+		fileMenu.add(placeholder);
+		placeholder.addActionListener(this);
+		
 		// setup exit
 		fileMenu.addSeparator();
 		exitFileItem = new JMenuItem("Exit");
@@ -474,6 +481,10 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 			//			importImage(x, y);
 			importImageIntoMemory();
 		}
+		else if (e.getSource() == placeholder)
+		{
+			paintPanel.updateImageOnPanel(5);
+		}
 
 	} // end method actionPerformed
 
@@ -506,7 +517,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		// add roatation slider
 		int defaultRotation = 50;
 		int minROtation = 0;
-		int MaxRotation = 100;
+		int MaxRotation = 360;
 		rotationSlider = new JSlider(JSlider.HORIZONTAL, minROtation, MaxRotation, defaultRotation);
 		rotationSlider.addChangeListener(this);
 //		importImagePanel.add(rotationSlider);
@@ -534,22 +545,22 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	private void importImageIntoMemory()
 	{
 		// ebalnle back later
-//		// present open file dialog and receive input
-//		JFileChooser fc = new JFileChooser();
-//		int userInput = fc.showOpenDialog(null);
-//
-//		// cancel open action if user press cancel
-//		if (userInput == JFileChooser.CANCEL_OPTION)	return;
-//
-//		// fetch properties of the file 
-//		String path = "";
-//		try {
-//			path = fc.getSelectedFile().getCanonicalPath();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//			JOptionPane.showMessageDialog(null, "Fail to open file");
-//			return;
-//		}
+		// present open file dialog and receive input
+		JFileChooser fc = new JFileChooser();
+		int userInput = fc.showOpenDialog(null);
+
+		// cancel open action if user press cancel
+		if (userInput == JFileChooser.CANCEL_OPTION)	return;
+
+		// fetch properties of the file 
+		String path = "";
+		try {
+			path = fc.getSelectedFile().getCanonicalPath();
+		} catch (IOException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Fail to open file");
+			return;
+		}
 //
 //		// test
 //		System.out.println(path);
@@ -557,8 +568,8 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		// read image from path
 		Image img = null;
 		try {
-			img = ImageIO.read(new File("/eecs/home/cse13185/zzz.png"));
-//			img = ImageIO.read(new File(path));
+//			img = ImageIO.read(new File("/eecs/home/cse13185/zzz.png"));
+			img = ImageIO.read(new File(path));
 		} catch (IOException e) {
 			System.out.println("The selected file is not an image file!");
 		}
@@ -1062,7 +1073,8 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 		if (source == rotationSlider)
 		{
-			double value = (double) source.getValue();
+			int value = (int) source.getValue();
+			paintPanel.updateImageOnPanel(value);
 			//			paintPanel.rotateImage(value);
 		}
 
@@ -1542,6 +1554,31 @@ class PaintPanel extends JPanel
 		setBackground(DEFAULT_BACKGROUND_COLOR);
 	} // end method clearPaintPanel
 
+	//
+	public void updateImageOnPanel(int rotation)
+	{
+		System.out.println("repaint");
+		repaint();
+		
+		// retrieve properties
+		BufferedImage image = lastImage;
+		int x = lastImageX;
+		int y = lastImageY;
+		
+		// rotate transform
+		rotateImage(image, true, rotation, x, y);
+
+		// draw image to panel
+		Graphics g = this.getGraphics();
+		Graphics2D g2 = (Graphics2D) g;
+		g2.drawImage(image, at, null);
+		
+		System.out.println("completed");
+		
+	} // end method updateImageOnPanel
+	
+	private int lastImageX, lastImageY;
+	private BufferedImage lastImage;
 	public void drawGivenImageAtLocation(BufferedImage image, int x, int y)
 	{
 
@@ -1557,8 +1594,13 @@ class PaintPanel extends JPanel
 //		}
 //		BufferedImage image = (BufferedImage) img;
 
+		// save properties for transform
+		lastImageX = x;
+		lastImageY = y;
+		lastImage = image;
+		
 		// try to transform
-		rotateImage(image, true, 100, x, y);
+		rotateImage(image, false, 100, x, y);
 
 		// draw image to panel
 		Graphics g = this.getGraphics();
@@ -1595,7 +1637,9 @@ class PaintPanel extends JPanel
 //		at.translate(x, y);
 //		at.translate(getWidth(), getHeight());
 //		at.translate(image.getWidth()/2, image.getHeight()/2);
-		at.rotate(80);
+//		at.rotate(degree);
+//		at.rotate(Math.toRadians(degree));
+		at.rotate(degree);
 //		at.translate(0, 0);
 //		at.translate(-x, y);
 		at.translate(-image.getWidth(), -image.getHeight());

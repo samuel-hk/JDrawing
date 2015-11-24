@@ -404,9 +404,6 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	public void actionPerformed(ActionEvent e) 
 	{
 		
-		System.out.println(e.getSource());
-		System.out.println("dfj");
-		
 		if (e.getSource() == newFileItem)
 		{
 			System.out.println("New File Item pressed!");
@@ -522,6 +519,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		int defaultRotation = 0;
 		int minROtation = 0;
 		int MaxRotation = 360;
+//		int MaxRotation = 5;
 		rotationSlider = new JSlider(JSlider.HORIZONTAL, minROtation, MaxRotation, defaultRotation);
 		rotationSlider.addChangeListener(this);
 		rotationSlider.setEnabled(false);
@@ -1127,7 +1125,7 @@ class PaintPanel extends JPanel
 		allStrokes = new ArrayList<>();
 		allRectangles = new ArrayList<>();
 		allEllipse = new ArrayList<>();
-		allImageList = new ArrayList<>();
+		allImage = new ArrayList<>();
 		fontStyle = DEFAULT_STYLE;
 		textShouldBeUnderlined = false;
 
@@ -1153,8 +1151,22 @@ class PaintPanel extends JPanel
 		drawAllStrokes(g);
 		drawAllRectangles(g);
 		drawAllEllipses(g);
+		drawAllImages(g);
 	} // end method paintComponent
 
+	public void drawAllImages(Graphics g)
+	{
+		Graphics2D g2D = (Graphics2D) g;
+		
+		for (ExtendedBufferedImage image : allImage)
+		{
+//			g2D.drawIm
+			g2D.drawImage(image, image.at, null);
+			System.out.println("drawing image");
+		}
+		
+	}
+	
 	public void drawAllEllipses(Graphics g)
 	{
 		Graphics2D g2D = (Graphics2D) g;
@@ -1457,7 +1469,7 @@ class PaintPanel extends JPanel
 		//		FontMetrics fm = g.getFontMetrics();
 
 		// set Font
-		System.out.println("fontStyle: "+fontStyle);
+//		System.out.println("fontStyle: "+fontStyle);
 		Font f = new Font(font, fontStyle, fontSize);
 		if (textShouldBeUnderlined)
 		{
@@ -1544,7 +1556,7 @@ class PaintPanel extends JPanel
 	// test
 	public void setScale()
 	{
-		System.out.println("Scale!");
+//		System.out.println("Scale!");
 		//		AffineTransform tran = AffineTransform.getScaleInstance(3.0, 3.0);
 		Graphics2D g = (Graphics2D) this.getGraphics();
 		//		g.setTransform(tran);
@@ -1563,8 +1575,8 @@ class PaintPanel extends JPanel
 	//
 	public void updateImageOnPanel(int rotation)
 	{
-		System.out.println("repaint");
-//		repaint();
+//		System.out.println("repaint");
+		repaint();
 		
 		// retrieve properties
 		BufferedImage image = lastImage;
@@ -1579,14 +1591,18 @@ class PaintPanel extends JPanel
 		Graphics2D g2 = (Graphics2D) g;
 		g2.drawImage(image, at, null);
 		
-		System.out.println("completed");
+		allImage.remove(lastImage);
+		lastImage = new ExtendedBufferedImage(image, at);
+		allImage.add(lastImage);
+		
+//		System.out.println("completed");
 		
 	} // end method updateImageOnPanel
 	
 	private int lastImageX, lastImageY;
-	private BufferedImage lastImage;
+	private ExtendedBufferedImage lastImage;
 	private AffineTransform at;
-	private ArrayList<ExtendedBufferedImage> allImageList;
+	private ArrayList<ExtendedBufferedImage> allImage;
 	public void drawGivenImageAtLocation(BufferedImage image, int x, int y)
 	{
 
@@ -1615,9 +1631,8 @@ class PaintPanel extends JPanel
 		// save properties for transform
 		lastImageX = x;
 		lastImageY = y;
-		lastImage = image;
-		ExtendedBufferedImage extendImage = new ExtendedBufferedImage(image, at);
-		
+		lastImage = new ExtendedBufferedImage(image, at);
+		allImage.add(lastImage);
 		
 //		double rotationRequired = Math.toRadians (45);
 //		double locationX = image.getWidth() / 2;

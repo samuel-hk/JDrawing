@@ -4,6 +4,10 @@ import java.awt.geom.Ellipse2D;
 
 public class ExtendedEllipse2DDouble extends Ellipse2D.Double
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	Color fillColor;
 	Color borderColor;
 	BasicStroke stroke;

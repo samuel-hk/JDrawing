@@ -4,7 +4,11 @@ import java.awt.geom.Rectangle2D;
 
 public class ExtendedRectangle2DDouble extends Rectangle2D.Double
 {
-	 Color fillColor;
+	 /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	Color fillColor;
 	 Color bordercolor;
 	 BasicStroke strokeThickness;
 	 

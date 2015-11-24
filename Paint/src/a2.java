@@ -505,6 +505,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		fillToolBarDetailPanelWithImportImage();
 		
 		// test
+		importImageCache = null;
 		importImageIntoMemory();
 	} // end method setCurrentToolImport
 
@@ -646,7 +647,9 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 	private void drawImportedImageOntoPanel(int x, int y)
 	{
-
+		// if no image imported exit directly
+		if (importImageCache == null)	return;
+		
 		// import image to panel
 		paintPanel.drawGivenImageAtLocation(importImageCache, x, y);
 		rotationSlider.setEnabled(true);

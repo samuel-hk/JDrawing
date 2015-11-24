@@ -95,9 +95,11 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JPanel importImagePanel;
 	JButton importImageButton;
 	JSlider rotationSlider;
+	JSlider zoomSlider;
 	JButton importImageToolBarDetailButton;
 	JLabel imageImportLabel;
 	JButton resetRotationButton;
+	JButton resetZoomButton;
 
 	JComboBox<Integer> strokeWidthBox;
 	JComboBox<Integer> objectBorderThicknessBox;
@@ -524,10 +526,14 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		imageImportLabel.setHorizontalAlignment(JLabel.CENTER);
 		importImagePanel.add(imageImportLabel, BorderLayout.CENTER);
 		
+		//panel to hold all image properties
+		JPanel imagePropertyPanel = new JPanel();
+		imagePropertyPanel.setLayout(new BoxLayout(imagePropertyPanel,BoxLayout.Y_AXIS));
+		
 		// panel to hold rotation
 		JPanel rotationPanel = new JPanel();
 		rotationPanel.setBorder(BorderFactory.createTitledBorder("Rotation"));
-		importImagePanel.add(rotationPanel, BorderLayout.SOUTH);
+		
 		
 		// add roatation slider
 		int minROtation = 0;
@@ -542,6 +548,33 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		resetRotationButton = new JButton("Reset");
 		resetRotationButton.addActionListener(this);
 		rotationPanel.add(resetRotationButton);
+		
+		
+		
+		
+		// panel to hold zoom in/out
+		JPanel zoomPanel = new JPanel();
+		zoomPanel.setBorder(BorderFactory.createTitledBorder("Zoom"));
+		
+		//add zoom slider
+		zoomSlider = new JSlider(JSlider.HORIZONTAL,1,100,50);
+		zoomSlider.addChangeListener(this);
+		zoomSlider.setEnabled(false);
+		
+		//add reset zoom
+		resetZoomButton = new JButton("Reset");
+		resetZoomButton.addActionListener(this);
+		
+		zoomPanel.add(zoomSlider);
+		zoomPanel.add(resetZoomButton);
+		
+		
+		imagePropertyPanel.add(rotationPanel);
+		imagePropertyPanel.add(zoomPanel);
+		importImagePanel.add(imagePropertyPanel, BorderLayout.SOUTH);
+		
+		
+		
 
 		// put import panel to detail panel
 		toolBarDetailPanel.add(importImagePanel);

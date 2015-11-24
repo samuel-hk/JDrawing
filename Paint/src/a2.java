@@ -520,6 +520,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		
 		// panel to hold rotation
 		JPanel rotationPanel = new JPanel();
+		rotationPanel.setBorder(BorderFactory.createTitledBorder("Rotation"));
 		importImagePanel.add(rotationPanel, BorderLayout.SOUTH);
 		
 		// add roatation slider

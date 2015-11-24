@@ -474,6 +474,11 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		{
 			importImageIntoMemory();
 		}
+		else if (e.getSource() == resetRotationButton)
+		{
+			int reset = -1;
+			paintPanel.updateImageOnPanel(reset);
+		}
 
 	} // end method actionPerformed
 
@@ -500,9 +505,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		toolBarDetailPanel.repaint();
 
 		// init detail panel
-//		importImagePanel = new JPanel();
 		importImagePanel = new JPanel(new BorderLayout());
-
 
 		// add import button
 		importImageToolBarDetailButton = new JButton("Change Import File");
@@ -517,23 +520,21 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		
 		// panel to hold rotation
 		JPanel rotationPanel = new JPanel();
+		importImagePanel.add(rotationPanel, BorderLayout.SOUTH);
 		
 		// add roatation slider
-//		int defaultRotation = 180;
 		int minROtation = 0;
-//		int MaxRotation = 360;
 		int defaultRotation = 7;
 		int MaxRotation = 13;
 		rotationSlider = new JSlider(JSlider.HORIZONTAL, minROtation, MaxRotation, defaultRotation);
 		rotationSlider.addChangeListener(this);
 		rotationSlider.setEnabled(false);
-//		importImagePanel.add(rotationSlider);
-		importImagePanel.add(rotationSlider, BorderLayout.SOUTH);
+		rotationPanel.add(rotationSlider);
 		
 		// add reset rotation
 		resetRotationButton = new JButton("Reset");
-		resetRotationButton.addActionListener(this)
-		;
+		resetRotationButton.addActionListener(this);
+		rotationPanel.add(resetRotationButton);
 
 		// put import panel to detail panel
 		toolBarDetailPanel.add(importImagePanel);
@@ -1606,7 +1607,8 @@ class PaintPanel extends JPanel
 		int y = lastImageY;
 		
 		// rotate transform
-		rotateImage(image, true, rotation, x, y);
+		if (rotation == -1)	rotateImage(image, false, rotation, x, y);
+		else	rotateImage(image, true, rotation, x, y);
 
 		// draw image to panel
 		Graphics g = this.getGraphics();

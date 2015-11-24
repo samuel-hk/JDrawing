@@ -1627,8 +1627,13 @@ class PaintPanel extends JPanel
 		// last action background color
 		else if (undo.lastAction == CustomUndo.BACKGROUND_ACTION)
 		{
-			System.out.println("Background");
 			setBackground(undo.lastBackgroundColor);
+		}
+		
+		else if (undo.lastAction == CustomUndo.IMAGE_ACTION)
+		{
+			allImage.remove(undo.lastImage);
+			System.out.println("Here");
 		}
 		
 		repaint();
@@ -1832,9 +1837,16 @@ class PaintPanel extends JPanel
 		lastImage = new ExtendedBufferedImage(image, at);
 		allImage.add(lastImage);
 		
+		//
+		saveImage(lastImage);
 	} // end method importImage
 
-
+	public void saveImage(ExtendedBufferedImage image)
+	{
+		undo.lastAction = CustomUndo.IMAGE_ACTION;
+		undo.lastImage = image;
+		System.out.println("dfdsf");
+	}
 	
 	public void rotateImage(BufferedImage image, boolean rotate, double degree, int x, int y)
 	{

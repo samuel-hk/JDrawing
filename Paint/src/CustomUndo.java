@@ -8,7 +8,7 @@ public class CustomUndo
 	public static final int ERASER_ACTION = 2;
 	public static final int SHAPE_ACTION = 3;
 	public static final int BACKGROUND_ACTION = 4;
-	public static final int IMAGE_ACTION = 4;
+	public static final int IMAGE_ACTION = 5;
 	
 	// holding recent action objects
 	public ArrayList<ExtendedLine2DDouble> lastStroke;
@@ -16,6 +16,7 @@ public class CustomUndo
 	public ArrayList<ExtendedLine2DDouble> lastErase;
 	public Object lastShape;
 	public Color lastBackgroundColor;
+	public ExtendedBufferedImage lastImage;
 	
 	public int lastAction;
 	

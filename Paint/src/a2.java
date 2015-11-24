@@ -13,6 +13,7 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class a2 
 {
@@ -168,6 +169,9 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		// init tool bar
 		toolBar = new JToolBar();
 		toolBarPanel.add(toolBar);
+		int toolBarRow = 6;
+		int toolBarCol = 2;
+		toolBar.setLayout(new GridLayout(toolBarRow, toolBarCol));
 
 		// clear button
 		clearButton = new JButton("Clear");
@@ -383,6 +387,8 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	private void setCurrentToolEraser()
 	{
 		currentTool = a2Frame.ERASER;
+		toolBarDetailPanel.removeAll();
+		toolBarDetailPanel.repaint();
 	} // end method setCurrentToolEraser
 
 	private void createNewPaint()
@@ -546,9 +552,11 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	private BufferedImage importImageCache;
 	private void importImageIntoMemory()
 	{
-		// ebalnle back later
+
 		// present open file dialog and receive input
 		JFileChooser fc = new JFileChooser();
+		FileNameExtensionFilter ff = new FileNameExtensionFilter("Image FIle", "png", "jpg", "jpeg", "gif");
+		fc.setFileFilter(ff);
 		int userInput = fc.showOpenDialog(null);
 
 		// cancel open action if user press cancel
@@ -569,9 +577,12 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		try {
 //			img = ImageIO.read(new File("/eecs/home/cse13185/zzz.png"));
 			img = ImageIO.read(new File(path));
-		} catch (IOException e) {
+		} catch (Exception e) {
 			System.out.println("The selected file is not an image file!");
+			System.out.println("what");
+			return;
 		}
+		System.out.println("here");
 		BufferedImage image = (BufferedImage) img;
 		importImageCache = image;
 		

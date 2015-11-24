@@ -1157,9 +1157,7 @@ class PaintPanel extends JPanel
 		
 		for (ExtendedBufferedImage image : allImage)
 		{
-//			g2D.drawIm
 			g2D.drawImage(image, image.at, null);
-			System.out.println("drawing image");
 		}
 		
 	}
@@ -1625,13 +1623,18 @@ class PaintPanel extends JPanel
 	
 	public void rotateImage(BufferedImage image, boolean rotate, double degree, int x, int y)
 	{
-		at = new AffineTransform();
 		//		at.translate(getWidth() /2, getHeight()/2);
+		at = new AffineTransform();
 
 		
 		// do not rate if rotate false
 		at.translate(x, y);
 		if (!rotate)	return;
+//		if (!rotate)
+//		{
+//			at.translate(x, y);
+//			return;
+//		}
 		
 		// 
 //		at.translate(x, y);
@@ -1642,7 +1645,8 @@ class PaintPanel extends JPanel
 		at.rotate(degree);
 //		at.translate(0, 0);
 //		at.translate(-x, y);
-		at.translate(-image.getWidth(), -image.getHeight());
+//		at.translate(-image.getWidth(), -image.getHeight());
+//		at.translate(-image.getWidth() / 2, -image.getHeight() / 2);
 		//		at.translate(-100, -600);
 //				at.translate(-x, -y);
 		//		System.out.println("jdlsfkjds");

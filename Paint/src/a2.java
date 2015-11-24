@@ -1564,6 +1564,9 @@ class PaintPanel extends JPanel
 	public void clearPaintPanel()
 	{
 		allStrokes.clear();
+		allEllipse.clear();
+		allImage.clear();
+		allRectangles.clear();
 		repaint();
 
 		setBackground(DEFAULT_BACKGROUND_COLOR);
@@ -1572,7 +1575,7 @@ class PaintPanel extends JPanel
 	//
 	public void updateImageOnPanel(int rotation)
 	{
-//		System.out.println("repaint");
+		// clear old images
 		repaint();
 		
 		// retrieve properties
@@ -1592,8 +1595,6 @@ class PaintPanel extends JPanel
 		lastImage = new ExtendedBufferedImage(image, at);
 		allImage.add(lastImage);
 		
-//		System.out.println("completed");
-		
 	} // end method updateImageOnPanel
 	
 	private int lastImageX, lastImageY;
@@ -1603,19 +1604,6 @@ class PaintPanel extends JPanel
 	public void drawGivenImageAtLocation(BufferedImage image, int x, int y)
 	{
 
-		// test
-		//		repaint();
-
-//		// read image from path
-//		Image img = null;
-//		try {
-//			img = ImageIO.read(new File(path));
-//		} catch (IOException e) {
-//			System.out.println("The selected file is not an image file!");
-//		}
-//		BufferedImage image = (BufferedImage) img;
-
-		
 		// try to transform
 		rotateImage(image, false, 100, x, y);
 
@@ -1631,17 +1619,6 @@ class PaintPanel extends JPanel
 		lastImage = new ExtendedBufferedImage(image, at);
 		allImage.add(lastImage);
 		
-//		double rotationRequired = Math.toRadians (45);
-//		double locationX = image.getWidth() / 2;
-//		double locationY = image.getHeight() / 2;
-//		AffineTransform tx = AffineTransform.getRotateInstance(rotationRequired, locationX, locationY);
-//		AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
-//		tx.translate(x, y);
-////
-////		// Drawing the rotated image at the required drawing locations
-//		g2.drawImage(op.filter(image, null), x, y, null);
-//		g2.drawImage(image, tx, null);
-
 	} // end method importImage
 
 

@@ -96,6 +96,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JSlider rotationSlider;
 	JButton importImageToolBarDetailButton;
 	JLabel imageImportLabel;
+	JButton resetRotationButton;
 
 	JComboBox<Integer> strokeWidthBox;
 	JComboBox<Integer> objectBorderThicknessBox;
@@ -109,8 +110,6 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	// Paint Panel
 	PaintPanel paintPanel;
 
-	// test
-	JMenuItem placeholder = new JMenuItem("for testing");
 	
 	public a2Frame()
 	{
@@ -245,10 +244,6 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		saveAsFileItem.setMnemonic(KeyEvent.VK_S);
 		saveAsFileItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
 
-		// test
-		fileMenu.add(placeholder);
-		placeholder.addActionListener(this);
-		
 		// setup exit
 		fileMenu.addSeparator();
 		exitFileItem = new JMenuItem("Exit");
@@ -467,7 +462,6 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		}
 		else if (e.getSource() == textColorButton)
 		{
-			System.out.println("Color!");
 			Color tmp = JColorChooser.showDialog(this, "Choose Color", Color.black);
 			paintPanel.setTextColor(tmp);
 			textColorLabel.setBackground(tmp);
@@ -478,13 +472,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		}
 		else if (e.getSource() == importImageToolBarDetailButton)
 		{
-			//			importImage(x, y);
-			//			importImage(x, y);
 			importImageIntoMemory();
-		}
-		else if (e.getSource() == placeholder)
-		{
-			paintPanel.updateImageOnPanel(5);
 		}
 
 	} // end method actionPerformed
@@ -515,16 +503,6 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 //		importImagePanel = new JPanel();
 		importImagePanel = new JPanel(new BorderLayout());
 
-		// add roatation slider
-		int defaultRotation = 180;
-		int minROtation = 0;
-		int MaxRotation = 360;
-//		int MaxRotation = 5;
-		rotationSlider = new JSlider(JSlider.HORIZONTAL, minROtation, MaxRotation, defaultRotation);
-		rotationSlider.addChangeListener(this);
-		rotationSlider.setEnabled(false);
-//		importImagePanel.add(rotationSlider);
-		importImagePanel.add(rotationSlider, BorderLayout.SOUTH);
 
 		// add import button
 		importImageToolBarDetailButton = new JButton("Change Import File");
@@ -537,6 +515,25 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		imageImportLabel.setHorizontalAlignment(JLabel.CENTER);
 		importImagePanel.add(imageImportLabel, BorderLayout.CENTER);
 		
+		// panel to hold rotation
+		JPanel rotationPanel = new JPanel();
+		
+		// add roatation slider
+//		int defaultRotation = 180;
+		int minROtation = 0;
+//		int MaxRotation = 360;
+		int defaultRotation = 7;
+		int MaxRotation = 13;
+		rotationSlider = new JSlider(JSlider.HORIZONTAL, minROtation, MaxRotation, defaultRotation);
+		rotationSlider.addChangeListener(this);
+		rotationSlider.setEnabled(false);
+//		importImagePanel.add(rotationSlider);
+		importImagePanel.add(rotationSlider, BorderLayout.SOUTH);
+		
+		// add reset rotation
+		resetRotationButton = new JButton("Reset");
+		resetRotationButton.addActionListener(this)
+		;
 
 		// put import panel to detail panel
 		toolBarDetailPanel.add(importImagePanel);
@@ -1123,6 +1120,7 @@ class PaintPanel extends JPanel
 		allRectangles = new ArrayList<>();
 		allEllipse = new ArrayList<>();
 		allImage = new ArrayList<>();
+		allTextList = new ArrayList<>();
 		fontStyle = DEFAULT_STYLE;
 		textShouldBeUnderlined = false;
 
@@ -1145,12 +1143,32 @@ class PaintPanel extends JPanel
 	public void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
-		drawAllStrokes(g);
 		drawAllRectangles(g);
 		drawAllEllipses(g);
 		drawAllImages(g);
+		drawAllText(g);
+		drawAllStrokes(g);
 	} // end method paintComponent
 
+	public void drawAllText(Graphics g)
+	{
+		Graphics2D g2D = (Graphics2D) g;
+		
+		for (TextOnPanel text : allTextList)
+		{
+			// set Font
+			Font f = text.font;
+			g2D.setFont(f);
+
+			// set text color
+			g2D.setColor(text.textColor);
+
+			// actual draw string
+			g2D.drawString(text.text, text.x, text.y);
+		}
+		
+	} // end method drawAllText
+	
 	public void drawAllImages(Graphics g)
 	{
 		Graphics2D g2D = (Graphics2D) g;
@@ -1455,30 +1473,35 @@ class PaintPanel extends JPanel
 		allStrokes.add(inkSegment);
 	} // end method drawInk
 
+	private ArrayList<TextOnPanel> allTextList;
 	public void drawText(String text, String font, int x, int y)
 	{
-
+		// get grpahics to draw
 		Graphics g = this.getGraphics();
 
-		// test
-		//		FontMetrics fm = g.getFontMetrics();
-
 		// set Font
-//		System.out.println("fontStyle: "+fontStyle);
 		Font f = new Font(font, fontStyle, fontSize);
+		Font finalFont = null;
 		if (textShouldBeUnderlined)
 		{
 			Map attritubes = f.getAttributes();
 			attritubes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
-			g.setFont(f.deriveFont(attritubes));
+			finalFont = f.deriveFont(attritubes);
+			g.setFont(finalFont);
 		}	// end if, font should be underlined
-		else	g.setFont(f);
+		else	finalFont = f;
+		g.setFont(finalFont);
 
 		// set text color, use default if no color selected
-		if (textColor == null)	g.setColor(PaintPanel.DEFAULT_TEXT_COLOR);
-		else	g.setColor(textColor);
+		if (textColor == null)	textColor = PaintPanel.DEFAULT_TEXT_COLOR;
+		g.setColor(textColor);
 
+		// actual draw string
 		g.drawString(text, x, y);
+		
+		// save attritubes for repaint
+		TextOnPanel saveText = new TextOnPanel(text, finalFont, textColor, x, y);
+		allTextList.add(saveText);
 	} // end method drawText
 
 	public void setStrokeColor(Color color)
@@ -1565,6 +1588,7 @@ class PaintPanel extends JPanel
 		allEllipse.clear();
 		allImage.clear();
 		allRectangles.clear();
+		allTextList.clear();
 		repaint();
 
 		setBackground(DEFAULT_BACKGROUND_COLOR);

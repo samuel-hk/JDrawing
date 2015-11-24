@@ -144,7 +144,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		// set application visible
 		pack();
 		setVisible(true);
-
+		
 	} // end constructor a2JFrame
 
 	private void setupPaintPanel()
@@ -403,6 +403,10 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	@Override
 	public void actionPerformed(ActionEvent e) 
 	{
+		
+		System.out.println(e.getSource());
+		System.out.println("dfj");
+		
 		if (e.getSource() == newFileItem)
 		{
 			System.out.println("New File Item pressed!");
@@ -515,11 +519,12 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		importImagePanel = new JPanel(new BorderLayout());
 
 		// add roatation slider
-		int defaultRotation = 50;
+		int defaultRotation = 0;
 		int minROtation = 0;
 		int MaxRotation = 360;
 		rotationSlider = new JSlider(JSlider.HORIZONTAL, minROtation, MaxRotation, defaultRotation);
 		rotationSlider.addChangeListener(this);
+		rotationSlider.setEnabled(false);
 //		importImagePanel.add(rotationSlider);
 		importImagePanel.add(rotationSlider, BorderLayout.NORTH);
 
@@ -596,7 +601,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 		// import image to panel
 		paintPanel.drawGivenImageAtLocation(importImageCache, x, y);
-		
+		rotationSlider.setEnabled(true);
 	} // end method importImage
 
 	private void setStrokeColor()
@@ -1068,11 +1073,11 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	public void stateChanged(ChangeEvent e)
 	{
 		JSlider source = (JSlider) e.getSource();
-		System.out.println("here!fdfdfsdsd");
-
+		
 
 		if (source == rotationSlider)
 		{
+//			paintPanel.repaint();
 			int value = (int) source.getValue();
 			paintPanel.updateImageOnPanel(value);
 			//			paintPanel.rotateImage(value);
@@ -1122,6 +1127,7 @@ class PaintPanel extends JPanel
 		allStrokes = new ArrayList<>();
 		allRectangles = new ArrayList<>();
 		allEllipse = new ArrayList<>();
+		allImageList = new ArrayList<>();
 		fontStyle = DEFAULT_STYLE;
 		textShouldBeUnderlined = false;
 
@@ -1558,7 +1564,7 @@ class PaintPanel extends JPanel
 	public void updateImageOnPanel(int rotation)
 	{
 		System.out.println("repaint");
-		repaint();
+//		repaint();
 		
 		// retrieve properties
 		BufferedImage image = lastImage;
@@ -1579,6 +1585,8 @@ class PaintPanel extends JPanel
 	
 	private int lastImageX, lastImageY;
 	private BufferedImage lastImage;
+	private AffineTransform at;
+	private ArrayList<ExtendedBufferedImage> allImageList;
 	public void drawGivenImageAtLocation(BufferedImage image, int x, int y)
 	{
 
@@ -1594,10 +1602,6 @@ class PaintPanel extends JPanel
 //		}
 //		BufferedImage image = (BufferedImage) img;
 
-		// save properties for transform
-		lastImageX = x;
-		lastImageY = y;
-		lastImage = image;
 		
 		// try to transform
 		rotateImage(image, false, 100, x, y);
@@ -1608,6 +1612,13 @@ class PaintPanel extends JPanel
 		Graphics2D g2 = (Graphics2D) g;
 		g2.drawImage(image, at, null);
 
+		// save properties for transform
+		lastImageX = x;
+		lastImageY = y;
+		lastImage = image;
+		ExtendedBufferedImage extendImage = new ExtendedBufferedImage(image, at);
+		
+		
 //		double rotationRequired = Math.toRadians (45);
 //		double locationX = image.getWidth() / 2;
 //		double locationY = image.getHeight() / 2;
@@ -1622,7 +1633,7 @@ class PaintPanel extends JPanel
 	} // end method importImage
 
 
-	private AffineTransform at;
+	
 	public void rotateImage(BufferedImage image, boolean rotate, double degree, int x, int y)
 	{
 		at = new AffineTransform();

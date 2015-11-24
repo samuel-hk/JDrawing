@@ -59,17 +59,13 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JLabel penStrokeColorLabel;
 
 	// Text Objects Detail Panel related fields
-	JPanel textDetailPanel;
-	JPanel textStylePanel;
-	JPanel textSizePanel;
-	JPanel textContentPanel;
+	JPanel textDetailPanel, textStylePanel, textSizePanel, textContentPanel;
 	JTextField textInputField;
-	JLabel drawTextLabel;
+	JLabel drawTextLabel, textColorLabel;
 	JComboBox<Integer> textSizeBox;
 	JCheckBox textBoldCheckBox, textItalicsCheckBox, textUnderLineCheckBox;
 	JComboBox<String> fontFamily;
 	JButton textColorButton;
-	JLabel textColorLabel;
 
 	// Draw Objects Detail Panel
 	JPanel shapeChooserPanel;
@@ -89,8 +85,6 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JLabel shapeBorderColorLabel;
 	JLabel shapeFillingColorLabel;
 
-
-
 	// import image realted fields
 	JPanel importImagePanel;
 	JButton importImageButton;
@@ -100,11 +94,14 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JLabel imageImportLabel;
 	JButton resetRotationButton;
 	JButton resetZoomButton;
+	
+	// Undo related fields
+	JButton undoButton;
 
 	JComboBox<Integer> strokeWidthBox;
 	JComboBox<Integer> objectBorderThicknessBox;
 
-	//coordinates for mouseEvents
+	// coordinates for mouseEvents
 	public double pressX;
 	double pressY;
 	double releaseX;
@@ -113,7 +110,6 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	// Paint Panel
 	PaintPanel paintPanel;
 
-	
 	public a2Frame()
 	{
 		// init variables to avoid null pointer exception (no real purpose here)
@@ -214,6 +210,14 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		toolBarDetailPanel = new JPanel();
 		toolBarPanel.add(toolBarDetailPanel);
 		toolBarDetailPanel.setLayout(new BoxLayout(toolBarDetailPanel,BoxLayout.Y_AXIS));
+		
+		// undo button
+		undoButton = new JButton("Undo");
+		toolBar.add(undoButton);
+//		undoButton.setBackground(Color.red);
+//		undoButton.setOpaque(true);
+//		undoButton.setBorder(null);
+		undoButton.addActionListener(this);
 
 		// test
 		toolBarDetailPanel.setBackground(Color.red);
@@ -451,6 +455,11 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		{
 			setBackgroundColor();
 		}// end if, changeBackgroundButton
+		else if (e.getSource() == undoButton)
+		{
+//			System.out.println("Undo");
+			paintPanel.undoLastAction();
+		}
 		else if (e.getSource() == strokeColorButton)
 		{
 			setStrokeColor();
@@ -612,26 +621,27 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 			img = ImageIO.read(new File(path));
 		} catch (Exception e) {
 			System.out.println("The selected file is not an image file!");
-			System.out.println("what");
 			return;
 		}
-		System.out.println("here");
 		BufferedImage image = (BufferedImage) img;
 		importImageCache = image;
 		
 		// scale image
 		int width = 200;
 		int height = 200;
-		img = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+		try
+		{
+			img = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+		} catch (Exception e)
+		{
+			System.out.println("The selected file is not an image file!");
+			return;
+		}
 
+		// display image on the toolBarDetailPanel
 		ImageIcon icon = new ImageIcon(img);
-//		imageImportLabel.setMaximumSize(new Dimension(200, 300));
-//		int imageLabelHeight = imageImportLabel.getParent().getHeight() / 10;
-//		int imageLabelWidth = imageImportLabel.getParent().getWidth() / 10;
 		imageImportLabel.setIcon(icon);
-//		imageImportLabel.setMaximumSize(new Dimension(imageLabelWidth, imageLabelHeight));
-//		this.repaint();
-//		this.revalidate();
+		
 	} // end method importImageIntoMemory
 
 	private void drawImportedImageOntoPanel(int x, int y)
@@ -664,8 +674,11 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		// if user did not select a color, stop set color process
 		if (tmp == null) return;
 
+		paintPanel.saveBackgroundColor(tmp);
+		
 		//set user selection effective
 		paintPanel.setBackground(tmp);
+		
 	}
 
 	private void setObjectBorderColor()
@@ -941,9 +954,26 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		pressX = e.getX();
 		pressY = e.getY();
 
-		// test
-		if (currentTool == a2Frame.TEXT)	paintPanel.drawText(textInputField.getText(), (String) fontFamily.getSelectedItem(), (int) pressX, (int) pressY);
+		// writing text on panel
+		if (currentTool == a2Frame.TEXT)
+		{
+			paintPanel.saveText();
+			paintPanel.drawText(textInputField.getText(), (String) fontFamily.getSelectedItem(), (int) pressX, (int) pressY);
+		}
+		
 		else if (currentTool == a2Frame.IMAGE)	drawImportedImageOntoPanel(e.getX(), e.getY());
+		
+		// drawing stroke on panel
+		else if (currentTool == a2Frame.PEN)
+		{
+			paintPanel.startSavingStroke();
+		}
+		
+		// erasing stroke
+		else if (currentTool == a2Frame.ERASER)
+		{
+			paintPanel.startSavingErasedStroke();
+		}
 
 	} // end method mousePressed
 
@@ -955,19 +985,33 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		releaseX = e.getX();
 		releaseY = e.getY();
 
-		//draw rectangle
-		if(currentTool==Cursor.HAND_CURSOR && rectangleShapeButton.isSelected())
-			paintPanel.drawRectangle(pressX, releaseX, pressY, releaseY);
-		//draw oval
-		else if(currentTool == Cursor.HAND_CURSOR && ovalShapeButton.isSelected())
-			paintPanel.drawOval(pressX, releaseX, pressY, releaseY);
-		//draw circle
-		else if(currentTool == Cursor.HAND_CURSOR && circleShapeButton.isSelected())
-			paintPanel.drawCircle(pressX, releaseX, pressY, releaseY);
-		//draw line
-		else if(currentTool == Cursor.HAND_CURSOR && lineShapeButton.isSelected())
-			paintPanel.drawLine(pressX, releaseX, pressY, releaseY);	
+		if (currentTool == Cursor.HAND_CURSOR)
+		{
+			Object shape = null;
+			
+			//draw rectangle
+			if(rectangleShapeButton.isSelected())
+				shape = paintPanel.drawRectangle(pressX, releaseX, pressY, releaseY);
+			//draw oval
+			else if(ovalShapeButton.isSelected())
+				shape = paintPanel.drawOval(pressX, releaseX, pressY, releaseY);
+			//draw circle
+			else if(circleShapeButton.isSelected())
+				shape = paintPanel.drawCircle(pressX, releaseX, pressY, releaseY);
+			//draw line
+			else if(lineShapeButton.isSelected())
+				shape = paintPanel.drawLine(pressX, releaseX, pressY, releaseY);	
+			
+			paintPanel.saveShape(shape);
+			
+		}
 
+		 // test
+//		else if (currentTool == a2Frame.PEN)
+//		{
+//			
+//		}
+		
 	}
 
 	@Override
@@ -998,7 +1042,11 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 
 		// perform draw/erase on the current spot
-		if (currentTool == a2Frame.PEN)	paintPanel.drawInk(oldX, x2, oldY, y2);
+		if (currentTool == a2Frame.PEN)
+		{
+			
+			paintPanel.drawStroke(oldX, x2, oldY, y2);
+		}
 		else if (currentTool == a2Frame.ERASER)	paintPanel.erase(oldX, x2, oldY, y2);
 
 		// save current pointer location as old for next point draw
@@ -1169,6 +1217,7 @@ class PaintPanel extends JPanel
 		allTextList = new ArrayList<>();
 		fontStyle = DEFAULT_STYLE;
 		textShouldBeUnderlined = false;
+		undo = new CustomUndo();
 
 		// init default stokre properties
 		strokeColor = Color.black;
@@ -1280,7 +1329,7 @@ class PaintPanel extends JPanel
 
 
 
-	public void drawRectangle(double x1,double x2,double y1,double y2)
+	public ExtendedRectangle2DDouble drawRectangle(double x1,double x2,double y1,double y2)
 	{
 
 		Graphics2D g2 = (Graphics2D) this.getGraphics();
@@ -1344,13 +1393,12 @@ class PaintPanel extends JPanel
 		r.setBorderThickness(stroke);
 
 		g2.draw(r);
-
-
-
+		
+		return r;
 
 	}
 
-	public void drawOval(double x1,double x2,double y1, double y2)
+	public ExtendedEllipse2DDouble drawOval(double x1,double x2,double y1, double y2)
 	{
 		Graphics2D g2 = (Graphics2D) this.getGraphics();
 
@@ -1412,9 +1460,11 @@ class PaintPanel extends JPanel
 		allEllipse.add(r);
 		r.setStroke(stroke);
 		g2.draw(r);
+		
+		return r;
 	}
 
-	public void drawCircle(double x1, double x2, double y1, double y2)
+	public ExtendedEllipse2DDouble drawCircle(double x1, double x2, double y1, double y2)
 	{
 		Graphics2D g2 = (Graphics2D)this.getGraphics();
 
@@ -1476,10 +1526,12 @@ class PaintPanel extends JPanel
 		r.setStroke(stroke);
 		r.setBorderColor(objectBorderColor);
 		allEllipse.add(r);
+		
+		return r;
 
 	}
 
-	public void drawLine(double x1, double x2, double y1, double y2)
+	public ExtendedLine2DDouble drawLine(double x1, double x2, double y1, double y2)
 	{
 		Graphics2D g2 = (Graphics2D)this.getGraphics();
 
@@ -1495,9 +1547,94 @@ class PaintPanel extends JPanel
 		g2.draw(r);
 
 		allStrokes.add(r);
+		
+		return r;
 	}
 
-	public void drawInk(int x1, int x2, int y1, int y2)
+	CustomUndo undo;
+	public void startSavingStroke()
+	{
+		undo.lastAction = CustomUndo.STROKE_ACTION;
+		undo.lastStroke = new ArrayList<>();
+	} // end method saveStroke
+	
+	public void saveText()
+	{
+		undo.lastAction = CustomUndo.TEXT_ACTION;
+		undo.lastText = new ArrayList<>();
+	} // end method saveText
+	
+	public void saveBackgroundColor(Color color)
+	{
+		
+		undo.lastAction = CustomUndo.BACKGROUND_ACTION;
+//		undo.lastBackgroundColor = color;
+		undo.lastBackgroundColor = this.getBackground();
+	} // end method saveBackgroundColor
+	
+	public void startSavingErasedStroke()
+	{
+		undo.lastAction = CustomUndo.ERASER_ACTION;
+		undo.lastErase = new ArrayList<>();
+	} // end method saveErasedStroke
+	
+	public void saveShape(Object shape)
+	{
+		undo.lastAction = CustomUndo.SHAPE_ACTION;
+		undo.lastShape = shape;
+	}
+	
+	public void undoLastAction()
+	{
+		
+		// last action is stroke
+		if (undo.lastAction == CustomUndo.STROKE_ACTION)
+		{
+			for (ExtendedLine2DDouble stroke : undo.lastStroke)
+			{
+				allStrokes.remove(stroke);
+			}
+			
+		} // end if, last action is stroke
+		
+		// last action is text
+		else if (undo.lastAction == CustomUndo.TEXT_ACTION)
+		{
+			for (TextOnPanel text : undo.lastText)
+			{
+				allTextList.remove(text);
+			}
+			
+		} // end if, last action text
+		
+		// last action eraser
+		else if (undo.lastAction == CustomUndo.ERASER_ACTION)
+		{
+			for (ExtendedLine2DDouble stroke : undo.lastErase)
+			{
+				allStrokes.add(stroke);
+			}
+		} // end if, last action eraser
+		
+		// last action shape
+		else if (undo.lastAction == CustomUndo.SHAPE_ACTION)
+		{
+			allEllipse.remove(undo.lastShape);
+			allRectangles.remove(undo.lastShape);
+			allStrokes.remove(undo.lastShape);
+		}
+		
+		// last action background color
+		else if (undo.lastAction == CustomUndo.BACKGROUND_ACTION)
+		{
+			System.out.println("Background");
+			setBackground(undo.lastBackgroundColor);
+		}
+		
+		repaint();
+	} // end method undoLastAction
+	
+	public void drawStroke(int x1, int x2, int y1, int y2)
 	{
 		// get graphics to draw
 		Graphics2D g2 = (Graphics2D) this.getGraphics();
@@ -1517,8 +1654,11 @@ class PaintPanel extends JPanel
 
 		// save drawing for windows resize
 		allStrokes.add(inkSegment);
-	} // end method drawInk
-
+		
+		// save stroke for undo
+		undo.lastStroke.add(inkSegment);
+	} // end method drawStroke
+	
 	private ArrayList<TextOnPanel> allTextList;
 	public void drawText(String text, String font, int x, int y)
 	{
@@ -1545,9 +1685,10 @@ class PaintPanel extends JPanel
 		// actual draw string
 		g.drawString(text, x, y);
 		
-		// save attritubes for repaint
+		// save attritubes for repaint and undo
 		TextOnPanel saveText = new TextOnPanel(text, finalFont, textColor, x, y);
 		allTextList.add(saveText);
+		undo.lastText.add(saveText);
 	} // end method drawText
 
 	public void setStrokeColor(Color color)
@@ -1591,7 +1732,7 @@ class PaintPanel extends JPanel
 		ExtendedLine2DDouble line = null;
 		for (int i = 0; i < allStrokes.size(); i++)
 		{
-			// fetch the nth elemetn
+			// fetch the nth element
 			line = allStrokes.get(i);
 
 			// fetch line properties
@@ -1609,6 +1750,9 @@ class PaintPanel extends JPanel
 
 			// remove line if conditions are met
 			if (samePoint)	allStrokes.remove(line);
+			
+			// save line for undo
+			undo.lastErase.add(line);
 
 		}
 
@@ -1725,5 +1869,5 @@ class PaintPanel extends JPanel
 		
 		
 	} // end method rotateImage
-
+	
 } // end class PaintPanel 

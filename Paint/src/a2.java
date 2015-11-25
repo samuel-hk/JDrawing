@@ -94,6 +94,9 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JLabel imageImportLabel;
 	JButton resetRotationButton;
 	JButton resetZoomButton;
+	int minROtation = 0;
+	int defaultRotation = 7;
+	int MaxRotation = 13;
 	
 	// Undo related fields
 	JButton undoButton;
@@ -493,8 +496,9 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		}
 		else if (e.getSource() == resetRotationButton)
 		{
-			int reset = -1;
-			paintPanel.updateImageOnPanel(reset);
+			int rotation = -1; // -1 mean do not rotate
+			rotationSlider.setValue(defaultRotation);
+			paintPanel.updateImageOnPanel(rotation);
 		}
 
 	} // end method actionPerformed
@@ -546,9 +550,6 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		
 		
 		// add roatation slider
-		int minROtation = 0;
-		int defaultRotation = 7;
-		int MaxRotation = 13;
 		rotationSlider = new JSlider(JSlider.HORIZONTAL, minROtation, MaxRotation, defaultRotation);
 		rotationSlider.addChangeListener(this);
 		rotationSlider.setEnabled(false);
@@ -559,7 +560,8 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		resetRotationButton.addActionListener(this);
 		rotationPanel.add(resetRotationButton);
 		
-		
+		// test
+		rotationSlider.addMouseMotionListener(this);
 		
 		
 		// panel to hold zoom in/out
@@ -943,12 +945,14 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		// TODO Auto-generated method stub
 
 
-
+		System.out.println("mouse clicked");
+			
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) 
 	{
+		System.out.println("mouse pressed");
 		// TODO Auto-generated method stub
 		oldX = e.getX();
 		oldY = e.getY();

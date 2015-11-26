@@ -560,7 +560,9 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		resetRotationButton.addActionListener(this);
 		rotationPanel.add(resetRotationButton);
 		
-		
+		// test
+		rotationSlider.addMouseListener(this);
+		rotationSlider.addMouseMotionListener(this);
 		
 		
 		// panel to hold zoom in/out
@@ -950,6 +952,14 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	@Override
 	public void mousePressed(MouseEvent e) 
 	{
+		// test
+		if (e.getSource() == rotationSlider)
+		{
+			System.out.println("start rotating");
+			paintPanel.pushRotatedImageToUndoStact();
+			return;
+		}
+		
 		// TODO Auto-generated method stub
 		oldX = e.getX();
 		oldY = e.getY();
@@ -982,8 +992,15 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	} // end method mousePressed
 
 	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
+	public void mouseReleased(MouseEvent e) 
+	{
+		// test
+		if (e.getSource() == rotationSlider)
+		{
+			System.out.println("exiting rotation");
+//			paintPanel.pushRotatedImageToUndoStact();
+			return;
+		}
 
 		//get coordinates when mouse is released
 		releaseX = e.getX();
@@ -1043,6 +1060,9 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	@Override
 	public void mouseDragged(MouseEvent e) 
 	{
+		
+//		System.out.println("dragging!");
+		
 		// do not draw, if mouse left button not clicked
 		if (!SwingUtilities.isLeftMouseButton(e))	return;
 
@@ -1614,7 +1634,11 @@ class PaintPanel extends JPanel
 	public void undoLastAction()
 	{
 		// nothing to undo, exit undo
-		if (undoStack.isEmpty())	return;
+		if (undoStack.isEmpty())	
+		{
+			JOptionPane.showMessageDialog(null, "Nothing to Undo");
+			return;
+		}
 		
 		CustomUndo lastUndo = undoStack.pop();
 		
@@ -1665,7 +1689,15 @@ class PaintPanel extends JPanel
 		else if (lastUndo.lastAction == CustomUndo.IMAGE_ACTION)
 		{
 			allImage.remove(lastUndo.lastImage);
-//			System.out.println("Here");
+		}
+		
+		else if (lastUndo.lastAction == CustomUndo.IMAGE_ROTATION_ACTION)
+		{
+			allImage.remove(allImage.size() - 1);
+			System.out.println("adding before roatae image back");
+			allImage.remove(lastImage);
+			allImage.add(lastUndo.lastImage);
+			lastImage = lastUndo.lastImage;
 		}
 		
 		repaint();
@@ -1844,6 +1876,12 @@ class PaintPanel extends JPanel
 		Graphics2D g2 = (Graphics2D) g;
 		g2.drawImage(image, at, null);
 		
+		// test
+//		ExtendedBufferedImage oldImage = undoStack.peek().lastImage;
+//		allImage.remove(oldImage);
+//		ExtendedBufferedImage newImage = new ExtendedBufferedImage(image, at);		
+//		allImage.add(newImage);
+		
 		allImage.remove(lastImage);
 		lastImage = new ExtendedBufferedImage(image, at);
 		allImage.add(lastImage);
@@ -1872,18 +1910,33 @@ class PaintPanel extends JPanel
 		lastImage = new ExtendedBufferedImage(image, at);
 		allImage.add(lastImage);
 		
-		//
-		saveImage(lastImage);
+		// push to undo stack for "undo button"
+		pushImageToUndoStack(lastImage);
 	} // end method importImage
 
-	public void saveImage(ExtendedBufferedImage image)
+	public void pushImageToUndoStack(ExtendedBufferedImage image)
 	{
 		undo = new CustomUndo();
 		undo.lastAction = CustomUndo.IMAGE_ACTION;
 		undo.lastImage = image;
 		undoStack.push(undo);
 		undo = new CustomUndo();
-	}
+	} // end method saveImageToUndoStack
+	
+	public void pushRotatedImageToUndoStact()
+	{
+		ExtendedBufferedImage image = allImage.get(allImage.size() - 1);
+		undo = new CustomUndo();
+		undo.lastAction = CustomUndo.IMAGE_ROTATION_ACTION;
+		undo.lastImage = image;
+		undoStack.push(undo);
+		undo = new CustomUndo();
+	} // end method pushRotatedImageToUndoStact
+	
+//	public void prepareImageRotationUndo()
+//	{
+//		
+//	} // end method
 	
 	public void rotateImage(BufferedImage image, boolean rotate, double degree, int x, int y)
 	{

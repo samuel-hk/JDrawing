@@ -9,6 +9,7 @@ public class CustomUndo
 	public static final int SHAPE_ACTION = 3;
 	public static final int BACKGROUND_ACTION = 4;
 	public static final int IMAGE_ACTION = 5;
+	public static final int IMAGE_ROTATION_ACTION = 6;
 	
 	// holding recent action objects
 	public ArrayList<ExtendedLine2DDouble> lastStroke;

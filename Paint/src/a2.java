@@ -1588,10 +1588,11 @@ class PaintPanel extends JPanel
 	
 	public void saveBackgroundColor(Color color)
 	{
-		
+		undo = new CustomUndo();
 		undo.lastAction = CustomUndo.BACKGROUND_ACTION;
-//		undo.lastBackgroundColor = color;
 		undo.lastBackgroundColor = this.getBackground();
+		undoStack.push(undo);
+		undo = new CustomUndo();
 	} // end method saveBackgroundColor
 	
 	public void startSavingErasedStroke()
@@ -1656,9 +1657,9 @@ class PaintPanel extends JPanel
 		}
 		
 		// last action background color
-		else if (undo.lastAction == CustomUndo.BACKGROUND_ACTION)
+		else if (lastUndo.lastAction == CustomUndo.BACKGROUND_ACTION)
 		{
-			setBackground(undo.lastBackgroundColor);
+			setBackground(lastUndo.lastBackgroundColor);
 		}
 		
 		else if (undo.lastAction == CustomUndo.IMAGE_ACTION)

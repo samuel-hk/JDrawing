@@ -1618,7 +1618,7 @@ class PaintPanel extends JPanel
 		
 		CustomUndo lastUndo = undoStack.pop();
 		
-		// last action is stroke
+		// last action stroke
 		if (lastUndo.lastAction == CustomUndo.STROKE_ACTION)
 		{
 			System.out.println("Undo1");
@@ -1637,7 +1637,7 @@ class PaintPanel extends JPanel
 			}
 		} // end if, last action eraser
 		
-		// last action is text
+		// last action text
 		else if (lastUndo.lastAction == CustomUndo.TEXT_ACTION)
 		{
 			for (TextOnPanel text : lastUndo.lastText)
@@ -1662,10 +1662,10 @@ class PaintPanel extends JPanel
 			setBackground(lastUndo.lastBackgroundColor);
 		}
 		
-		else if (undo.lastAction == CustomUndo.IMAGE_ACTION)
+		else if (lastUndo.lastAction == CustomUndo.IMAGE_ACTION)
 		{
-			allImage.remove(undo.lastImage);
-			System.out.println("Here");
+			allImage.remove(lastUndo.lastImage);
+//			System.out.println("Here");
 		}
 		
 		repaint();
@@ -1878,8 +1878,11 @@ class PaintPanel extends JPanel
 
 	public void saveImage(ExtendedBufferedImage image)
 	{
+		undo = new CustomUndo();
 		undo.lastAction = CustomUndo.IMAGE_ACTION;
 		undo.lastImage = image;
+		undoStack.push(undo);
+		undo = new CustomUndo();
 	}
 	
 	public void rotateImage(BufferedImage image, boolean rotate, double degree, int x, int y)

@@ -1603,8 +1603,11 @@ class PaintPanel extends JPanel
 	
 	public void saveShape(Object shape)
 	{
+		undo = new CustomUndo();
 		undo.lastAction = CustomUndo.SHAPE_ACTION;
 		undo.lastShape = shape;
+		undoStack.push(undo);
+		undo = new CustomUndo();
 	}
 	
 	public void undoLastAction()
@@ -1644,11 +1647,12 @@ class PaintPanel extends JPanel
 		} // end if, last action text
 		
 		// last action shape
-		else if (undo.lastAction == CustomUndo.SHAPE_ACTION)
+		else if (lastUndo.lastAction == CustomUndo.SHAPE_ACTION)
 		{
-			allEllipse.remove(undo.lastShape);
-			allRectangles.remove(undo.lastShape);
-			allStrokes.remove(undo.lastShape);
+			Object lastShape = lastUndo.lastShape;
+			allEllipse.remove(lastShape);
+			allRectangles.remove(lastShape);
+			allStrokes.remove(lastShape);
 		}
 		
 		// last action background color

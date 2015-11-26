@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Stack;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -1010,10 +1011,10 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		}
 
 		 // test
-//		else if (currentTool == a2Frame.PEN)
-//		{
-//			
-//		}
+		else if (currentTool == a2Frame.PEN)
+		{
+			paintPanel.endSavingStroke();
+		}
 		
 	}
 
@@ -1209,6 +1210,9 @@ class PaintPanel extends JPanel
 	int fontSize = 14;
 	boolean textShouldBeUnderlined;
 	int DEFAULT_STYLE = Font.PLAIN;
+	
+	// undo fields
+	Stack<CustomUndo> undoStack;
 
 	PaintPanel()
 	{
@@ -1221,6 +1225,7 @@ class PaintPanel extends JPanel
 		fontStyle = DEFAULT_STYLE;
 		textShouldBeUnderlined = false;
 		undo = new CustomUndo();
+		undoStack = new Stack<>();
 
 		// init default stokre properties
 		strokeColor = Color.black;
@@ -1557,9 +1562,16 @@ class PaintPanel extends JPanel
 	CustomUndo undo;
 	public void startSavingStroke()
 	{
+		undo = new CustomUndo();
 		undo.lastAction = CustomUndo.STROKE_ACTION;
 		undo.lastStroke = new ArrayList<>();
 	} // end method saveStroke
+	
+	public void endSavingStroke()
+	{
+		undoStack.push(undo);
+		undo = new CustomUndo();
+	} // end method 
 	
 	public void saveText()
 	{
@@ -1589,11 +1601,16 @@ class PaintPanel extends JPanel
 	
 	public void undoLastAction()
 	{
+		// nothing to undo, exit undo
+		if (undoStack.isEmpty())	return;
+		
+		CustomUndo lastUndo = undoStack.pop();
 		
 		// last action is stroke
-		if (undo.lastAction == CustomUndo.STROKE_ACTION)
+		if (lastUndo.lastAction == CustomUndo.STROKE_ACTION)
 		{
-			for (ExtendedLine2DDouble stroke : undo.lastStroke)
+			System.out.println("Undo1");
+			for (ExtendedLine2DDouble stroke : lastUndo.lastStroke)
 			{
 				allStrokes.remove(stroke);
 			}

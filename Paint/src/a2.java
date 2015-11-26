@@ -1014,6 +1014,12 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		else if (currentTool == a2Frame.PEN)
 		{
 			paintPanel.endSavingStroke();
+		} 
+		
+		// end saving onto undo stacks
+		else if (currentTool == a2Frame.ERASER)
+		{
+			paintPanel.endSavingStroke();
 		}
 		
 	}
@@ -1589,6 +1595,7 @@ class PaintPanel extends JPanel
 	
 	public void startSavingErasedStroke()
 	{
+		undo = new CustomUndo();
 		undo.lastAction = CustomUndo.ERASER_ACTION;
 		undo.lastErase = new ArrayList<>();
 	} // end method saveErasedStroke
@@ -1617,6 +1624,15 @@ class PaintPanel extends JPanel
 			
 		} // end if, last action is stroke
 		
+		// last action eraser
+		else if (lastUndo.lastAction == CustomUndo.ERASER_ACTION)
+		{
+			for (ExtendedLine2DDouble stroke : lastUndo.lastErase)
+			{
+				allStrokes.add(stroke);
+			}
+		} // end if, last action eraser
+		
 		// last action is text
 		else if (undo.lastAction == CustomUndo.TEXT_ACTION)
 		{
@@ -1626,15 +1642,6 @@ class PaintPanel extends JPanel
 			}
 			
 		} // end if, last action text
-		
-		// last action eraser
-		else if (undo.lastAction == CustomUndo.ERASER_ACTION)
-		{
-			for (ExtendedLine2DDouble stroke : undo.lastErase)
-			{
-				allStrokes.add(stroke);
-			}
-		} // end if, last action eraser
 		
 		// last action shape
 		else if (undo.lastAction == CustomUndo.SHAPE_ACTION)

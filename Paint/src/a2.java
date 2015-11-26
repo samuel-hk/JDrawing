@@ -1581,6 +1581,7 @@ class PaintPanel extends JPanel
 	
 	public void saveText()
 	{
+		undo = new CustomUndo();
 		undo.lastAction = CustomUndo.TEXT_ACTION;
 		undo.lastText = new ArrayList<>();
 	} // end method saveText
@@ -1621,7 +1622,6 @@ class PaintPanel extends JPanel
 			{
 				allStrokes.remove(stroke);
 			}
-			
 		} // end if, last action is stroke
 		
 		// last action eraser
@@ -1634,9 +1634,9 @@ class PaintPanel extends JPanel
 		} // end if, last action eraser
 		
 		// last action is text
-		else if (undo.lastAction == CustomUndo.TEXT_ACTION)
+		else if (lastUndo.lastAction == CustomUndo.TEXT_ACTION)
 		{
-			for (TextOnPanel text : undo.lastText)
+			for (TextOnPanel text : lastUndo.lastText)
 			{
 				allTextList.remove(text);
 			}
@@ -1721,6 +1721,9 @@ class PaintPanel extends JPanel
 		TextOnPanel saveText = new TextOnPanel(text, finalFont, textColor, x, y);
 		allTextList.add(saveText);
 		undo.lastText.add(saveText);
+		
+		undoStack.push(undo);
+		undo = new CustomUndo();
 	} // end method drawText
 
 	public void setStrokeColor(Color color)
@@ -1872,7 +1875,6 @@ class PaintPanel extends JPanel
 	{
 		undo.lastAction = CustomUndo.IMAGE_ACTION;
 		undo.lastImage = image;
-		System.out.println("dfdsf");
 	}
 	
 	public void rotateImage(BufferedImage image, boolean rotate, double degree, int x, int y)

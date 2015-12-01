@@ -1,26 +1,42 @@
-import java.awt.*;	
+/*
+import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
 import java.awt.font.TextAttribute;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Stack;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-public class a2 
+public class a2New 
 {
 
-	public static void main(String[] args)
-	{
+	public static void main(String[] args) {
+
+		try {
+			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+				if ("Nimbus".equals(info.getName())) {
+					javax.swing.UIManager.setLookAndFeel(info.getClassName());
+					break;
+				}
+			}
+		} catch (Exception ex) {
+			System.out.println("Ex: " + ex);
+		}
+
 		a2Frame a2 = new a2Frame();
 		a2.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		System.out.println("Up and running!!");
@@ -28,8 +44,94 @@ public class a2
 
 } // end class a2
 
-class a2Frame extends JFrame implements ActionListener, MouseMotionListener, MouseListener, ItemListener, WindowListener, ChangeListener
+	// fields for status
+//	final static int PEN = 0;
+//	final static int ERASER = 1;
+//	final static int TEXT = 2;
+//	final static int IMAGE = 3;
+//	String filePath;
+//	int currentTool;
+//
+//	// frame main panel field
+//	JPanel mainPanel;
+//
+//	// Menu Bar and related fields
+//	JMenuBar menuBar;
+//	JMenu fileMenu;
+//	JMenuItem saveFileItem, saveAsFileItem;
+//	JMenuItem exitFileItem;
+//	JMenuItem newFileItem;
+//
+//	// Tool Bar and related fields
+//	JToolBar toolBar;
+//	JButton clearButton, strokeButton, earseButton, objectButton, changeBackgroundButton;
+//	JButton textButton;
+//	JPanel toolBarDetailPanel;
+//	JPanel toolBarPanel;
+//	JButton strokeColorButton;
+//	JPanel strokeColorPanel;
+//	JPanel strokeWeightPanel;
+//	JLabel penStrokeColorLabel;
+//
+//	// Text Objects Detail Panel related fields
+//	JPanel textDetailPanel, textStylePanel, textSizePanel, textContentPanel;
+//	JTextField textInputField;
+//	JLabel drawTextLabel, textColorLabel;
+//	JComboBox<Integer> textSizeBox;
+//	JCheckBox textBoldCheckBox, textItalicsCheckBox, textUnderLineCheckBox;
+//	JComboBox<String> fontFamily;
+//	JButton textColorButton;
+//
+//	// Draw Objects Detail Panel
+//	JPanel shapeChooserPanel;
+//	JRadioButton rectangleShapeButton;
+//	JRadioButton ovalShapeButton;
+//	JRadioButton circleShapeButton;
+//	JRadioButton lineShapeButton;
+//	ButtonGroup shapeButtonGroup;
+//	JButton objectBorderColorButton;
+//	JPanel shapeBorderColorPanel;
+//	JPanel shapeBorderThicknessPanel;
+//	JLabel shapeFillColorLabel;
+//	JPanel shapeFillColorPanel;
+//	JButton shapeFillColorButton;
+//	JButton shapeNoFillingButton;
+//	JLabel shapeNoFillingLabel;
+//	JLabel shapeBorderColorLabel;
+//	JLabel shapeFillingColorLabel;
+//
+//	// import image realted fields
+//	JPanel importImagePanel;
+//	JButton importImageButton;
+//	
+//	JSlider zoomSlider;ima
+//	
+//	
+//	
+//	
+//
+//	// Undo related fields
+//	JButton undoButton;
+//
+//	JComboBox<Integer> strokeWidthBox;
+//	JComboBox<Integer> objectBorderThicknessBox;
+//
+//	// coordinates for mouseEvents
+//	public double pressX;
+//	double pressY;
+//	double releaseX;
+//	double releaseY;
+//
+//	// Paint Panel
+//	PaintPanel paintPanel;
+//
+//
+//
+//} // end class a2
+
+class a2Frame extends JFrame implements ActionListener, MouseMotionListener, MouseListener, ItemListener, WindowListener, ChangeListener 
 {
+
 	// fields for status
 	final static int PEN = 0;
 	final static int ERASER = 1;
@@ -48,9 +150,13 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JMenuItem exitFileItem;
 	JMenuItem newFileItem;
 
+	JMenuItem clearItem, changeBackgroundItem;
+
+	JMenuItem imageItem;
+
 	// Tool Bar and related fields
-	JToolBar toolBar;
-	JButton clearButton, strokeButton, earseButton, objectButton, changeBackgroundButton;
+	//    JToolBar toolBar;
+	JButton clearButton, strokeButton, eraseButton, objectButton, changeBackgroundButton;
 	JButton textButton;
 	JPanel toolBarDetailPanel;
 	JPanel toolBarPanel;
@@ -58,15 +164,20 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JPanel strokeColorPanel;
 	JPanel strokeWeightPanel;
 	JLabel penStrokeColorLabel;
+	// erase releated fields
 
 	// Text Objects Detail Panel related fields
-	JPanel textDetailPanel, textStylePanel, textSizePanel, textContentPanel;
+	JPanel textDetailPanel;
+	JPanel textStylePanel;
+	JPanel textSizePanel;
+	JPanel textContentPanel;
 	JTextField textInputField;
-	JLabel drawTextLabel, textColorLabel;
+	JLabel drawTextLabel;
 	JComboBox<Integer> textSizeBox;
 	JCheckBox textBoldCheckBox, textItalicsCheckBox, textUnderLineCheckBox;
 	JComboBox<String> fontFamily;
 	JButton textColorButton;
+	JLabel textColorLabel;
 
 	// Draw Objects Detail Panel
 	JPanel shapeChooserPanel;
@@ -86,23 +197,23 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JLabel shapeBorderColorLabel;
 	JLabel shapeFillingColorLabel;
 
-	// import image realted fields
+	// import image related fields
 	JPanel importImagePanel;
 	JButton importImageButton;
-	JSlider rotationSlider;
-	JSlider zoomSlider;
 	JButton importImageToolBarDetailButton;
 	JLabel imageImportLabel;
-	JButton resetRotationButton;
-	JButton resetZoomButton;
-	
-	// Undo related fields
-	JButton undoButton;
-
 	JComboBox<Integer> strokeWidthBox;
 	JComboBox<Integer> objectBorderThicknessBox;
+	JButton resetRotationButton;
+	JButton resetZoomButton;
+	JSlider rotationSlider;
+	JSlider zoomSlider;
+	
+	JButton undoButton;
+	
+	JPanel shapeDetailPanel;
 
-	// coordinates for mouseEvents
+	//coordinates for mouseEvents
 	public double pressX;
 	double pressY;
 	double releaseX;
@@ -142,8 +253,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 		// set application visible
 		pack();
-		setVisible(true);
-		
+		setVisible(true);		
 	} // end constructor a2JFrame
 
 	private void setupPaintPanel()
@@ -158,74 +268,187 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	private void setupToolBarPanel()
 	{
 		// set panel properties
-		int toolBarPanelRow = 2; // one for tool bar, one for tool bar selection detail
-		int toolBarPanelCol = 1;
+		//      int toolBarPanelRow = 2; // one for tool bar, one for tool bar selection detail
+		//      int toolBarPanelCol = 1;
 
 		// init panel
-		toolBarPanel = new JPanel(new GridLayout(toolBarPanelRow, toolBarPanelCol));
+		shapeDetailPanel = new JPanel();
+		toolBarPanel = new JPanel(new GridBagLayout());
+		toolBarPanel.setPreferredSize(new Dimension(300, 200));
+		GridBagConstraints constraints = new GridBagConstraints();
+
 		mainPanel.add(toolBarPanel, BorderLayout.WEST);
 
+		//      JButton button;
+		//
+		//      for (int i = 0; i < 2; i++) {
+		//
+		//          for (int j = 0; j < 10; j++) {
+		//              constraints.gridx = i;
+		//              constraints.gridy = j;
+		//              button = new JButton(" ");
+		//
+		//              toolBarPanel.add(button, constraints);
+		//          }
+		//      }
+		//
 		// init tool bar
-		toolBar = new JToolBar();
-		toolBarPanel.add(toolBar);
-		int toolBarRow = 6;
-		int toolBarCol = 2;
-		toolBar.setLayout(new GridLayout(toolBarRow, toolBarCol));
+		//      toolBar = new JToolBar();
+		//      toolBarPanel.add(toolBar);
+		//
+		//      // clear button
+		constraints.gridy = 0;
+		constraints.gridx = 0;
+		constraints.gridwidth = 1;
+		constraints.gridheight = 1;
+		constraints.weightx = 1;
+		//      constraints.weighty=1;
+		constraints.fill = GridBagConstraints.BOTH;
 
-		// clear button
-		clearButton = new JButton("Clear");
-		clearButton.addActionListener(this);
-		toolBar.add(clearButton);
+		//
+		//      // stroke button
+		//      constraints.gridx = 1;
+		eraseButton = new JButton();
+		eraseButton.setContentAreaFilled(false);
+		eraseButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		try {
+			eraseButton.setIcon(new ImageIcon(ImageIO.read(new File(getClass().getResource("/img/ERASER.png").toURI()))));
+		} catch (Exception ex) {
 
-		// stroke button
-		strokeButton = new JButton("Stroke");
-		strokeButton.addActionListener(this);
-		toolBar.add(strokeButton);
+		}
+		eraseButton.addActionListener(this);
+		toolBarPanel.add(eraseButton, constraints);
 
 		// text button
-		textButton = new JButton("Text");
+		constraints.gridy = 0;
+		constraints.gridx = 1;
+		strokeButton = new JButton();
+		strokeButton.setContentAreaFilled(false);
+		strokeButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		try {
+			strokeButton.setIcon(new ImageIcon(ImageIO.read(new File(getClass().getResource("/img/PEN.png").toURI()))));
+		} catch (Exception ex) {
+
+		}
+		strokeButton.addActionListener(this);
+		toolBarPanel.add(strokeButton, constraints);
+
+		// eraser button
+		constraints.gridy = 1;
+		constraints.gridx = 0;
+		textButton = new JButton();
+		textButton.setContentAreaFilled(false);
+		textButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		try {
+			textButton.setIcon(new ImageIcon(ImageIO.read(new File(getClass().getResource("/img/TEXT.png").toURI()))));
+		} catch (Exception ex) {
+
+		}
 		textButton.addActionListener(this);
-		toolBar.add(textButton);
+		toolBarPanel.add(textButton, constraints);
 
-		// earser button
-		earseButton = new JButton("Earser");
-		earseButton.addActionListener(this);
-		toolBar.add(earseButton);
+		constraints.gridx = 1;
+		//      rectangleButton = new JButton("Rectangle");
+		//      rectangleButton.addActionListener(this);
+		//      toolBarPanel.add(rectangleButton, constraints);
+		//
+		//      constraints.gridy = 2;
+		//      constraints.gridx = 0;
+		//      ovalButton = new JButton("Oval");
+		//      ovalButton.addActionListener(this);
+		//      toolBarPanel.add(ovalButton, constraints);
+		//
+		//      constraints.gridx = 1;
+		//      circleButton = new JButton("Circle");
+		//      circleButton.addActionListener(this);
+		//      toolBarPanel.add(circleButton, constraints);
+		//
+		//      constraints.gridy = 3;
+		//      constraints.gridx = 0;
+		//      lineButton = new JButton("Line");
+		//      lineButton.addActionListener(this);
+		//      toolBarPanel.add(lineButton, constraints);
 
-		//draw object button
-		objectButton = new JButton("Draw Object");
+		//      //draw object button
+		objectButton = new JButton();
+		objectButton.setContentAreaFilled(false);
+		objectButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		try {
+			objectButton.setIcon(new ImageIcon(ImageIO.read(new File(getClass().getResource("/img/SHAPE.png").toURI()))));
+		} catch (Exception ex) {
+
+		}
 		objectButton.addActionListener(this);
-		toolBar.add(objectButton);
+		toolBarPanel.add(objectButton, constraints);
 
 		//change background color button
-		changeBackgroundButton = new JButton("Change Background Color");
+		constraints.gridy = 2;
+		constraints.gridx = 0;
+		changeBackgroundButton = new JButton();
+		changeBackgroundButton.setContentAreaFilled(false);
+		changeBackgroundButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		try {
+			changeBackgroundButton.setIcon(new ImageIcon(ImageIO.read(new File(getClass().getResource("/img/BACKGROUND.png").toURI()))));
+		} catch (Exception ex) {
+
+		}
 		changeBackgroundButton.addActionListener(this);
-		toolBar.add(changeBackgroundButton);
+		toolBarPanel.add(changeBackgroundButton, constraints);
 
 		// import image button
-		importImageButton = new JButton("Import Image");
+		constraints.gridx = 1;
+		importImageButton = new JButton();
+		importImageButton.setContentAreaFilled(false);
+		importImageButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		try {
+			importImageButton.setIcon(new ImageIcon(ImageIO.read(new File(getClass().getResource("/img/IMAGE.png").toURI()))));
+		} catch (Exception ex) {
+
+		}
 		importImageButton.addActionListener(this);
-		toolBar.add(importImageButton);
+		toolBarPanel.add(importImageButton, constraints);
+
+		constraints.gridy = 3;
+		constraints.gridx = 0;
+		clearButton = new JButton();
+		clearButton.setContentAreaFilled(false);
+		clearButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		try {
+			clearButton.setIcon(new ImageIcon(ImageIO.read(new File(getClass().getResource("/img/CLEAR.png").toURI()))));
+		} catch (Exception ex) {
+
+		}
+		clearButton.addActionListener(this);
+		toolBarPanel.add(clearButton, constraints);
 
 		// init toolBarDetailPanel
+		constraints.gridx = 0;
+		constraints.gridy = 10;
+		constraints.gridwidth = 2;
+		constraints.gridheight = 10;
+		//      constraints.weightx = 1;
+		//      constraints.weighty = 1;
+
 		toolBarDetailPanel = new JPanel();
-		toolBarPanel.add(toolBarDetailPanel);
-		toolBarDetailPanel.setLayout(new BoxLayout(toolBarDetailPanel,BoxLayout.Y_AXIS));
-		
-		// undo button
-		undoButton = new JButton("Undo");
-		toolBar.add(undoButton);
-//		undoButton.setBackground(Color.red);
-//		undoButton.setOpaque(true);
-//		undoButton.setBorder(null);
-		undoButton.addActionListener(this);
+		toolBarDetailPanel.setBackground(Color.white);
+		//      toolBarDetailPanel.setBorder(BorderFactory.createTitledBorder(new LineBorder(Color.black), "Options"));
+		toolBarPanel.add(toolBarDetailPanel, constraints);
+
+		//      toolBarDetailPanel.setLayout(new BoxLayout(toolBarDetailPanel, BoxLayout.Y_AXIS));
+		constraints.gridy = 11;
+		constraints.gridwidth = 1;
+
+		constraints.weightx = 1;
+		constraints.weighty = 1;
+
+		toolBarPanel.add(new JPanel(), constraints);
 
 		// test
-		toolBarDetailPanel.setBackground(Color.red);
-		toolBar.setBackground(Color.gray);
-		//		toolBar.setPreferredSize(new Dimension(300, 300));
+		//      toolBarDetailPanel.setBackground(Color.red);
+		//      toolBarDetailPanel.setBorder(BorderFactory.createLineBorder(Color.blue));
+		//      toolBar.setBackground(Color.gray);
+		//toolBar.setPreferredSize(new Dimension(300, 300));
 		//		toolBar.setMaximumSize(new Dimension(1300, 1300));
-
 	} // end method setupToolBarPanel
 
 	private void setupMenuBar()
@@ -292,14 +515,14 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 	private void fillToolBarDetailPanelWithText()
 	{
-		// clear detail pane for text buttons arrival
+		// clear detail pane for text buttons arrival        // clear detail pane for text buttons arrival
 		toolBarDetailPanel.removeAll();
 		//toolBarDetailPanel.revalidate();
 		toolBarDetailPanel.repaint();
 
 		// create panel to hold text detail buttons
 		textDetailPanel = new JPanel();
-		textDetailPanel.setLayout(new BoxLayout(textDetailPanel,BoxLayout.Y_AXIS));
+		textDetailPanel.setLayout(new BoxLayout(textDetailPanel, BoxLayout.Y_AXIS));
 
 		// add "Drawing Text" text label
 		//drawTextLabel = new JLabel("Insert Text");
@@ -342,7 +565,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		TitledBorder sizeTitle;
 		sizeTitle = BorderFactory.createTitledBorder("Size");
 		textSizePanel.setBorder(sizeTitle);
-		Integer[] size = {10,12,14,16,18,20,22,24,26,28,30,32,34,36} ;
+		Integer[] size = {10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36};
 		textSizeBox = new JComboBox<>(size);
 		textSizeBox.addItemListener(this);
 		textSizePanel.add(textSizeBox);
@@ -356,7 +579,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		textColorPanel.add(textColorButton);
 
 		textColorLabel = new JLabel();
-		textColorLabel.setPreferredSize(new Dimension(30,30));
+		textColorLabel.setPreferredSize(new Dimension(30, 30));
 		textColorLabel.setOpaque(true);
 		textColorLabel.setBackground(PaintPanel.DEFAULT_TEXT_COLOR);
 		textColorPanel.add(textColorLabel);
@@ -370,350 +593,21 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		fontFamily = new JComboBox<>(fontList);
 		textFontFamilyPanel.add(fontFamily);
 
-
 		textDetailPanel.add(textFontFamilyPanel);
 		//		textDetailPanel.setPreferredSize(toolBarDetailPanel.getSize());
-
-
 
 		// show textDetailPanel on toolBarDetailPanel
 		toolBarDetailPanel.add(textDetailPanel);
 		toolBarDetailPanel.revalidate();
 
-
-
-
-	} // end method fillToolBarDetailPanelWithText
+	} // end main
 
 	private void setCurrentToolPen()
 	{
 		currentTool = a2Frame.PEN;
 		fillToolBarDetailPanelWithPen();
 	} // end method setCurrentToolPen
-
-	private void setCurrentToolEraser()
-	{
-		currentTool = a2Frame.ERASER;
-		toolBarDetailPanel.removeAll();
-		toolBarDetailPanel.repaint();
-	} // end method setCurrentToolEraser
-
-	private void createNewPaint()
-	{
-		// ask for confirmation to discard current paintings
-		String message = "Create new painting? Current Painting will be lost.";
-		int answer = JOptionPane.showConfirmDialog(this, message, "Create", JOptionPane.YES_OPTION, JOptionPane.QUESTION_MESSAGE);
-
-		// create new painting if user selected yes
-		if (answer == JOptionPane.YES_OPTION)	paintPanel.clearPaintPanel();
-	} // end method createNewPaintPanel
-
-	@Override
-	public void actionPerformed(ActionEvent e) 
-	{
-		
-		if (e.getSource() == newFileItem)
-		{
-			System.out.println("New File Item pressed!");
-			createNewPaint();
-		} // end if, new file item pressed
-		else if (e.getSource() == saveFileItem)
-		{
-			System.out.println("Save Only pressed!");
-			saveToFile();
-		} // end if, save file item pressed
-		else if (e.getSource() == saveAsFileItem)
-		{
-			System.out.println("Save As pressed!");
-			saveAsToFile();
-		} // end if, save as file item pressed
-		else if(e.getSource() == exitFileItem)
-		{
-			askExitWithoutSaving();
-		}// end if, exit file Item pressed
-		else if (e.getSource() == clearButton)
-		{
-			paintPanel.clearPaintPanel();
-		} // end if, clear button pressed
-		else if (e.getSource() == strokeButton)
-		{
-			setCurrentTool(a2Frame.PEN);
-		} // end if, stroke button pressed
-		else if (e.getSource() == textButton)
-		{
-			setCurrentTool(a2Frame.TEXT);
-		} // end if, text button pressed
-		else if(e.getSource() == objectButton)
-		{
-			currentTool = Cursor.HAND_CURSOR;
-			fillToolBarDetailPanelWithShape();
-		}
-		else if (e.getSource() == earseButton)
-		{
-			setCurrentTool(a2Frame.ERASER);
-		} // end if, eraser button pressed
-		else if (e.getSource() == changeBackgroundButton)
-		{
-			setBackgroundColor();
-		}// end if, changeBackgroundButton
-		else if (e.getSource() == undoButton)
-		{
-//			System.out.println("Undo");
-			paintPanel.undoLastAction();
-		}
-		else if (e.getSource() == strokeColorButton)
-		{
-			setStrokeColor();
-		} // end if, stroke color button
-		else if(e.getSource() == objectBorderColorButton)
-		{
-			setObjectBorderColor();
-		}// end if, stroke color button
-		else if(e.getSource() == shapeFillColorButton)
-		{
-			paintPanel.fillOrDraw = 1;
-			setObjectFillColor();
-		}
-		else if(e.getSource() == shapeNoFillingButton)
-		{
-			paintPanel.fillOrDraw = 0;
-		}
-		else if (e.getSource() == textColorButton)
-		{
-			Color tmp = JColorChooser.showDialog(this, "Choose Color", Color.black);
-			paintPanel.setTextColor(tmp);
-			textColorLabel.setBackground(tmp);
-		}
-		else if (e.getSource() == importImageButton)
-		{
-			setCurrentTool(a2Frame.IMAGE);
-		}
-		else if (e.getSource() == importImageToolBarDetailButton)
-		{
-			importImageIntoMemory();
-		}
-		else if (e.getSource() == resetRotationButton)
-		{
-			int reset = -1;
-			paintPanel.updateImageOnPanel(reset);
-		}
-
-	} // end method actionPerformed
-
-	private void setCurrentToolImport()
-	{
-		currentTool = a2Frame.IMAGE;
-		fillToolBarDetailPanelWithImportImage();
-		
-		// test
-		importImageCache = null;
-		importImageIntoMemory();
-	} // end method setCurrentToolImport
-
-	private void askExitWithoutSaving()
-	{
-		int n = JOptionPane.showConfirmDialog(mainPanel, "Exit Without Saving?", "Warning", JOptionPane.YES_NO_CANCEL_OPTION);
-		if (n == JOptionPane.YES_OPTION)	System.exit(0);
-		else if (n == JOptionPane.NO_OPTION)	saveToFile();
-	}  // end method askExitWithoutExiting
-
-	private void fillToolBarDetailPanelWithImportImage()
-	{
-		// clear toolbardetail panel
-		toolBarDetailPanel.removeAll();
-		toolBarDetailPanel.repaint();
-
-		// init detail panel
-		importImagePanel = new JPanel(new BorderLayout());
-
-		// add import button
-		importImageToolBarDetailButton = new JButton("Change Import File");
-		importImagePanel.add(importImageToolBarDetailButton, BorderLayout.NORTH);
-		importImageToolBarDetailButton.addActionListener(this);
-
-		// add label to show imported image
-		imageImportLabel = new JLabel();
-		imageImportLabel.setVerticalAlignment(JLabel.CENTER);
-		imageImportLabel.setHorizontalAlignment(JLabel.CENTER);
-		importImagePanel.add(imageImportLabel, BorderLayout.CENTER);
-		
-		//panel to hold all image properties
-		JPanel imagePropertyPanel = new JPanel();
-		imagePropertyPanel.setLayout(new BoxLayout(imagePropertyPanel,BoxLayout.Y_AXIS));
-		
-		// panel to hold rotation
-		JPanel rotationPanel = new JPanel();
-		rotationPanel.setBorder(BorderFactory.createTitledBorder("Rotation"));
-		
-		
-		// add roatation slider
-		int minROtation = 0;
-		int defaultRotation = 7;
-		int MaxRotation = 13;
-		rotationSlider = new JSlider(JSlider.HORIZONTAL, minROtation, MaxRotation, defaultRotation);
-		rotationSlider.addChangeListener(this);
-		rotationSlider.setEnabled(false);
-		rotationPanel.add(rotationSlider);
-		
-		// add reset rotation
-		resetRotationButton = new JButton("Reset");
-		resetRotationButton.addActionListener(this);
-		rotationPanel.add(resetRotationButton);
-		
-		// test
-		rotationSlider.addMouseListener(this);
-		rotationSlider.addMouseMotionListener(this);
-		
-		
-		// panel to hold zoom in/out
-		JPanel zoomPanel = new JPanel();
-		zoomPanel.setBorder(BorderFactory.createTitledBorder("Zoom"));
-		
-		//add zoom slider
-		zoomSlider = new JSlider(JSlider.HORIZONTAL,1,100,50);
-		zoomSlider.addChangeListener(this);
-		zoomSlider.setEnabled(false);
-		
-		//add reset zoom
-		resetZoomButton = new JButton("Reset");
-		resetZoomButton.addActionListener(this);
-		
-		zoomPanel.add(zoomSlider);
-		zoomPanel.add(resetZoomButton);
-		
-		
-		imagePropertyPanel.add(rotationPanel);
-		imagePropertyPanel.add(zoomPanel);
-		importImagePanel.add(imagePropertyPanel, BorderLayout.SOUTH);
-		
-		
-		
-
-		// put import panel to detail panel
-		toolBarDetailPanel.add(importImagePanel);
-		toolBarDetailPanel.revalidate();
-	} // end method fillToolBarDetailPanelWithImportImage
-
 	
-	private BufferedImage importImageCache;
-	private void importImageIntoMemory()
-	{
-
-		// present open file dialog and receive input
-		JFileChooser fc = new JFileChooser();
-		FileNameExtensionFilter ff = new FileNameExtensionFilter("Image FIle", "png", "jpg", "jpeg", "gif");
-		fc.setFileFilter(ff);
-		int userInput = fc.showOpenDialog(null);
-
-		// cancel open action if user press cancel
-		if (userInput == JFileChooser.CANCEL_OPTION)	return;
-
-		// fetch properties of the file 
-		String path = "";
-		try {
-			path = fc.getSelectedFile().getCanonicalPath();
-		} catch (IOException e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Fail to open file");
-			return;
-		}
-
-		// read image from path
-		Image img = null;
-		try {
-//			img = ImageIO.read(new File("/eecs/home/cse13185/zzz.png"));
-			img = ImageIO.read(new File(path));
-		} catch (Exception e) {
-			System.out.println("The selected file is not an image file!");
-			return;
-		}
-		BufferedImage image = (BufferedImage) img;
-		importImageCache = image;
-		
-		// scale image
-		int width = 200;
-		int height = 200;
-		try
-		{
-			img = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-		} catch (Exception e)
-		{
-			System.out.println("The selected file is not an image file!");
-			return;
-		}
-
-		// display image on the toolBarDetailPanel
-		ImageIcon icon = new ImageIcon(img);
-		imageImportLabel.setIcon(icon);
-		
-	} // end method importImageIntoMemory
-
-	private void drawImportedImageOntoPanel(int x, int y)
-	{
-		// if no image imported exit directly
-		if (importImageCache == null)	return;
-		
-		// import image to panel
-		paintPanel.drawGivenImageAtLocation(importImageCache, x, y);
-		rotationSlider.setEnabled(true);
-	} // end method importImage
-
-	private void setStrokeColor()
-	{
-		// fetch user selection
-		Color tmp = JColorChooser.showDialog(this, "Choose Color", Color.black);
-
-		// if user did not select a color, stop set color process
-		if (tmp == null)	return;
-
-		// set user selection effective
-		paintPanel.setStrokeColor(tmp);
-		penStrokeColorLabel.setBackground(PaintPanel.strokeColor);
-
-	} // end method setStrokeColor
-
-	private void setBackgroundColor()
-	{
-		//fetch user selection
-		Color tmp = JColorChooser.showDialog(this, "Choose Color", Color.white);
-
-		// if user did not select a color, stop set color process
-		if (tmp == null) return;
-
-		paintPanel.saveBackgroundColor(tmp);
-		
-		//set user selection effective
-		paintPanel.setBackground(tmp);
-		
-	}
-
-	private void setObjectBorderColor()
-	{
-		//fetch user selection
-		Color tmp = JColorChooser.showDialog(this, "Choose Color", Color.black);
-
-		//if user did not select a color, stop set color process
-		if(tmp == null)	return;
-
-		//set user selection effective
-		paintPanel.setObjectBorderColor(tmp);
-		shapeBorderColorLabel.setBackground(PaintPanel.objectBorderColor);
-	}
-
-	private void setObjectFillColor()
-	{
-		//fetch user selection
-		Color tmp = JColorChooser.showDialog(this, "Choose Color", Color.orange);
-
-		//if user did not select a color, stop set color process
-		if(tmp == null)	return;
-
-		//set user selection effective
-		paintPanel.setObjectFillColor(tmp);
-		shapeFillingColorLabel.setBackground(PaintPanel.objectFillColor);
-
-	}
-
 	private void fillToolBarDetailPanelWithPen()
 	{
 		// clear everything
@@ -761,6 +655,116 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		toolBarDetailPanel.revalidate();
 	} // end method fillToolBarDetailPanelWithPen
 
+
+	private void setCurrentToolEraser()
+	{
+		currentTool = a2Frame.ERASER;
+		toolBarDetailPanel.removeAll();
+		toolBarDetailPanel.repaint();
+	} // end method setCurrentToolEraser
+
+	private void createNewPaint()
+	{
+		// ask for confirmation to discard current paintings
+		String message = "Create new painting? Current Painting will be lost.";
+		int answer = JOptionPane.showConfirmDialog(this, message, "Create", JOptionPane.YES_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+		// create new painting if user selected yes
+		if (answer == JOptionPane.YES_OPTION)	paintPanel.clearPaintPanel();
+	} // end method createNewPaintPanel
+
+	@Override
+	public void actionPerformed(ActionEvent e) 
+	{
+
+		if (e.getSource() == newFileItem)
+		{
+			System.out.println("New File Item pressed!");
+			createNewPaint();
+		} // end if, new file item pressed
+		else if (e.getSource() == saveFileItem)
+		{
+			System.out.println("Save Only pressed!");
+			saveToFile();
+		} // end if, save file item pressed
+		else if (e.getSource() == saveAsFileItem)
+		{
+			System.out.println("Save As pressed!");
+			saveAsToFile();
+		} // end if, save as file item pressed
+		else if(e.getSource() == exitFileItem)
+		{
+			askExitWithoutSaving();
+		}// end if, exit file Item pressed
+		else if (e.getSource() == clearButton)
+		{
+			paintPanel.clearPaintPanel();
+		} // end if, clear button pressed
+		else if (e.getSource() == strokeButton)
+		{
+			setCurrentTool(a2Frame.PEN);
+		} // end if, stroke button pressed
+		else if (e.getSource() == textButton)
+		{
+			setCurrentTool(a2Frame.TEXT);
+		} // end if, text button pressed
+		else if(e.getSource() == objectButton)
+		{
+			currentTool = Cursor.HAND_CURSOR;
+			fillToolBarDetailPanelWithShape();
+		}
+		else if (e.getSource() == eraseButton)
+		{
+			setCurrentTool(a2Frame.ERASER);
+		} // end if, eraser button pressed
+		else if (e.getSource() == changeBackgroundButton)
+		{
+			setBackgroundColor();
+		}// end if, changeBackgroundButton
+		else if (e.getSource() == undoButton)
+		{
+			//			System.out.println("Undo");
+			paintPanel.undoLastAction();
+		}
+		else if (e.getSource() == strokeColorButton)
+		{
+			setStrokeColor();
+		} // end if, stroke color button
+		else if(e.getSource() == objectBorderColorButton)
+		{
+			setObjectBorderColor();
+		}// end if, stroke color button
+		else if(e.getSource() == shapeFillColorButton)
+		{
+			paintPanel.fillOrDraw = 1;
+			setObjectFillColor();
+		}
+		else if(e.getSource() == shapeNoFillingButton)
+		{
+			paintPanel.fillOrDraw = 0;
+		}
+		else if (e.getSource() == textColorButton)
+		{
+			Color tmp = JColorChooser.showDialog(this, "Choose Color", Color.black);
+			paintPanel.setTextColor(tmp);
+			textColorLabel.setBackground(tmp);
+		}
+		else if (e.getSource() == importImageButton)
+		{
+			setCurrentTool(a2Frame.IMAGE);
+		}
+		else if (e.getSource() == importImageToolBarDetailButton)
+		{
+			importImageIntoMemory();
+		}
+		else if (e.getSource() == resetRotationButton)
+		{
+			int reset = -1;
+			paintPanel.updateImageOnPanel(reset);
+		}
+
+	} // end method actionPerformed
+	
 	private void fillToolBarDetailPanelWithShape()
 	{
 		// clear everything
@@ -769,7 +773,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 		//toolBarDetailPanel.setOpaque(true);
 		// panel to hold shape related fields
-		JPanel shapeDetailPanel = new JPanel();
+		shapeDetailPanel = new JPanel();
 		shapeDetailPanel.setLayout(new BoxLayout(shapeDetailPanel,BoxLayout.Y_AXIS));
 
 		shapeChooserPanel = new JPanel();
@@ -860,6 +864,222 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	}
 
 
+	private void setCurrentToolImport()
+	{
+		currentTool = a2Frame.IMAGE;
+		fillToolBarDetailPanelWithImportImage();
+
+		// test
+		importImageCache = null;
+		importImageIntoMemory();
+	} // end method setCurrentToolImport
+
+	private void askExitWithoutSaving()
+	{
+		int n = JOptionPane.showConfirmDialog(mainPanel, "Exit Without Saving?", "Warning", JOptionPane.YES_NO_CANCEL_OPTION);
+		if (n == JOptionPane.YES_OPTION)	System.exit(0);
+		else if (n == JOptionPane.NO_OPTION)	saveToFile();
+	}  // end method askExitWithoutExiting
+
+	private void fillToolBarDetailPanelWithImportImage()
+	{
+		// clear toolbardetail panel
+		toolBarDetailPanel.removeAll();
+		toolBarDetailPanel.repaint();
+
+		// init detail panel
+		importImagePanel = new JPanel(new BorderLayout());
+
+		// add import button
+		importImageToolBarDetailButton = new JButton("Change Import File");
+		importImagePanel.add(importImageToolBarDetailButton, BorderLayout.NORTH);
+		importImageToolBarDetailButton.addActionListener(this);
+
+		// add label to show imported image
+		imageImportLabel = new JLabel();
+		imageImportLabel.setVerticalAlignment(JLabel.CENTER);
+		imageImportLabel.setHorizontalAlignment(JLabel.CENTER);
+		importImagePanel.add(imageImportLabel, BorderLayout.CENTER);
+
+		//panel to hold all image properties
+		JPanel imagePropertyPanel = new JPanel();
+		imagePropertyPanel.setLayout(new BoxLayout(imagePropertyPanel,BoxLayout.Y_AXIS));
+
+		// panel to hold rotation
+		JPanel rotationPanel = new JPanel();
+		rotationPanel.setBorder(BorderFactory.createTitledBorder("Rotation"));
+
+
+		// add roatation slider
+		int minROtation = 0;
+		int defaultRotation = 7;
+		int MaxRotation = 13;
+		rotationSlider = new JSlider(JSlider.HORIZONTAL, minROtation, MaxRotation, defaultRotation);
+		rotationSlider.addChangeListener(this);
+		rotationSlider.setEnabled(false);
+		rotationPanel.add(rotationSlider);
+
+		// add reset rotation
+		resetRotationButton = new JButton("Reset");
+		resetRotationButton.addActionListener(this);
+		rotationPanel.add(resetRotationButton);
+
+		// test
+		rotationSlider.addMouseListener(this);
+		rotationSlider.addMouseMotionListener(this);
+
+
+		// panel to hold zoom in/out
+		JPanel zoomPanel = new JPanel();
+		zoomPanel.setBorder(BorderFactory.createTitledBorder("Zoom"));
+
+		//add zoom slider
+		zoomSlider = new JSlider(JSlider.HORIZONTAL,1,100,50);
+		zoomSlider.addChangeListener(this);
+		zoomSlider.setEnabled(false);
+
+		//add reset zoom
+		resetZoomButton = new JButton("Reset");
+		resetZoomButton.addActionListener(this);
+
+		zoomPanel.add(zoomSlider);
+		zoomPanel.add(resetZoomButton);
+
+
+		imagePropertyPanel.add(rotationPanel);
+		imagePropertyPanel.add(zoomPanel);
+		importImagePanel.add(imagePropertyPanel, BorderLayout.SOUTH);
+
+
+
+
+		// put import panel to detail panel
+		toolBarDetailPanel.add(importImagePanel);
+		toolBarDetailPanel.revalidate();
+	} // end method fillToolBarDetailPanelWithImportImage
+
+
+	private BufferedImage importImageCache;
+	private void importImageIntoMemory()
+	{
+
+		// present open file dialog and receive input
+		JFileChooser fc = new JFileChooser();
+		FileNameExtensionFilter ff = new FileNameExtensionFilter("Image FIle", "png", "jpg", "jpeg", "gif");
+		fc.setFileFilter(ff);
+		int userInput = fc.showOpenDialog(null);
+
+		// cancel open action if user press cancel
+		if (userInput == JFileChooser.CANCEL_OPTION)	return;
+
+		// fetch properties of the file 
+		String path = "";
+		try {
+			path = fc.getSelectedFile().getCanonicalPath();
+		} catch (IOException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Fail to open file");
+			return;
+		}
+
+		// read image from path
+		Image img = null;
+		try {
+			//			img = ImageIO.read(new File("/eecs/home/cse13185/zzz.png"));
+			img = ImageIO.read(new File(path));
+		} catch (Exception e) {
+			System.out.println("The selected file is not an image file!");
+			return;
+		}
+		BufferedImage image = (BufferedImage) img;
+		importImageCache = image;
+
+		// scale image
+		int width = 200;
+		int height = 200;
+		try
+		{
+			img = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+		} catch (Exception e)
+		{
+			System.out.println("The selected file is not an image file!");
+			return;
+		}
+
+		// display image on the toolBarDetailPanel
+		ImageIcon icon = new ImageIcon(img);
+		imageImportLabel.setIcon(icon);
+
+	} // end method importImageIntoMemory
+
+	private void drawImportedImageOntoPanel(int x, int y)
+	{
+		// if no image imported exit directly
+		if (importImageCache == null)	return;
+
+		// import image to panel
+		paintPanel.drawGivenImageAtLocation(importImageCache, x, y);
+		rotationSlider.setEnabled(true);
+	} // end method importImage
+
+	private void setStrokeColor()
+	{
+		// fetch user selection
+		Color tmp = JColorChooser.showDialog(this, "Choose Color", Color.black);
+
+		// if user did not select a color, stop set color process
+		if (tmp == null)	return;
+
+		// set user selection effective
+		paintPanel.setStrokeColor(tmp);
+		penStrokeColorLabel.setBackground(PaintPanel.strokeColor);
+
+	} // end method setStrokeColor
+
+	private void setBackgroundColor()
+	{
+		//fetch user selection
+		Color tmp = JColorChooser.showDialog(this, "Choose Color", Color.white);
+
+		// if user did not select a color, stop set color process
+		if (tmp == null) return;
+
+		paintPanel.saveBackgroundColor(tmp);
+
+		//set user selection effective
+		paintPanel.setBackground(tmp);
+
+	}
+
+	private void setObjectBorderColor()
+	{
+		//fetch user selection
+		Color tmp = JColorChooser.showDialog(this, "Choose Color", Color.black);
+
+		//if user did not select a color, stop set color process
+		if(tmp == null)	return;
+
+		//set user selection effective
+		paintPanel.setObjectBorderColor(tmp);
+		shapeBorderColorLabel.setBackground(PaintPanel.objectBorderColor);
+	}
+
+	private void setObjectFillColor()
+	{
+		//fetch user selection
+		Color tmp = JColorChooser.showDialog(this, "Choose Color", Color.orange);
+
+		//if user did not select a color, stop set color process
+		if(tmp == null)	return;
+
+		//set user selection effective
+		paintPanel.setObjectFillColor(tmp);
+		shapeFillingColorLabel.setBackground(PaintPanel.objectFillColor);
+
+	}
+
+
+
 	private void saveToFile()
 	{
 		// fresh save, save like save as
@@ -941,64 +1161,13 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	} // end method saveHelper
 
 	@Override
-	public void mouseClicked(MouseEvent e) 
-	{
-		// TODO Auto-generated method stub
-
-
-
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) 
-	{
-		// test
-		if (e.getSource() == rotationSlider)
-		{
-			System.out.println("start rotating");
-			paintPanel.pushRotatedImageToUndoStact();
-			return;
-		}
-		
-		// TODO Auto-generated method stub
-		oldX = e.getX();
-		oldY = e.getY();
-
-		//get coordinates when mouse is pressed
-		pressX = e.getX();
-		pressY = e.getY();
-
-		// writing text on panel
-		if (currentTool == a2Frame.TEXT)
-		{
-			paintPanel.saveText();
-			paintPanel.drawText(textInputField.getText(), (String) fontFamily.getSelectedItem(), (int) pressX, (int) pressY);
-		}
-		
-		else if (currentTool == a2Frame.IMAGE)	drawImportedImageOntoPanel(e.getX(), e.getY());
-		
-		// drawing stroke on panel
-		else if (currentTool == a2Frame.PEN)
-		{
-			paintPanel.startSavingStroke();
-		}
-		
-		// erasing stroke
-		else if (currentTool == a2Frame.ERASER)
-		{
-			paintPanel.startSavingErasedStroke();
-		}
-
-	} // end method mousePressed
-
-	@Override
 	public void mouseReleased(MouseEvent e) 
 	{
 		// test
 		if (e.getSource() == rotationSlider)
 		{
 			System.out.println("exiting rotation");
-//			paintPanel.pushRotatedImageToUndoStact();
+			//			paintPanel.pushRotatedImageToUndoStact();
 			return;
 		}
 
@@ -1009,7 +1178,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		if (currentTool == Cursor.HAND_CURSOR)
 		{
 			Object shape = null;
-			
+
 			//draw rectangle
 			if(rectangleShapeButton.isSelected())
 				shape = paintPanel.drawRectangle(pressX, releaseX, pressY, releaseY);
@@ -1022,23 +1191,23 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 			//draw line
 			else if(lineShapeButton.isSelected())
 				shape = paintPanel.drawLine(pressX, releaseX, pressY, releaseY);	
-			
+
 			paintPanel.saveShape(shape);
-			
+
 		}
 
-		 // test
+		// test
 		else if (currentTool == a2Frame.PEN)
 		{
 			paintPanel.endSavingStroke();
 		} 
-		
+
 		// end saving onto undo stacks
 		else if (currentTool == a2Frame.ERASER)
 		{
 			paintPanel.endSavingStroke();
 		}
-		
+
 	}
 
 	@Override
@@ -1053,16 +1222,13 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 	}
 
-	// test
-	private int oldX;
-	private int oldY;
 
 	@Override
 	public void mouseDragged(MouseEvent e) 
 	{
-		
-//		System.out.println("dragging!");
-		
+
+		//		System.out.println("dragging!");
+
 		// do not draw, if mouse left button not clicked
 		if (!SwingUtilities.isLeftMouseButton(e))	return;
 
@@ -1074,7 +1240,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		// perform draw/erase on the current spot
 		if (currentTool == a2Frame.PEN)
 		{
-			
+
 			paintPanel.drawStroke(oldX, x2, oldY, y2);
 		}
 		else if (currentTool == a2Frame.ERASER)	paintPanel.erase(oldX, x2, oldY, y2);
@@ -1087,10 +1253,6 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 	} // end method mouseDragged
 
-	@Override
-	public void mouseMoved(MouseEvent e) 
-	{
-	} // end method mouseMoved
 
 	@Override
 	public void itemStateChanged(ItemEvent e) 
@@ -1180,20 +1342,106 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	}
 
 	@Override
-	public void windowDeactivated(WindowEvent e) {
+	public void windowDeactivated(WindowEvent e) 
+	{
+		//Border Color Panel
+		shapeBorderColorPanel = new JPanel();
+		//shapeBorderColorPanel.setOpaque(true);
+		//shapeBorderColorPanel.setLayout(new BoxLayout(shapeBorderColorPanel,BoxLayout.Y_AXIS));
+		//		shapeBorderColorPanel.setBackground(Color.red);
+		objectBorderColorButton = new JButton("Choose Color");
+		objectBorderColorButton.addActionListener(this);
+
+		shapeBorderColorLabel = new JLabel();
+		shapeBorderColorLabel.setPreferredSize(new Dimension(50, 50));
+		shapeBorderColorLabel.setOpaque(true);
+		shapeBorderColorLabel.setBackground(PaintPanel.objectBorderColor);
+
+		shapeBorderColorPanel.add(objectBorderColorButton);
+		shapeBorderColorPanel.add(shapeBorderColorLabel);
+		shapeBorderColorPanel.setBorder(BorderFactory.createTitledBorder("Border Color"));
+		shapeDetailPanel.add(shapeBorderColorPanel);
+
+		//Border Thickness Panel
+		Integer[] size = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+		objectBorderThicknessBox = new JComboBox<>(size);
+		objectBorderThicknessBox.addItemListener(this);
+
+		shapeBorderThicknessPanel = new JPanel();
+		//shapeBorderThicknessPanel.setLayout(new BoxLayout(shapeBorderThicknessPanel, BoxLayout.Y_AXIS ));
+
+		shapeBorderThicknessPanel.add(objectBorderThicknessBox);
+		shapeBorderThicknessPanel.setBorder(BorderFactory.createTitledBorder("Thickness"));
+		shapeDetailPanel.add(shapeBorderThicknessPanel);
+
+		//object fill color panel
+		shapeFillColorPanel = new JPanel();
+		//shapeFillColorPanel.setLayout(new BoxLayout(shapeFillColorPanel,BoxLayout.Y_AXIS));
+		shapeFillColorLabel = new JLabel("Filled Object");
+		shapeFillColorButton = new JButton("Choose Color");
+		shapeFillColorButton.addActionListener(this);
+		//shapeNoFillingLabel = new JLabel("Draw Without Filling");
+		shapeFillColorPanel.setBorder(BorderFactory.createTitledBorder("Filling Color"));
+
+		shapeFillingColorLabel = new JLabel();
+		shapeFillingColorLabel.setPreferredSize(new Dimension(50, 50));
+		shapeFillingColorLabel.setOpaque(true);
+		shapeFillingColorLabel.setBackground(PaintPanel.objectFillColor);
+		shapeNoFillingButton = new JButton("Clear Filling");
+		shapeNoFillingButton.addActionListener(this);
+
+		shapeFillColorPanel.add(shapeFillColorButton);
+		shapeFillColorPanel.add(shapeFillingColorLabel);
+		shapeFillColorPanel.add(shapeNoFillingButton);
+		shapeDetailPanel.add(shapeFillColorPanel);
+
+		toolBarDetailPanel.add(shapeDetailPanel);
+
+		rectangleShapeButton.setSelected(true);
+		toolBarDetailPanel.revalidate();
+
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		oldX = e.getX();
+		oldY = e.getY();
+
+		//get coordinates when mouse is pressed
+		pressX = e.getX();
+		pressY = e.getY();
+
+		// test
+		if (currentTool == a2Frame.TEXT) {
+			paintPanel.drawText(textInputField.getText(), (String) fontFamily.getSelectedItem(), (int) pressX, (int) pressY);
+		}
+
+	} // end method mousePressed
+
+	// test
+	private int oldX;
+	private int oldY;
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+	} // end method mouseMoved
+
+
 	public void stateChanged(ChangeEvent e)
 	{
 		JSlider source = (JSlider) e.getSource();
-		
+
 
 		if (source == rotationSlider)
 		{
-//			paintPanel.repaint();
+			//			paintPanel.repaint();
 			int value = (int) source.getValue();
 			paintPanel.updateImageOnPanel(value);
 			//			paintPanel.rotateImage(value);
@@ -1205,9 +1453,6 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 class PaintPanel extends JPanel
 {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L; // keep compiler happy
 
 	// default properties
@@ -1973,3 +2218,6 @@ class PaintPanel extends JPanel
 	} // end method rotateImage
 	
 } // end class PaintPanel 
+
+
+**/

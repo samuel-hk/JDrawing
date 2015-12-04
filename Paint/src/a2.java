@@ -86,7 +86,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JLabel shapeBorderColorLabel;
 	JLabel shapeFillingColorLabel;
 
-	// import image realted fields
+	// import image related fields
 	JPanel importImagePanel;
 	JButton importImageButton;
 	JSlider rotationSlider;
@@ -95,6 +95,9 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JLabel imageImportLabel;
 	JButton resetRotationButton;
 	JButton resetZoomButton;
+	int zoomMax = 1000;
+	int zoomMin = 1;
+	int zoomDefault = 100;
 	
 	// Undo related fields
 	JButton undoButton;
@@ -570,7 +573,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		zoomPanel.setBorder(BorderFactory.createTitledBorder("Zoom"));
 		
 		//add zoom slider
-		zoomSlider = new JSlider(JSlider.HORIZONTAL,1,100,50);
+		zoomSlider = new JSlider(JSlider.HORIZONTAL,zoomMin, zoomMax, zoomDefault);
 		zoomSlider.addChangeListener(this);
 		zoomSlider.setEnabled(false);
 		
@@ -656,6 +659,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		// import image to panel
 		paintPanel.drawGivenImageAtLocation(importImageCache, x, y);
 		rotationSlider.setEnabled(true);
+		zoomSlider.setEnabled(true);
 	} // end method importImage
 
 	private void setStrokeColor()
@@ -1197,6 +1201,14 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 			int value = (int) source.getValue();
 			paintPanel.updateImageOnPanel(value);
 			//			paintPanel.rotateImage(value);
+		}
+		else if (source == zoomSlider)
+		{
+			int value = (int) source.getValue();
+			// test
+//			double zoomRatio = ( (double) value ) / zoomDefault;
+			
+			paintPanel.zoomImageOnPanel(value, zoomDefault);
 		}
 
 	} // end method stateChanged
@@ -1856,7 +1868,50 @@ class PaintPanel extends JPanel
 		setBackground(DEFAULT_BACKGROUND_COLOR);
 	} // end method clearPaintPanel
 
-	//
+	private BufferedImage imageToBufImage(Image img)
+	{
+		// declare the var to return
+		BufferedImage bufImage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+		
+	    // Draw the image on to the buffered image
+	    Graphics2D bGr = bufImage.createGraphics();
+	    bGr.drawImage(img, 0, 0, null);
+	    bGr.dispose();
+
+	    // return BufferedImage
+		return bufImage;
+	}
+	
+	public void zoomImageOnPanel(int zoom, int zoomDefault)
+	{
+		// clear old images
+		repaint();
+		
+		// retrieve properties
+		ExtendedBufferedImage image = lastImage;
+		int x = lastImageX;
+		int y = lastImageY;
+		int oldImageHeight = image.originalImageHeight;
+		int oldImageWidth = image.originalImageWIdth;
+		
+		// compute new size
+		double zoomRatio = ( (double) zoom ) / zoomDefault;
+		int newImgHeight = (int) (oldImageHeight * zoomRatio);
+		int newImgWidth = (int) (oldImageWidth * zoomRatio);
+		
+		//
+		Image tmpImg = image.getScaledInstance(newImgWidth, newImgHeight, Image.SCALE_SMOOTH);
+		BufferedImage newImage = imageToBufImage(tmpImg);
+		AffineTransform atNew = new AffineTransform(lastImage.at);
+		ExtendedBufferedImage newImg = new ExtendedBufferedImage(newImage, atNew);
+		newImg.originalImageHeight = oldImageHeight;
+		newImg.originalImageWIdth = oldImageWidth;
+		allImage.remove(image);
+		allImage.add(newImg);
+		pushImageToUndoStack(newImg);
+		lastImage = newImg;
+	} // end method zoomImageOnPanel
+	
 	public void updateImageOnPanel(int rotation)
 	{
 		// clear old images
@@ -1884,6 +1939,8 @@ class PaintPanel extends JPanel
 		
 		allImage.remove(lastImage);
 		lastImage = new ExtendedBufferedImage(image, at);
+		lastImage.originalImageHeight = lastImage.getHeight();
+		lastImage.originalImageWIdth = lastImage.getWidth(); 
 		allImage.add(lastImage);
 		
 	} // end method updateImageOnPanel
@@ -1908,6 +1965,8 @@ class PaintPanel extends JPanel
 		lastImageX = x;
 		lastImageY = y;
 		lastImage = new ExtendedBufferedImage(image, at);
+		lastImage.originalImageHeight = lastImage.getHeight();
+		lastImage.originalImageWIdth = lastImage.getWidth();
 		allImage.add(lastImage);
 		
 		// push to undo stack for "undo button"

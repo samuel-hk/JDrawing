@@ -175,16 +175,39 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		int toolBarCol = 2;
 		toolBar.setLayout(new GridLayout(toolBarRow, toolBarCol));
 
+		// test
 		// clear button
-		clearButton = new JButton("Clear");
+//		clearButton = new JButton("Clear");
+//		clearButton.setContentAreaFilled(false);
+//		clearButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+//		try {
+//			clearButton.setIcon(new ImageIcon(ImageIO.read(new File(getClass().getResource("/img/CLEAR.png").toURI()))));
+//		} catch (Exception ex) {
+//			
+//		}
+//		clearButton.addActionListener(this);
+//		toolBar.add(clearButton);
+		clearButton = new JButton("");
 		clearButton.setContentAreaFilled(false);
         clearButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        ImageIcon icon = null;
         try {
+        		icon = new ImageIcon(ImageIO.read(new File(getClass().getResource("/img/CLEAR.png").toURI())));
             clearButton.setIcon(new ImageIcon(ImageIO.read(new File(getClass().getResource("/img/CLEAR.png").toURI()))));
         } catch (Exception ex) {
 
         }
-		clearButton.addActionListener(this);
+        int width = icon.getIconWidth();
+        int height = icon.getIconHeight();
+	    clearButton.setPreferredSize( new Dimension(width, height) );
+	    clearButton.setMaximumSize(new Dimension(width, height));
+	    clearButton.setFocusPainted(false);
+	    clearButton.setRolloverEnabled(false);
+	    clearButton.setOpaque(false);
+	    clearButton.setContentAreaFilled(false);
+	    clearButton.setBorderPainted(false);
+	    clearButton.setBorder(BorderFactory.createEmptyBorder(0,0,0,0)); 
+	    clearButton.addActionListener(this);
 		toolBar.add(clearButton);
 
 		// stroke button

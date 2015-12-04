@@ -95,7 +95,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	JLabel imageImportLabel;
 	JButton resetRotationButton;
 	JButton resetZoomButton;
-	int zoomMax = 1000;
+	int zoomMax = 200;
 	int zoomMin = 1;
 	int zoomDefault = 100;
 	
@@ -1904,7 +1904,7 @@ class PaintPanel extends JPanel
 		Image tmpImg = image.getScaledInstance(newImgWidth, newImgHeight, Image.SCALE_SMOOTH);
 		BufferedImage newImage = imageToBufImage(tmpImg);
 		
-		// create new ExtendedBufferedImage object to resepent the scaled image
+		// create new ExtendedBufferedImage object to represent the scaled image
 		AffineTransform atNew = new AffineTransform(lastImage.at);
 		ExtendedBufferedImage newImg = new ExtendedBufferedImage(newImage, atNew);
 		newImg.originalImageHeight = oldImageHeight;
@@ -1917,7 +1917,7 @@ class PaintPanel extends JPanel
 		
 		// save old image for undo
 		pushImageToUndoStack(newImg);
-	} // end method zoomImageOnPanel
+	} // end method zoomImageOnPanelb
 	
 	public void updateImageOnPanel(int rotation)
 	{

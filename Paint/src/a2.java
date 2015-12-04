@@ -177,11 +177,25 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 		// clear button
 		clearButton = new JButton("Clear");
+		clearButton.setContentAreaFilled(false);
+        clearButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        try {
+            clearButton.setIcon(new ImageIcon(ImageIO.read(new File(getClass().getResource("/img/CLEAR.png").toURI()))));
+        } catch (Exception ex) {
+
+        }
 		clearButton.addActionListener(this);
 		toolBar.add(clearButton);
 
 		// stroke button
 		strokeButton = new JButton("Stroke");
+		strokeButton.setContentAreaFilled(false);
+        strokeButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        try {
+            strokeButton.setIcon(new ImageIcon(ImageIO.read(new File(getClass().getResource("/img/PEN.png").toURI()))));
+        } catch (Exception ex) {
+
+        }
 		strokeButton.addActionListener(this);
 		toolBar.add(strokeButton);
 
@@ -202,6 +216,13 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 		//change background color button
 		changeBackgroundButton = new JButton("Change Background Color");
+		changeBackgroundButton.setContentAreaFilled(false);
+        changeBackgroundButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        try {
+            changeBackgroundButton.setIcon(new ImageIcon(ImageIO.read(new File(getClass().getResource("/img/BACKGROUND.png").toURI()))));
+        } catch (Exception ex) {
+
+        }
 		changeBackgroundButton.addActionListener(this);
 		toolBar.add(changeBackgroundButton);
 

@@ -582,6 +582,9 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		zoomSlider.addChangeListener(this);
 		zoomSlider.setEnabled(false);
 		
+		// test
+		zoomSlider.addMouseListener(this);
+		
 		//add reset zoom
 		resetZoomButton = new JButton("Reset");
 		resetZoomButton.addActionListener(this);
@@ -964,8 +967,11 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		// test
 		if (e.getSource() == rotationSlider)
 		{
-			System.out.println("start rotating");
 			paintPanel.pushRotatedImageToUndoStact();
+			return;
+		}
+		else if (e.getSource() == zoomSlider)
+		{
 			return;
 		}
 		
@@ -2011,35 +2017,13 @@ class PaintPanel extends JPanel
 	
 	public void rotateImage(BufferedImage image, boolean rotate, double degree, int x, int y)
 	{
-		//		at.translate(getWidth() /2, getHeight()/2);
 		at = new AffineTransform();
-
 		
 		// do not rate if rotate false
 		at.translate(x, y);
 		if (!rotate)	return;
-//		if (!rotate)
-//		{
-//			at.translate(x, y);
-//			return;
-//		}
 		
-		// 
-//		at.translate(x, y);
-//		at.translate(getWidth(), getHeight());
-//		at.translate(image.getWidth()/2, image.getHeight()/2);
-//		at.rotate(degree);
-//		at.rotate(Math.toRadians(degree));
 		at.rotate(degree);
-//		at.translate(0, 0);
-//		at.translate(-x, y);
-//		at.translate(-image.getWidth(), -image.getHeight());
-//		at.translate(-image.getWidth() / 2, -image.getHeight() / 2);
-		//		at.translate(-100, -600);
-//				at.translate(-x, -y);
-		//		System.out.println("jdlsfkjds");
-		
-		
 		
 	} // end method rotateImage
 	

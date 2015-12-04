@@ -6,6 +6,8 @@ public class ExtendedBufferedImage extends BufferedImage
 {
 	
 	public AffineTransform at;
+	public int originalImageHeight;
+	public int originalImageWIdth;
 	
 	public ExtendedBufferedImage(BufferedImage image, AffineTransform tran)
 	{
@@ -20,4 +22,4 @@ public class ExtendedBufferedImage extends BufferedImage
 		
 	} // end constructor
 	
-}
+} // end class

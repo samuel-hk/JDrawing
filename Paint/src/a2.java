@@ -1868,6 +1868,9 @@ class PaintPanel extends JPanel
 		setBackground(DEFAULT_BACKGROUND_COLOR);
 	} // end method clearPaintPanel
 
+	/*
+	 * Convert an Image object into a BufferedImage object and return the BuffferedImage object
+	 */
 	private BufferedImage imageToBufImage(Image img)
 	{
 		// declare the var to return
@@ -1880,7 +1883,7 @@ class PaintPanel extends JPanel
 
 	    // return BufferedImage
 		return bufImage;
-	}
+	} // end method imageToBufImage
 	
 	public void zoomImageOnPanel(int zoom, int zoomDefault)
 	{
@@ -1889,8 +1892,6 @@ class PaintPanel extends JPanel
 		
 		// retrieve properties
 		ExtendedBufferedImage image = lastImage;
-		int x = lastImageX;
-		int y = lastImageY;
 		int oldImageHeight = image.originalImageHeight;
 		int oldImageWidth = image.originalImageWIdth;
 		
@@ -1899,17 +1900,23 @@ class PaintPanel extends JPanel
 		int newImgHeight = (int) (oldImageHeight * zoomRatio);
 		int newImgWidth = (int) (oldImageWidth * zoomRatio);
 		
-		//
+		// scale the image using getScaledInstance
 		Image tmpImg = image.getScaledInstance(newImgWidth, newImgHeight, Image.SCALE_SMOOTH);
 		BufferedImage newImage = imageToBufImage(tmpImg);
+		
+		// create new ExtendedBufferedImage object to resepent the scaled image
 		AffineTransform atNew = new AffineTransform(lastImage.at);
 		ExtendedBufferedImage newImg = new ExtendedBufferedImage(newImage, atNew);
 		newImg.originalImageHeight = oldImageHeight;
 		newImg.originalImageWIdth = oldImageWidth;
+		lastImage = newImg;
+		
+		// save images for repaint
 		allImage.remove(image);
 		allImage.add(newImg);
+		
+		// save old image for undo
 		pushImageToUndoStack(newImg);
-		lastImage = newImg;
 	} // end method zoomImageOnPanel
 	
 	public void updateImageOnPanel(int rotation)

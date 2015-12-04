@@ -239,16 +239,10 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		// undo button
 		undoButton = new JButton("Undo");
 		toolBar.add(undoButton);
-//		undoButton.setBackground(Color.red);
-//		undoButton.setOpaque(true);
-//		undoButton.setBorder(null);
 		undoButton.addActionListener(this);
 
-		// test
-		toolBarDetailPanel.setBackground(Color.red);
+		// set background
 		toolBar.setBackground(Color.gray);
-		//		toolBar.setPreferredSize(new Dimension(300, 300));
-//				toolBar.setMaximumSize(new Dimension(1300, 1300));
 		
 		// set frame window size
 		int windoHeight = 1024;
@@ -290,7 +284,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		fileMenu.add(exitFileItem);
 		exitFileItem.addActionListener(this);
 
-		exitFileItem.setMnemonic(KeyEvent.VK_E); // test Samuel: not sure if we need this for exit 
+		exitFileItem.setMnemonic(KeyEvent.VK_E); 
 		exitFileItem.setToolTipText("Exit Application");
 	} // end method setupMenuBar
 
@@ -462,7 +456,10 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		}// end if, exit file Item pressed
 		else if (e.getSource() == clearButton)
 		{
-			paintPanel.clearPaintPanel();
+			String msg = "Are you sure you want to clear the panel? You cannot undo this.";
+			int n = JOptionPane.showConfirmDialog(mainPanel, msg, "Warning", JOptionPane.YES_NO_CANCEL_OPTION);
+			if (n == JOptionPane.YES_OPTION)	paintPanel.clearPaintPanel();
+			else if (n == JOptionPane.NO_OPTION)	return;
 		} // end if, clear button pressed
 		else if (e.getSource() == strokeButton)
 		{
@@ -534,7 +531,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		currentTool = a2Frame.IMAGE;
 		fillToolBarDetailPanelWithImportImage();
 		
-		// test
+		// import image
 		importImageCache = null;
 		importImageIntoMemory();
 	} // end method setCurrentToolImport
@@ -589,10 +586,9 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		resetRotationButton.addActionListener(this);
 		rotationPanel.add(resetRotationButton);
 		
-		// test
+		// listen mouse action for undo rotation
 		rotationSlider.addMouseListener(this);
 		rotationSlider.addMouseMotionListener(this);
-		
 		
 		// panel to hold zoom in/out
 		JPanel zoomPanel = new JPanel();
@@ -603,7 +599,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		zoomSlider.addChangeListener(this);
 		zoomSlider.setEnabled(false);
 		
-		// test
+		// listen mouse action for undo scale
 		zoomSlider.addMouseListener(this);
 		
 		//add reset zoom
@@ -985,7 +981,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	@Override
 	public void mousePressed(MouseEvent e) 
 	{
-		// test
+		// case roataionSLider and zoomSLider
 		if (e.getSource() == rotationSlider)
 		{
 			paintPanel.pushRotatedImageToUndoStact();
@@ -1030,11 +1026,9 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	@Override
 	public void mouseReleased(MouseEvent e) 
 	{
-		// test
+		// do nothing if roataionSlider is the source
 		if (e.getSource() == rotationSlider)
 		{
-			System.out.println("exiting rotation");
-//			paintPanel.pushRotatedImageToUndoStact();
 			return;
 		}
 
@@ -1063,7 +1057,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 			
 		}
 
-		 // test
+		// end saving pen stroke to undo stacks
 		else if (currentTool == a2Frame.PEN)
 		{
 			paintPanel.endSavingStroke();
@@ -1089,7 +1083,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 	}
 
-	// test
+	// for saving original x y coordinates
 	private int oldX;
 	private int oldY;
 
@@ -1237,9 +1231,6 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		else if (source == zoomSlider)
 		{
 			int value = (int) source.getValue();
-			// test
-//			double zoomRatio = ( (double) value ) / zoomDefault;
-			
 			paintPanel.zoomImageOnPanel(value, zoomDefault);
 		}
 
@@ -1305,8 +1296,8 @@ class PaintPanel extends JPanel
 		objectBorderColor = Color.black;
 		objectBorderThickness = 1.0f;
 
-		// test
-		setBackground(Color.ORANGE); // because I love orange!!!!!!
+		// set default color to orange
+		setBackground(Color.WHITE);
 		setPreferredSize(new Dimension(1200, 600));
 
 
@@ -1737,11 +1728,20 @@ class PaintPanel extends JPanel
 		
 		else if (lastUndo.lastAction == CustomUndo.IMAGE_ROTATION_ACTION)
 		{
-			allImage.remove(allImage.size() - 1);
+//			allImage.remove(allImage.size() - 1);
 			System.out.println("adding before roatae image back");
 			allImage.remove(lastImage);
 			allImage.add(lastUndo.lastImage);
 			lastImage = lastUndo.lastImage;
+		}
+		
+		else if (lastUndo.lastAction == CustomUndo.IMAGE_SCALE_ACTION)
+		{
+			allImage.remove(allImage.size() - 1);
+			System.out.println("adding before roatae image back");
+			allImage.remove(lastImage);
+			lastImage = lastUndo.lastImage;
+			allImage.add(lastImage);
 		}
 		
 		repaint();
@@ -1844,7 +1844,7 @@ class PaintPanel extends JPanel
 		// eraser size
 		int eraserSize = 80;
 
-		// test
+		// loop through all saved storkes to see if there is any storke match current earser position
 		ExtendedLine2DDouble line = null;
 		for (int i = 0; i < allStrokes.size(); i++)
 		{
@@ -1877,17 +1877,6 @@ class PaintPanel extends JPanel
 
 	} // end method erase
 
-	// test
-	public void setScale()
-	{
-//		System.out.println("Scale!");
-		//		AffineTransform tran = AffineTransform.getScaleInstance(3.0, 3.0);
-		Graphics2D g = (Graphics2D) this.getGraphics();
-		//		g.setTransform(tran);
-		g.scale(5.0, 5.0);
-
-	} // end method setScale
-
 	public void clearPaintPanel()
 	{
 		allStrokes.clear();
@@ -1895,6 +1884,9 @@ class PaintPanel extends JPanel
 		allImage.clear();
 		allRectangles.clear();
 		allTextList.clear();
+		
+		undoStack = new Stack<>();
+		
 		repaint();
 
 		setBackground(DEFAULT_BACKGROUND_COLOR);
@@ -1948,7 +1940,7 @@ class PaintPanel extends JPanel
 		allImage.add(newImg);
 		
 		// save old image for undo
-		pushImageToUndoStack(newImg);
+		pushScaledImageToUndoStack(newImg);
 	} // end method zoomImageOnPanelb
 	
 	public void updateImageOnPanel(int rotation)
@@ -1970,12 +1962,7 @@ class PaintPanel extends JPanel
 		Graphics2D g2 = (Graphics2D) g;
 		g2.drawImage(image, at, null);
 		
-		// test
-//		ExtendedBufferedImage oldImage = undoStack.peek().lastImage;
-//		allImage.remove(oldImage);
-//		ExtendedBufferedImage newImage = new ExtendedBufferedImage(image, at);		
-//		allImage.add(newImage);
-		
+		// update saved data
 		allImage.remove(lastImage);
 		lastImage = new ExtendedBufferedImage(image, at);
 		lastImage.originalImageHeight = lastImage.getHeight();
@@ -2021,6 +2008,15 @@ class PaintPanel extends JPanel
 		undo = new CustomUndo();
 	} // end method saveImageToUndoStack
 	
+	public void pushScaledImageToUndoStack(ExtendedBufferedImage image)
+	{
+		undo = new CustomUndo();
+		undo.lastAction = CustomUndo.IMAGE_SCALE_ACTION;
+		undo.lastImage = image;
+		undoStack.push(undo);
+		undo = new CustomUndo();
+	} // end method saveImageToUndoStack
+	
 	public void pushRotatedImageToUndoStact()
 	{
 		ExtendedBufferedImage image = allImage.get(allImage.size() - 1);
@@ -2030,6 +2026,16 @@ class PaintPanel extends JPanel
 		undoStack.push(undo);
 		undo = new CustomUndo();
 	} // end method pushRotatedImageToUndoStact
+	
+	public void pushScaledImageToUndoStack()
+	{
+		ExtendedBufferedImage image = allImage.get(allImage.size() - 1);
+		undo = new CustomUndo();
+		undo.lastAction = CustomUndo.IMAGE_SCALE_ACTION;
+		undo.lastImage = image;
+		undoStack.push(undo);
+		undo = new CustomUndo();
+	}
 	
 //	public void prepareImageRotationUndo()
 //	{

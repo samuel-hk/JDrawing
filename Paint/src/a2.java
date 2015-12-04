@@ -227,7 +227,12 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		toolBarDetailPanel.setBackground(Color.red);
 		toolBar.setBackground(Color.gray);
 		//		toolBar.setPreferredSize(new Dimension(300, 300));
-		//		toolBar.setMaximumSize(new Dimension(1300, 1300));
+//				toolBar.setMaximumSize(new Dimension(1300, 1300));
+		
+		// set frame window size
+		int windoHeight = 1024;
+		int windowWidth = 1400;
+		this.setPreferredSize(new Dimension(windowWidth, windoHeight));
 
 	} // end method setupToolBarPanel
 

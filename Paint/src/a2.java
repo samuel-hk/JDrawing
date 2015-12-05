@@ -2,7 +2,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
 import java.awt.font.TextAttribute;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
@@ -45,6 +44,10 @@ public class a2
 
 class a2Frame extends JFrame implements ActionListener, MouseMotionListener, MouseListener, ItemListener, WindowListener, ChangeListener
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	// fields for status
 	final static int PEN = 0;
 	final static int ERASER = 1;
@@ -1321,7 +1324,7 @@ class PaintPanel extends JPanel
 	private ArrayList<ExtendedEllipse2DDouble> allEllipse;
 
 	// text properties
-	public static Color textColor;
+	public Color textColor;
 
 	// stroke properties
 	public static Color strokeColor;

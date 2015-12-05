@@ -189,134 +189,133 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		int toolBarCol = 2;
 		toolBar.setLayout(new GridLayout(toolBarRow, toolBarCol));
 
-		// test
 		// clear button
-
-		clearButton = new JButton();
-//		clearButton = new JButton("Clear");
-//		clearButton.setContentAreaFilled(false);
-//		clearButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-//		try {
-//			clearButton.setIcon(new ImageIcon(ImageIO.read(new File(getClass().getResource("/img/CLEAR.png").toURI()))));
-//		} catch (Exception ex) {
-//
-//		}
-//		clearButton.addActionListener(this);
-//		toolBar.add(clearButton);
 		clearButton = new JButton("");
 		clearButton.setContentAreaFilled(false);
-        clearButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        ImageIcon icon = null;
-        try {
-        		icon = new ImageIcon(ImageIO.read(new File(getClass().getResource("/img/CLEAR.png").toURI())));
-            clearButton.setIcon(new ImageIcon(ImageIO.read(new File(getClass().getResource("/img/CLEAR.png").toURI()))));
-        } catch (Exception ex) {
+		clearButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		ImageIcon icon = null;
+		try {
+			icon = new ImageIcon(ImageIO.read(new File(getClass().getResource("/img/CLEAR.png").toURI())));
+			clearButton.setIcon(new ImageIcon(ImageIO.read(new File(getClass().getResource("/img/CLEAR.png").toURI()))));
+		} catch (Exception ex) {
 
-        }
-        int width = icon.getIconWidth();
-        int height = icon.getIconHeight();
-	    clearButton.setPreferredSize( new Dimension(width, height) );
-	    clearButton.setMaximumSize(new Dimension(width, height));
-	    clearButton.setFocusPainted(false);
-	    clearButton.setRolloverEnabled(false);
-	    clearButton.setOpaque(false);
-	    clearButton.setContentAreaFilled(false);
-	    clearButton.setBorderPainted(false);
-	    clearButton.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
-	    clearButton.addActionListener(this);
+		}
+		buttonSetupHelper(icon, clearButton);
+		//        int width = icon.getIconWidth();
+		//        int height = icon.getIconHeight();
+		//	    clearButton.setPreferredSize( new Dimension(width, height) );
+		//	    clearButton.setMaximumSize(new Dimension(width, height));
+		//	    clearButton.setFocusPainted(false);
+		//	    clearButton.setRolloverEnabled(false);
+		//	    clearButton.setOpaque(false);
+		//	    clearButton.setContentAreaFilled(false);
+		//	    clearButton.setBorderPainted(false);
+		//	    clearButton.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
+		//	    clearButton.addActionListener(this);
 		toolBar.add(clearButton);
 
 		// stroke button
 		strokeButton = new JButton();
 		strokeButton.setContentAreaFilled(false);
-        strokeButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        try {
-            strokeButton.setIcon(new ImageIcon(ImageIO.read(new File(getClass().getResource("/img/PEN.png").toURI()))));
-        } catch (Exception ex) {
+		strokeButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		try {
+			String path = "/img/PEN.png";
+			icon = new ImageIcon(ImageIO.read(new File(getClass().getResource(path).toURI())));
+			strokeButton.setIcon(new ImageIcon(ImageIO.read(new File(getClass().getResource(path).toURI()))));
+		} catch (Exception ex) {
 
-        }
-		strokeButton.addActionListener(this);
+		}
+		buttonSetupHelper(icon, strokeButton);
 		toolBar.add(strokeButton);
 
 		// text button
 		textButton = new JButton();
 		textButton.setContentAreaFilled(false);
-        textButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        try {
-            textButton.setIcon(new ImageIcon(ImageIO.read(new File(getClass().getResource("/img/TEXT.png").toURI()))));
-        } catch (Exception ex) {
+		textButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		try {
+			String path = "/img/TEXT.png";
+			icon = new ImageIcon(ImageIO.read(new File(getClass().getResource(path).toURI())));
+			textButton.setIcon(new ImageIcon(ImageIO.read(new File(getClass().getResource(path).toURI()))));
+		} catch (Exception ex) {
 
-        }
-		textButton.addActionListener(this);
+		}
+		buttonSetupHelper(icon, textButton);
 		toolBar.add(textButton);
 
-		// earser button
+		// eraser button
 		eraseButton = new JButton();
 		eraseButton.setContentAreaFilled(false);
-        eraseButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        try {
-            eraseButton.setIcon(new ImageIcon(ImageIO.read(new File(getClass().getResource("/img/ERASER.png").toURI()))));
-        } catch (Exception ex) {
+		eraseButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		try {
+			String path = "/img/ERASER.png";
+			icon = new ImageIcon(ImageIO.read(new File(getClass().getResource(path).toURI())));
+			eraseButton.setIcon(new ImageIcon(ImageIO.read(new File(getClass().getResource(path).toURI()))));
+		} catch (Exception ex) {
 
-        }
-		eraseButton.addActionListener(this);
+		}
+		buttonSetupHelper(icon, eraseButton);
 		toolBar.add(eraseButton);
 
 		//draw object button
 		objectButton = new JButton();
 		objectButton.setContentAreaFilled(false);
-        objectButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        try {
-            objectButton.setIcon(new ImageIcon(ImageIO.read(new File(getClass().getResource("/img/SHAPE.png").toURI()))));
-        } catch (Exception ex) {
+		objectButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		try {
+			String path = "/img/SHAPE.png";
+			icon = new ImageIcon(ImageIO.read(new File(getClass().getResource(path).toURI())));
+			objectButton.setIcon(new ImageIcon(ImageIO.read(new File(getClass().getResource(path).toURI()))));
+		} catch (Exception ex) {
 
-        }
-		objectButton.addActionListener(this);
+		}
+		buttonSetupHelper(icon, objectButton);
 		toolBar.add(objectButton);
 
 		//change background color button
 		changeBackgroundButton = new JButton();
 		changeBackgroundButton.setContentAreaFilled(false);
-        changeBackgroundButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        try {
-            changeBackgroundButton.setIcon(new ImageIcon(ImageIO.read(new File(getClass().getResource("/img/BACKGROUND.png").toURI()))));
-        } catch (Exception ex) {
+		changeBackgroundButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		try {
+			String path = "/img/BACKGROUND.png";
+			icon = new ImageIcon(ImageIO.read(new File(getClass().getResource(path).toURI())));
+			changeBackgroundButton.setIcon(new ImageIcon(ImageIO.read(new File(getClass().getResource(path).toURI()))));
+		} catch (Exception ex) {
 
-        }
-		changeBackgroundButton.addActionListener(this);
+		}
+		buttonSetupHelper(icon, changeBackgroundButton);
 		toolBar.add(changeBackgroundButton);
 
 		// import image button
 		importImageButton = new JButton();
 		importImageButton.setContentAreaFilled(false);
-        importImageButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        try {
-            importImageButton.setIcon(new ImageIcon(ImageIO.read(new File(getClass().getResource("/img/IMAGE.png").toURI()))));
-        } catch (Exception ex) {
+		importImageButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		try {
+			String path = "/img/IMAGE.png";
+			icon = new ImageIcon(ImageIO.read(new File(getClass().getResource(path).toURI())));
+			importImageButton.setIcon(new ImageIcon(ImageIO.read(new File(getClass().getResource(path).toURI()))));
+		} catch (Exception ex) {
 
-        }
-		importImageButton.addActionListener(this);
+		}
+		buttonSetupHelper(icon, importImageButton);
 		toolBar.add(importImageButton);
-
-		// init toolBarDetailPanel
-		toolBarDetailPanel = new JPanel();
-		toolBarPanel.add(toolBarDetailPanel);
-		toolBarDetailPanel.setLayout(new BoxLayout(toolBarDetailPanel,BoxLayout.Y_AXIS));
 
 		// undo button
 		undoButton = new JButton();
 		undoButton.setContentAreaFilled(false);
 		undoButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        try {
-            undoButton.setIcon(new ImageIcon(ImageIO.read(new File(getClass().getResource("/img/UNDO.png").toURI()))));
-        } catch (Exception ex) {
-
-        }
+		try {
+			String path = "/img/UNDO.png";
+			icon = new ImageIcon(ImageIO.read(new File(getClass().getResource(path).toURI())));
+			undoButton.setIcon(new ImageIcon(ImageIO.read(new File(getClass().getResource(path).toURI()))));
+		} catch (Exception ex) {
+			
+		}
+		buttonSetupHelper(icon, undoButton);
 		toolBar.add(undoButton);
-		undoButton.addActionListener(this);
-
-		// set background
-//		toolBar.setBackground(Color.gray);
+		
+		// init toolBarDetailPanel
+		toolBarDetailPanel = new JPanel();
+		toolBarPanel.add(toolBarDetailPanel);
+		toolBarDetailPanel.setLayout(new BoxLayout(toolBarDetailPanel,BoxLayout.Y_AXIS));
 
 		// set frame window size
 		int windoHeight = 1024;
@@ -324,6 +323,21 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		this.setPreferredSize(new Dimension(windowWidth, windoHeight));
 
 	} // end method setupToolBarPanel
+
+	private void buttonSetupHelper(ImageIcon icon, JButton button)
+	{
+		int width = icon.getIconWidth();
+		int height = icon.getIconHeight();
+		button.setPreferredSize( new Dimension(width, height) );
+		button.setMaximumSize(new Dimension(width, height));
+		button.setFocusPainted(false);
+		button.setRolloverEnabled(false);
+		button.setOpaque(false);
+		button.setContentAreaFilled(false);
+		button.setBorderPainted(false);
+		button.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
+		button.addActionListener(this);
+	}
 
 	private void setupMenuBar()
 	{
@@ -558,7 +572,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		}// end if, changeBackgroundButton
 		else if (e.getSource() == undoButton)
 		{
-//			System.out.println("Undo");
+			//			System.out.println("Undo");
 			paintPanel.undoLastAction();
 		}
 		else if (e.getSource() == strokeColorButton)
@@ -723,7 +737,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		// read image from path
 		Image img = null;
 		try {
-//			img = ImageIO.read(new File("/eecs/home/cse13185/zzz.png"));
+			//			img = ImageIO.read(new File("/eecs/home/cse13185/zzz.png"));
 			img = ImageIO.read(new File(path));
 		} catch (Exception e) {
 			System.out.println("The selected file is not an image file!");
@@ -824,10 +838,10 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		toolBarDetailPanel.repaint();
 
 		toolBarDetailPanel.setLayout(new BoxLayout(toolBarDetailPanel,BoxLayout.Y_AXIS));
-//		toolBarDetailPanel.setBackground(Color.gray);
+		//		toolBarDetailPanel.setBackground(Color.gray);
 		// add color chooser
 		strokeColorPanel = new JPanel();
-//		strokeColorPanel.setBackground(Color.gray);
+		//		strokeColorPanel.setBackground(Color.gray);
 		//strokeColorPanel.setLayout(new BoxLayout(strokeColorPanel,BoxLayout.Y_AXIS));
 		TitledBorder strokeColorTitle;
 		strokeColorTitle = BorderFactory.createTitledBorder("Stroke Color");
@@ -1101,12 +1115,12 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		}
 
 		// test
-//		else if (currentTool == Cursor.HAND_CURSOR)
-//		{
-//			//draw rectangle
-//			if(rectangleShapeButton.isSelected())
-//				paintPanel.currentRect = null;
-//		}
+		//		else if (currentTool == Cursor.HAND_CURSOR)
+		//		{
+		//			//draw rectangle
+		//			if(rectangleShapeButton.isSelected())
+		//				paintPanel.currentRect = null;
+		//		}
 
 	} // end method mousePressed
 
@@ -1320,7 +1334,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 		if (source == rotationSlider)
 		{
-//			paintPanel.repaint();
+			//			paintPanel.repaint();
 			int value = (int) source.getValue();
 			paintPanel.updateImageOnPanel(value);
 			//			paintPanel.rotateImage(value);
@@ -1922,7 +1936,7 @@ class PaintPanel extends JPanel
 
 		else if (lastUndo.lastAction == CustomUndo.IMAGE_ROTATION_ACTION)
 		{
-//			allImage.remove(allImage.size() - 1);
+			//			allImage.remove(allImage.size() - 1);
 			System.out.println("adding before roatae image back");
 			allImage.remove(lastImage);
 			allImage.add(lastUndo.lastImage);
@@ -2094,12 +2108,12 @@ class PaintPanel extends JPanel
 		// declare the var to return
 		BufferedImage bufImage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
 
-	    // Draw the image on to the buffered image
-	    Graphics2D g2D = bufImage.createGraphics();
-	    g2D.drawImage(img, 0, 0, null);
-	    g2D.dispose();
+		// Draw the image on to the buffered image
+		Graphics2D g2D = bufImage.createGraphics();
+		g2D.drawImage(img, 0, 0, null);
+		g2D.dispose();
 
-	    // return BufferedImage
+		// return BufferedImage
 		return bufImage;
 	} // end method imageToBufImage
 

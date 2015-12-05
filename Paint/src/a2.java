@@ -1149,7 +1149,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		{
 			//draw rectangle
 			if(rectangleShapeButton.isSelected())
-				paintPanel.drawRectangle2(startX, x2, startY, y2);
+				paintPanel.drawRectanglePreview(startX, x2, startY, y2);
 		}
 		
 		// save current pointer location as old for next point draw
@@ -1441,15 +1441,24 @@ class PaintPanel extends JPanel
 
 	public ExtendedRectangle2DDouble drawRectangle(double x1,double x2,double y1,double y2)
 	{
-		// test
-		repaint();
+		ExtendedRectangle2DDouble r = drawRectHelper(x1, x2, y1, y2, false);
+		return r;
+	} // end method drawRectangle
+	
+	private ExtendedRectangle2DDouble drawRectHelper(double x1,double x2,double y1,double y2, boolean preview)
+	{
+		// remove last preview traces
 		if (lastRect != null)	allRectangles.remove(lastRect);
+		
+		// remove unwanted traces
+		repaint();
 
 		Graphics2D g2 = (Graphics2D) this.getGraphics();
 
 		BasicStroke stroke = new BasicStroke(this.objectBorderThickness);
 		g2.setStroke(stroke);
-		//default color black
+		
+		// default color black
 		g2.setColor(objectBorderColor);
 		g2.setPaint(objectFillColor);
 
@@ -1507,84 +1516,19 @@ class PaintPanel extends JPanel
 
 		g2.draw(r);
 		
+		// if the drawing is only a preivew while user dragging and createing the rectangle
+		// therefore, user is still dragging the rectangle
+		if (preview)	lastRect = r;
+		
 		return r;
-
 	}
 	
-	// test
 	ExtendedRectangle2DDouble lastRect;
-	public ExtendedRectangle2DDouble drawRectangle2(double x1,double x2,double y1,double y2)
+	public ExtendedRectangle2DDouble drawRectanglePreview(double x1,double x2,double y1,double y2)
 	{
-		repaint();
-		if (lastRect != null)	allRectangles.remove(lastRect);
-		
-		Graphics2D g2 = (Graphics2D) this.getGraphics();
-
-		BasicStroke stroke = new BasicStroke(this.objectBorderThickness);
-		g2.setStroke(stroke);
-		//default color black
-		g2.setColor(objectBorderColor);
-		g2.setPaint(objectFillColor);
-
-		double width;
-		double height;
-		double startX;
-		double startY;
-
-		width = Math.abs(x2-x1);
-		height = Math.abs(y2-y1);
-		ExtendedRectangle2DDouble r;
-
-		if(x2>x1 && y2<y1)
-		{
-			startX = x1;
-			startY = y1-height;
-			r = new ExtendedRectangle2DDouble(startX,startY,width,height);
-		}
-		else if(x1>x2 && y1<y2)
-		{
-			startX = x1-width;
-			startY = y1;
-			r = new ExtendedRectangle2DDouble(startX, startY, width, height);
-		}
-		else if(x1>x2 && y1>y2)
-		{
-			startX = x1-width;
-			startY = y1-height;
-			r = new ExtendedRectangle2DDouble(startX, startY, width, height);
-
-		}
-		else
-		{
-			r = new ExtendedRectangle2DDouble(x1, y1, width, height);
-
-		}
-
-		if( fillOrDraw== 0)
-		{
-			g2.setColor(objectBorderColor);
-		}
-
-		else
-		{
-			g2.setColor(objectFillColor);
-			g2.fill(r);
-			g2.setColor(objectBorderColor);
-
-			r.setBorderColor(objectBorderColor);
-			r.setFillColor(objectFillColor);
-
-		}
-		r.setBorderThickness(stroke);
-
-		g2.draw(r);
-		allRectangles.add(r);
-		
-		lastRect = r;
-		
+		ExtendedRectangle2DDouble r = drawRectHelper(x1, x2, y1, y2, true);
 		return r;
-
-	}
+	} // end method drawRectanglePreview
 	
 	public ExtendedEllipse2DDouble drawOval(double x1,double x2,double y1, double y2)
 	{

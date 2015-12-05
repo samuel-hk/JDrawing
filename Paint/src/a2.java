@@ -1000,6 +1000,9 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 
 	}
+	
+	// test
+	int startX, startY;
 
 	@Override
 	public void mousePressed(MouseEvent e) 
@@ -1015,9 +1018,12 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 			return;
 		}
 		
-		// TODO Auto-generated method stub
 		oldX = e.getX();
 		oldY = e.getY();
+		
+		// test
+		startX = e.getX();
+		startY = e.getY();
 
 		//get coordinates when mouse is pressed
 		pressX = e.getX();
@@ -1042,6 +1048,14 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		else if (currentTool == a2Frame.ERASER)
 		{
 			paintPanel.startSavingErasedStroke();
+		}
+		
+		// test
+		else if (currentTool == Cursor.HAND_CURSOR)
+		{
+			//draw rectangle
+			if(rectangleShapeButton.isSelected())
+				paintPanel.lastRect = null;
 		}
 
 	} // end method mousePressed
@@ -1076,7 +1090,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 			else if(lineShapeButton.isSelected())
 				shape = paintPanel.drawLine(pressX, releaseX, pressY, releaseY);	
 			
-			paintPanel.saveShape(shape);
+			paintPanel.pushShapeToUndoStack(shape);
 			
 		}
 
@@ -1114,8 +1128,6 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	public void mouseDragged(MouseEvent e) 
 	{
 		
-//		System.out.println("dragging!");
-		
 		// do not draw, if mouse left button not clicked
 		if (!SwingUtilities.isLeftMouseButton(e))	return;
 
@@ -1132,11 +1144,17 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		}
 		else if (currentTool == a2Frame.ERASER)	paintPanel.erase(oldX, x2, oldY, y2);
 
+		// test
+		else if (currentTool == Cursor.HAND_CURSOR)
+		{
+			//draw rectangle
+			if(rectangleShapeButton.isSelected())
+				paintPanel.drawRectangle2(startX, x2, startY, y2);
+		}
+		
 		// save current pointer location as old for next point draw
 		oldX = x2;
 		oldY = y2;
-
-
 
 	} // end method mouseDragged
 
@@ -1423,6 +1441,9 @@ class PaintPanel extends JPanel
 
 	public ExtendedRectangle2DDouble drawRectangle(double x1,double x2,double y1,double y2)
 	{
+		// test
+		repaint();
+		if (lastRect != null)	allRectangles.remove(lastRect);
 
 		Graphics2D g2 = (Graphics2D) this.getGraphics();
 
@@ -1489,7 +1510,82 @@ class PaintPanel extends JPanel
 		return r;
 
 	}
+	
+	// test
+	ExtendedRectangle2DDouble lastRect;
+	public ExtendedRectangle2DDouble drawRectangle2(double x1,double x2,double y1,double y2)
+	{
+		repaint();
+		if (lastRect != null)	allRectangles.remove(lastRect);
+		
+		Graphics2D g2 = (Graphics2D) this.getGraphics();
 
+		BasicStroke stroke = new BasicStroke(this.objectBorderThickness);
+		g2.setStroke(stroke);
+		//default color black
+		g2.setColor(objectBorderColor);
+		g2.setPaint(objectFillColor);
+
+		double width;
+		double height;
+		double startX;
+		double startY;
+
+		width = Math.abs(x2-x1);
+		height = Math.abs(y2-y1);
+		ExtendedRectangle2DDouble r;
+
+		if(x2>x1 && y2<y1)
+		{
+			startX = x1;
+			startY = y1-height;
+			r = new ExtendedRectangle2DDouble(startX,startY,width,height);
+		}
+		else if(x1>x2 && y1<y2)
+		{
+			startX = x1-width;
+			startY = y1;
+			r = new ExtendedRectangle2DDouble(startX, startY, width, height);
+		}
+		else if(x1>x2 && y1>y2)
+		{
+			startX = x1-width;
+			startY = y1-height;
+			r = new ExtendedRectangle2DDouble(startX, startY, width, height);
+
+		}
+		else
+		{
+			r = new ExtendedRectangle2DDouble(x1, y1, width, height);
+
+		}
+
+		if( fillOrDraw== 0)
+		{
+			g2.setColor(objectBorderColor);
+		}
+
+		else
+		{
+			g2.setColor(objectFillColor);
+			g2.fill(r);
+			g2.setColor(objectBorderColor);
+
+			r.setBorderColor(objectBorderColor);
+			r.setFillColor(objectFillColor);
+
+		}
+		r.setBorderThickness(stroke);
+
+		g2.draw(r);
+		allRectangles.add(r);
+		
+		lastRect = r;
+		
+		return r;
+
+	}
+	
 	public ExtendedEllipse2DDouble drawOval(double x1,double x2,double y1, double y2)
 	{
 		Graphics2D g2 = (Graphics2D) this.getGraphics();
@@ -1680,7 +1776,7 @@ class PaintPanel extends JPanel
 		undo.lastErase = new ArrayList<>();
 	} // end method saveErasedStroke
 	
-	public void saveShape(Object shape)
+	public void pushShapeToUndoStack(Object shape)
 	{
 		undo = new CustomUndo();
 		undo.lastAction = CustomUndo.SHAPE_ACTION;

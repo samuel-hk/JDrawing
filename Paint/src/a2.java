@@ -171,7 +171,13 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		// init tool bar
 		toolBar = new JToolBar();
 		toolBarPanel.add(toolBar);
-		int toolBarRow = 6;
+		toolBarPanel.setLayout( new BoxLayout(toolBarPanel, BoxLayout.Y_AXIS) );
+		int toolBarwidth = 350;
+		int toolBarheight = 200;
+		toolBar.setMinimumSize(new Dimension(toolBarwidth, toolBarheight));
+		toolBar.setPreferredSize(new Dimension(toolBarwidth, toolBarheight));
+		toolBar.setMaximumSize(new Dimension(toolBarwidth, toolBarheight));
+		int toolBarRow = 4;
 		int toolBarCol = 2;
 		toolBar.setLayout(new GridLayout(toolBarRow, toolBarCol));
 
@@ -265,7 +271,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		undoButton.addActionListener(this);
 
 		// set background
-		toolBar.setBackground(Color.gray);
+//		toolBar.setBackground(Color.gray);
 		
 		// set frame window size
 		int windoHeight = 1024;
@@ -772,12 +778,11 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		toolBarDetailPanel.removeAll();
 		toolBarDetailPanel.repaint();
 
-
 		toolBarDetailPanel.setLayout(new BoxLayout(toolBarDetailPanel,BoxLayout.Y_AXIS));
-		toolBarDetailPanel.setBackground(Color.white);
+//		toolBarDetailPanel.setBackground(Color.gray);
 		// add color chooser
 		strokeColorPanel = new JPanel();
-		strokeColorPanel.setBackground(Color.white);
+//		strokeColorPanel.setBackground(Color.gray);
 		//strokeColorPanel.setLayout(new BoxLayout(strokeColorPanel,BoxLayout.Y_AXIS));
 		TitledBorder strokeColorTitle;
 		strokeColorTitle = BorderFactory.createTitledBorder("Stroke Color");
@@ -2045,9 +2050,9 @@ class PaintPanel extends JPanel
 		BufferedImage bufImage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
 		
 	    // Draw the image on to the buffered image
-	    Graphics2D bGr = bufImage.createGraphics();
-	    bGr.drawImage(img, 0, 0, null);
-	    bGr.dispose();
+	    Graphics2D g2D = bufImage.createGraphics();
+	    g2D.drawImage(img, 0, 0, null);
+	    g2D.dispose();
 
 	    // return BufferedImage
 		return bufImage;
@@ -2180,11 +2185,6 @@ class PaintPanel extends JPanel
 		undoStack.push(undo);
 		undo = new CustomUndo();
 	}
-	
-//	public void prepareImageRotationUndo()
-//	{
-//		
-//	} // end method
 	
 	public void rotateImage(BufferedImage image, boolean rotate, double degree, int x, int y)
 	{

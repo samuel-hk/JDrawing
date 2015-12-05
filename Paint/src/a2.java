@@ -1152,7 +1152,10 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 				paintPanel.drawRectanglePreview(startPosX, x2, startPosY, y2);
 			else if (ovalShapeButton.isSelected())
 				paintPanel.drawOvalPreview(startPosX, x2, startPosY, y2);
-		
+			else if (lineShapeButton.isSelected())
+				paintPanel.drawLinePreview(startPosX, x2, startPosY, y2);
+			else if (circleShapeButton.isSelected())
+				paintPanel.drawCirclePreview(startPosX, x2, startPosY, y2);
 		}
 		
 		// save current pointer location as old for next point draw
@@ -1529,6 +1532,7 @@ class PaintPanel extends JPanel
 	
 	ExtendedRectangle2DDouble currentRect;
 	ExtendedEllipse2DDouble currentEllip;
+	ExtendedLine2DDouble currentLine;
 	public ExtendedRectangle2DDouble drawRectanglePreview(double x1,double x2,double y1,double y2)
 	{
 		ExtendedRectangle2DDouble r = drawRectHelper(x1, x2, y1, y2, true);
@@ -1627,6 +1631,24 @@ class PaintPanel extends JPanel
 
 	public ExtendedEllipse2DDouble drawCircle(double x1, double x2, double y1, double y2)
 	{
+		boolean isPreview = false;
+		return drawCircleHelper(x1, x2, y1, y2, isPreview);
+	}
+	
+	public ExtendedEllipse2DDouble drawCirclePreview(double x1, double x2, double y1, double y2)
+	{
+		boolean isPreview = true;
+		return drawCircleHelper(x1, x2, y1, y2, isPreview);
+	}
+
+	private ExtendedEllipse2DDouble drawCircleHelper(double x1, double x2, double y1, double y2, boolean isPreview)
+	{
+		// remove old traces from panel
+		repaint();
+		
+		// remove old traces from data
+		if (currentEllip != null)	allEllipse.remove(currentEllip);
+		
 		Graphics2D g2 = (Graphics2D)this.getGraphics();
 
 		BasicStroke stroke = new BasicStroke(this.objectBorderThickness);
@@ -1688,12 +1710,35 @@ class PaintPanel extends JPanel
 		r.setBorderColor(objectBorderColor);
 		allEllipse.add(r);
 		
+		// if is a preview, cache current Circle for removal
+		if (isPreview)	currentEllip = r;
+		
+		// remove reference to current circle so no wrong removal
+		else	currentEllip = null;
+		
 		return r;
-
 	}
-
+	
 	public ExtendedLine2DDouble drawLine(double x1, double x2, double y1, double y2)
 	{
+		boolean isPreview = false;
+		return drawLineHelper(x1, x2, y1, y2, isPreview);
+	}
+	
+	public ExtendedLine2DDouble drawLinePreview(double x1, double x2, double y1, double y2)
+	{
+		boolean isPreview = true;
+		return drawLineHelper(x1, x2, y1, y2, isPreview);
+	}
+	
+	private ExtendedLine2DDouble drawLineHelper(double x1, double x2, double y1, double y2, boolean isPreview)
+	{
+		// remove old traces from panel
+		repaint();
+		
+		// remove old trace from data
+		allStrokes.remove(currentLine);
+		
 		Graphics2D g2 = (Graphics2D)this.getGraphics();
 
 		BasicStroke stroke = new BasicStroke(this.objectBorderThickness);
@@ -1709,7 +1754,14 @@ class PaintPanel extends JPanel
 
 		allStrokes.add(r);
 		
+		// cache line drawing for removal when it is a preview
+		if (isPreview)	currentLine = r;
+		
+		// remove reference to cache 
+		else	currentLine = null;
+		
 		return r;
+
 	}
 
 	CustomUndo undo;

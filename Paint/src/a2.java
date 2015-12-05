@@ -1002,7 +1002,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	}
 	
 	// test
-	int startX, startY;
+	int startPosX, startPosY;
 
 	@Override
 	public void mousePressed(MouseEvent e) 
@@ -1022,8 +1022,8 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		oldY = e.getY();
 		
 		// test
-		startX = e.getX();
-		startY = e.getY();
+		startPosX = e.getX();
+		startPosY = e.getY();
 
 		//get coordinates when mouse is pressed
 		pressX = e.getX();
@@ -1049,14 +1049,14 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		{
 			paintPanel.startSavingErasedStroke();
 		}
-		
+
 		// test
-		else if (currentTool == Cursor.HAND_CURSOR)
-		{
-			//draw rectangle
-			if(rectangleShapeButton.isSelected())
-				paintPanel.lastRect = null;
-		}
+//		else if (currentTool == Cursor.HAND_CURSOR)
+//		{
+//			//draw rectangle
+//			if(rectangleShapeButton.isSelected())
+//				paintPanel.currentRect = null;
+//		}
 
 	} // end method mousePressed
 
@@ -1149,7 +1149,10 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		{
 			//draw rectangle
 			if(rectangleShapeButton.isSelected())
-				paintPanel.drawRectanglePreview(startX, x2, startY, y2);
+				paintPanel.drawRectanglePreview(startPosX, x2, startPosY, y2);
+			else if (ovalShapeButton.isSelected())
+				paintPanel.drawOvalPreview(startPosX, x2, startPosY, y2);
+		
 		}
 		
 		// save current pointer location as old for next point draw
@@ -1448,7 +1451,7 @@ class PaintPanel extends JPanel
 	private ExtendedRectangle2DDouble drawRectHelper(double x1,double x2,double y1,double y2, boolean preview)
 	{
 		// remove last preview traces
-		if (lastRect != null)	allRectangles.remove(lastRect);
+		if (currentRect != null)	allRectangles.remove(currentRect);
 		
 		// remove unwanted traces
 		repaint();
@@ -1518,12 +1521,14 @@ class PaintPanel extends JPanel
 		
 		// if the drawing is only a preivew while user dragging and createing the rectangle
 		// therefore, user is still dragging the rectangle
-		if (preview)	lastRect = r;
+		if (preview)	currentRect = r;
+		else	currentRect = null;
 		
 		return r;
 	}
 	
-	ExtendedRectangle2DDouble lastRect;
+	ExtendedRectangle2DDouble currentRect;
+	ExtendedEllipse2DDouble currentEllip;
 	public ExtendedRectangle2DDouble drawRectanglePreview(double x1,double x2,double y1,double y2)
 	{
 		ExtendedRectangle2DDouble r = drawRectHelper(x1, x2, y1, y2, true);
@@ -1532,6 +1537,24 @@ class PaintPanel extends JPanel
 	
 	public ExtendedEllipse2DDouble drawOval(double x1,double x2,double y1, double y2)
 	{
+		boolean isPreview = false;
+		return drawOvalHelper(x1, x2, y1, y2, isPreview);
+	}
+	
+	public ExtendedEllipse2DDouble drawOvalPreview(double x1,double x2,double y1, double y2)
+	{
+		boolean isPreview = true;
+		return drawOvalHelper(x1, x2, y1, y2, isPreview);
+	}
+	
+	private ExtendedEllipse2DDouble drawOvalHelper(double x1,double x2,double y1, double y2, boolean isPreview)
+	{
+		// remove last trace from data
+		if (currentEllip != null)	allEllipse.remove(currentEllip);
+		
+		// remove old traces on panel
+		repaint();
+		
 		Graphics2D g2 = (Graphics2D) this.getGraphics();
 
 		BasicStroke stroke = new BasicStroke(this.objectBorderThickness);
@@ -1592,6 +1615,12 @@ class PaintPanel extends JPanel
 		allEllipse.add(r);
 		r.setStroke(stroke);
 		g2.draw(r);
+		
+		// if current draw is only fir user preview, save the data for deleting the preivew later
+		if (isPreview)	currentEllip = r;
+		
+		// if current draw is completed, make sure to discard draw date cached so we dun delete it wrong
+		else	currentEllip = null;
 		
 		return r;
 	}

@@ -242,7 +242,6 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 	    clearButton.setBorderPainted(false);
 	    clearButton.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
 	    clearButton.addActionListener(this);
-=======
 		//		clearButton = new JButton("Clear");
 		//		clearButton.setContentAreaFilled(false);
 		//		clearButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -256,15 +255,13 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		clearButton = new JButton("");
 		clearButton.setContentAreaFilled(false);
 		clearButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		ImageIcon icon = null;
 		try {
 			icon = new ImageIcon(ImageIO.read(new File(getClass().getResource("/img/CLEAR.png").toURI())));
 			clearButton.setIcon(new ImageIcon(ImageIO.read(new File(getClass().getResource("/img/CLEAR.png").toURI()))));
 		} catch (Exception ex) {
 
 		}
-		int width = icon.getIconWidth();
-		int height = icon.getIconHeight();
+		
 		clearButton.setPreferredSize( new Dimension(width, height) );
 		clearButton.setMaximumSize(new Dimension(width, height));
 		clearButton.setFocusPainted(false);
@@ -2152,10 +2149,7 @@ class PaintPanel extends JPanel
 	    g2D.drawImage(img, 0, 0, null);
 	    g2D.dispose();
 
-		// Draw the image on to the buffered image
-		Graphics2D g2D = bufImage.createGraphics();
-		g2D.drawImage(img, 0, 0, null);
-		g2D.dispose();
+		
 
 		// return BufferedImage
 		return bufImage;

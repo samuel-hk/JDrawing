@@ -50,7 +50,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 
 	// Tool Bar and related fields
 	JToolBar toolBar;
-	JButton clearButton, strokeButton, earseButton, objectButton, changeBackgroundButton;
+	JButton clearButton, strokeButton, eraseButton, objectButton, changeBackgroundButton;
 	JButton textButton;
 	JPanel toolBarDetailPanel;
 	JPanel toolBarPanel;
@@ -167,6 +167,14 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		// init panel
 		toolBarPanel = new JPanel(new GridLayout(toolBarPanelRow, toolBarPanelCol));
 		mainPanel.add(toolBarPanel, BorderLayout.WEST);
+		/*GridBagConstraints constraints = new GridBagConstraints();
+		
+		 constraints.gridy = 0;
+	        constraints.gridx = 0;
+	        constraints.gridwidth = 2;
+	        constraints.gridheight = 2;
+	        constraints.weightx = 2;
+	        constraints.fill = GridBagConstraints.BOTH;*/
 
 		// init tool bar
 		toolBar = new JToolBar();
@@ -176,7 +184,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		toolBar.setLayout(new GridLayout(toolBarRow, toolBarCol));
 
 		// clear button
-		clearButton = new JButton("Clear");
+		clearButton = new JButton();
 		clearButton.setContentAreaFilled(false);
         clearButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         try {
@@ -188,7 +196,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		toolBar.add(clearButton);
 
 		// stroke button
-		strokeButton = new JButton("Stroke");
+		strokeButton = new JButton();
 		strokeButton.setContentAreaFilled(false);
         strokeButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         try {
@@ -200,22 +208,43 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		toolBar.add(strokeButton);
 
 		// text button
-		textButton = new JButton("Text");
+		textButton = new JButton();
+		textButton.setContentAreaFilled(false);
+        textButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        try {
+            textButton.setIcon(new ImageIcon(ImageIO.read(new File(getClass().getResource("/img/TEXT.png").toURI()))));
+        } catch (Exception ex) {
+
+        }
 		textButton.addActionListener(this);
 		toolBar.add(textButton);
 
 		// earser button
-		earseButton = new JButton("Earser");
-		earseButton.addActionListener(this);
-		toolBar.add(earseButton);
+		eraseButton = new JButton();
+		eraseButton.setContentAreaFilled(false);
+        eraseButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        try {
+            eraseButton.setIcon(new ImageIcon(ImageIO.read(new File(getClass().getResource("/img/ERASER.png").toURI()))));
+        } catch (Exception ex) {
+
+        }
+		eraseButton.addActionListener(this);
+		toolBar.add(eraseButton);
 
 		//draw object button
-		objectButton = new JButton("Draw Object");
+		objectButton = new JButton();
+		objectButton.setContentAreaFilled(false);
+        objectButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        try {
+            objectButton.setIcon(new ImageIcon(ImageIO.read(new File(getClass().getResource("/img/SHAPE.png").toURI()))));
+        } catch (Exception ex) {
+
+        }
 		objectButton.addActionListener(this);
 		toolBar.add(objectButton);
 
 		//change background color button
-		changeBackgroundButton = new JButton("Change Background Color");
+		changeBackgroundButton = new JButton();
 		changeBackgroundButton.setContentAreaFilled(false);
         changeBackgroundButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         try {
@@ -227,7 +256,14 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		toolBar.add(changeBackgroundButton);
 
 		// import image button
-		importImageButton = new JButton("Import Image");
+		importImageButton = new JButton();
+		importImageButton.setContentAreaFilled(false);
+        importImageButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        try {
+            importImageButton.setIcon(new ImageIcon(ImageIO.read(new File(getClass().getResource("/img/IMAGE.png").toURI()))));
+        } catch (Exception ex) {
+
+        }
 		importImageButton.addActionListener(this);
 		toolBar.add(importImageButton);
 
@@ -237,7 +273,14 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 		toolBarDetailPanel.setLayout(new BoxLayout(toolBarDetailPanel,BoxLayout.Y_AXIS));
 		
 		// undo button
-		undoButton = new JButton("Undo");
+		undoButton = new JButton();
+		undoButton.setContentAreaFilled(false);
+		undoButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        try {
+            undoButton.setIcon(new ImageIcon(ImageIO.read(new File(getClass().getResource("/img/UNDO.png").toURI()))));
+        } catch (Exception ex) {
+
+        }
 		toolBar.add(undoButton);
 //		undoButton.setBackground(Color.red);
 //		undoButton.setOpaque(true);
@@ -477,7 +520,7 @@ class a2Frame extends JFrame implements ActionListener, MouseMotionListener, Mou
 			currentTool = Cursor.HAND_CURSOR;
 			fillToolBarDetailPanelWithShape();
 		}
-		else if (e.getSource() == earseButton)
+		else if (e.getSource() == eraseButton)
 		{
 			setCurrentTool(a2Frame.ERASER);
 		} // end if, eraser button pressed
